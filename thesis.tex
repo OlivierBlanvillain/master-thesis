@@ -1,0 +1,48 @@
+\documentclass[12pt, a4paper, titlepage]{article}
+
+\usepackage{xltxtra}
+\usepackage[autostyle=false, style=english]{csquotes}
+\usepackage{blindtext}
+
+\setmainfont{Adobe Caslon Pro}
+% Show line numbers:
+
+\MakeOuterQuote{"}
+
+\title{A Very Simple Template}
+\author{
+  Vitaly Surazhsky \\
+          Department of Computer Science\\
+  Technion---Israel Institute of Technology\\
+  Technion City, Haifa 32000, \underline{Israel}
+      \and
+  Yossi Gil\\
+  Department of Computer Science\\
+  Technion---Israel Institute of Technology\\
+  Technion City, Haifa 32000, \underline{Israel}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{0.abstract.tex}
+\end{abstract}
+
+\section{Introduction}\label{introduction}
+\input{1.introduction.tex}
+
+\section{Results}\label{results}
+\input{2.results.tex}
+
+\section{Discussion}\label{discussion}
+\input{3.discussion.tex}
+
+\section{Conclusion}\label{conclusion}
+\input{4.conclusion.tex}
+
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
+
+\end{document}
