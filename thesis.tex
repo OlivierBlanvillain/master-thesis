@@ -1,4 +1,4 @@
-\documentclass[12pt, a4paper, titlepage]{article}
+\documentclass[12pt]{article}
 
 \usepackage{xltxtra}
 \usepackage[autostyle=false, style=english]{csquotes}
@@ -9,7 +9,12 @@
 
 \MakeOuterQuote{"}
 
-\title{A Very Simple Template}
+\begin{document}
+
+\input{titlepage.tex}
+
+\title{Scala.js networking made easy}
+
 \author{
   Vitaly Surazhsky \\
           Department of Computer Science\\
@@ -23,7 +28,6 @@
 }
 \date{\today}
 
-\begin{document}
 \maketitle
 
 \begin{abstract}
