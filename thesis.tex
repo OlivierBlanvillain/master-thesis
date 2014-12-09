@@ -1,52 +1,29 @@
 \documentclass[12pt]{article}
 
-\usepackage{xltxtra}
-\usepackage[autostyle=false, style=english]{csquotes}
-\usepackage{blindtext}
-
-\setmainfont{Adobe Caslon Pro}
-% Show line numbers:
-
-\MakeOuterQuote{"}
-
-\begin{document}
-
-\input{titlepage.tex}
+\input{headers.tex}
 
 \title{Scala.js networking made easy}
 
 \author{
-  Vitaly Surazhsky \\
-          Department of Computer Science\\
-  Technion---Israel Institute of Technology\\
-  Technion City, Haifa 32000, \underline{Israel}
-      \and
-  Yossi Gil\\
-  Department of Computer Science\\
-  Technion---Israel Institute of Technology\\
-  Technion City, Haifa 32000, \underline{Israel}
+  Olivier Blanvillain\\
+  EPFL, Switzerland\\
+  \href{mailto:olivier.blanvillain@gmail.com}{olivier.blanvillain{\at}gmail.com}
 }
-\date{\today}
+\date{January 16, 2015}
 
-\maketitle
+\begin{document}
 
-\begin{abstract}
-\input{0.abstract.tex}
-\end{abstract}
+  % \input{titlepage.tex}
 
-\section{Introduction}\label{introduction}
-\input{1.introduction.tex}
+  \maketitle
 
-\section{Results}\label{results}
-\input{2.results.tex}
+  \begin{abstract}
+    \input{abstract.mdtex}
+  \end{abstract}
 
-\section{Discussion}\label{discussion}
-\input{3.discussion.tex}
+  \input{content.mdtex}
 
-\section{Conclusion}\label{conclusion}
-\input{4.conclusion.tex}
-
-\bibliographystyle{abbrv}
-\bibliography{bibliography}
+  \bibliographystyle{abbrv}
+  \bibliography{bibliography}
 
 \end{document}

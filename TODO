@@ -1,0 +1,52 @@
+# Done
+
+- [x] Auto-wire + play example
+- [x] WebSocketTransport, client + play
+- [x] play transport
+- [x] sockjs
+- [x] revese routing
+- [x] future ordering
+- [x] Actor interface and examples
+- [x] Actor2Connection, Connection2Actor
+- [x] WebRTCTransport ConnectionHandle interface
+- [x] JVM client
+- [x] JVM server
+- [x] Doc everything
+- [x] Native function api
+- [x] Remove sound stuff
+- [x] React
+- [x] Multiplayer
+- [x] P1 P2 instead of Me Him
+- [x] Single player version
+- [x] Independent repo
+- [x] Check for memory leaks on the server
+
+
+# Pre Presentation
+
+- [] Use WebRTC in game
+
+- [] Fix JVM react UI
+- [] Delete objects on collision
+- [] Walls, bases and turrets
+
+- [] Clock synchronization
+- [] Setup online server
+- [] UI to measure/set latency
+
+- [] Proper buffer
+- [] Proper connection proxy
+
+- [] Live reload
+
+
+# Post Presentation
+
+- [] Readmes
+- [] Message to the mailing list
+- [] Message to the survivor author
+- [] Message to Odersky
+- [] Update CV
+- [] WebWorkers
+- [] Custom WebRTC/SockJS settings
+- [] Firefox

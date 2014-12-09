@@ -1,0 +1,56 @@
+% Fonts
+\usepackage[log-declarations=false]{xparse}
+\usepackage{fontspec}
+\setmainfont{Adobe Caslon Pro}
+\setmonofont{Bitstream Vera Sans Mono}
+
+% Scala format
+\usepackage{listings}
+\usepackage[framemethod=tikz]{mdframed}
+
+\lstdefinelanguage{Scala}{
+  morekeywords={abstract, case, catch, char, class, def, else, extends, final, if, import, match, module, new, null, object, override, package, private, protected, public, return, super, this, throw, trait, try, type, val, var, with, implicit, macro, sealed, true, false},
+  sensitive,
+  morecomment=[l]//,
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  showstringspaces=false
+}[keywords, comments, strings]
+
+\lstset{
+  tabsize=2,
+  basicstyle=\ttfamily\fontsize{8pt}{1em}\selectfont,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\rmfamily,
+  language=scala,
+  breaklines=false,
+  mathescape=false,
+  showspaces=false,
+  showstringspaces=false,
+  classoffset=0pt,
+  belowskip=0pt,
+}
+
+\surroundwithmdframed[
+  hidealllines=true,
+  innerleftmargin=15pt,
+  innerrightmargin=0pt,
+  innertopmargin=0pt,
+  innerbottommargin=2pt
+]{lstlisting}
+
+% Quotes
+\usepackage[autostyle=false, style=english]{csquotes}
+\MakeOuterQuote{"}
+
+% Margins
+\usepackage{titling}
+\setlength{\droptitle}{-1.9cm}
+\usepackage[parfill]{parskip}
+
+\usepackage[hidelinks]{hyperref}
+
+\newfont{\eaddfnt}{phvr8t at 12pt}
+\newcommand\at{\eaddfnt @}
+\newcommand\TODO[1]{\emph{\color{Red} TODO: #1}}
