@@ -1,58 +1,89 @@
-# Intro
-Js/NodeJs
-Many Apis
-Comet/Websocket/Webrtc
+Introduction
+============
 
-# Transport
-Scope: Unified interfaces. No magic.
+- Relevance: importance of networking for Scala.js
+- Motivation: Many JS APIs
+    - Websocket
+    - Comet
+    - WebRtc
+- Motivation: Many network programing models
+    - Akka
+    - RPC (type safe)
+    - Steams (scalaz, akka-stream)
+- Plan/Contributions
 
-The interface:
 
-    trait Transport {
-      type Address
-      def listen(): Future[Promise[ConnectionListener]]
-      def connect(remote: Address): Future[ConnectionHandle]
-      def shutdown(): Unit
-    }
+Transport
+=========
 
-    trait ConnectionHandle {
-      def handlerPromise: Promise[MessageListener]
-      def closedFuture: Future[Unit]
-      def write(outboundPayload: String): Unit
-      def close(): Unit
-    }
+- Scope: A unified, transparent interface to build upon.
+- No magic.
 
-All implementations
+### The interface:
 
-  - js
-    - WebSocket client
-    - SockJS client
-    - WebRtc client
-  - netty
-    - WebSocket server
-    - SockJS server (in next netty release)
-  - tyrus
-    - WebSocket client
-  - play
-    - WebSocket client
-    - SockJS client (with a plugin)
-    
-Wrappers
-  - Akka
-  - Autowire (RPC)sss
+    trait Transport {}
+    trait ConnectionHandle {}
 
-Two browser tests
+### Implementations
 
-# Survivor game
-Goal: Cross platform JS/JVM realtime mutiplayer game
-Everything but UI shared
-Clock synked, same game simulated on both platforms
-Pure functional design (taking advantage of scala collections immutability)
-"Lag compensation"
-React UI (& hack for the JVM version)
-Results: 60FPS on both platforms, lag free gameplay
+- js (WebSocket client, SockJS client, WebRtc client)
+- netty (WebSocket server, SockJS server (next netty))
+- tyrus (WebSocket client)
+- play (WebSocket client, SockJS client (plugin))
 
-# Conclusion
+### Wrappers
 
-A much longer example was written by Gil @Gil.
-Now go read #intro!
+- Works fine with the raw api
+- Akka
+- Autowire (RPC)
+
+### Testing infrastructure
+
+- Two configurable browsers
+
+
+Example: A Cross-platform Multiplayer Game
+==========================================
+
+- Goal: Cross platform JS/JVM realtime mutiplayer game
+- History: Scala.js port of a JS port of a Commodore 64 game
+
+### Architecture
+
+- Purely functional multiplayer game engine
+- Clock synked, same game simulated on both platforms
+- Requires: initialState, nextState, render, transport
+- Result: Immutability everywhere
+- Result: everything but input handler & UI is shared
+
+### Compensate Network Latency
+
+- Traditional solutions (actual lag, fixed delay with animation)
+- Solution: go back in time (Figure)
+- Scala List and Ref quality and fixed size buffer solution
+
+### Implementation
+
+- React UI (& hack for the JVM version)
+- Simple Server for matchmaking
+- WebRtc with SockJS fallback
+- Results: 60FPS on both platforms, lag free gameplay
+- Results: Lag Compensation in action (Screenshots)
+
+
+Related Work
+============
+
+- Js/NodeJs
+- Closure
+- Steam Engine/AoE/Sc2/Google docs
+
+
+Conclusion and Future Work
+==========================
+
+- Web workers
+- scalaz-stream/akka-stream wrappers
+- More utilities on top of Transport
+
+@Gil
