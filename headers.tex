@@ -1,12 +1,15 @@
 % Fonts
+\usepackage[english]{babel}
 \usepackage[log-declarations=false]{xparse}
 \usepackage{fontspec}
-\setmainfont{Adobe Caslon Pro}
+\pdfprotrudechars=2
+\pdfadjustspacing=2
+\newfontfeature{Microtype}{protrusion=default;expansion=default;}
+\setmainfont[Microtype]{Adobe Caslon Pro}
 \setmonofont{Bitstream Vera Sans Mono}
 
 % Scala format
 \usepackage{listings}
-\usepackage[framemethod=tikz]{mdframed}
 
 \lstdefinelanguage{Scala}{
   morekeywords={abstract, case, catch, char, class, def, else, extends, final, if, import, match, module, new, null, object, override, package, private, protected, public, return, super, this, throw, trait, try, type, val, var, with, implicit, macro, sealed, true, false},
@@ -29,16 +32,9 @@
   showspaces=false,
   showstringspaces=false,
   classoffset=0pt,
-  belowskip=0pt,
+  xleftmargin=20pt,
+  belowskip=0pt
 }
-
-\surroundwithmdframed[
-  hidealllines=true,
-  innerleftmargin=15pt,
-  innerrightmargin=0pt,
-  innertopmargin=0pt,
-  innerbottommargin=2pt
-]{lstlisting}
 
 % Quotes
 \usepackage[autostyle=false, style=english]{csquotes}
@@ -58,3 +54,5 @@
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
 \newcommand\TODO[1]{\emph{\color{Red} TODO: #1}}
+
+\usepackage{keyval}

@@ -13,16 +13,20 @@ Introduction
 - Plan/Contributions
 
 
+\newpage
+
 Transport
 =========
 
-- Scope: A unified, transparent interface to build upon.
-- No magic.
+* This section, scala-js-transport library, main contribution
 
 ### The interface:
 
-    trait Transport {}
-    trait ConnectionHandle {}
+In order to unify different means of communication, we begin by the definition of unique interface for asynchronous transports. This interface aims at *transparently* modeling the different underlying implementations, meaning it is not meant to add functionalities but rather to delegate its tasks to the underlying transport.
+
+\lstinputlisting{../transport/transport/shared/transport/Transport.cache}
+
+interface to build upon.
 
 ### Implementations
 
@@ -37,13 +41,16 @@ Transport
 - Akka
 - Autowire (RPC)
 
-### Testing infrastructure
+### Going further
 
+- Testing infrastructure
 - Two configurable browsers
 
 
+\newpage
+
 Example: A Cross-platform Multiplayer Game
-==========================================
+========================================== 
 
 - Goal: Cross platform JS/JVM realtime mutiplayer game
 - History: Scala.js port of a JS port of a Commodore 64 game
@@ -71,13 +78,17 @@ Example: A Cross-platform Multiplayer Game
 - Results: Lag Compensation in action (Screenshots)
 
 
+\newpage
+
 Related Work
 ============
 
-- Js/NodeJs
+- Js/NodeJs, relies on duck typing
 - Closure
 - Steam Engine/AoE/Sc2/Google docs
 
+
+\newpage
 
 Conclusion and Future Work
 ==========================
