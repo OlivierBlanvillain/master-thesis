@@ -1,0 +1,215 @@
+\section{Introduction}\label{introduction}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Relevance: importance of networking for Scala.js
+\item
+  Motivation: Many JS APIs
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Websocket
+  \item
+    Comet
+  \item
+    WebRtc
+  \end{itemize}
+\item
+  Motivation: Many network programing models
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Akka
+  \item
+    RPC (type safe)
+  \item
+    Steams (scalaz, akka-stream)
+  \end{itemize}
+\item
+  Plan/Contributions
+\end{itemize}
+
+\newpage
+
+\section{Transport}\label{transport}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  This section, scala-js-transport library, main contribution
+\end{itemize}
+
+\subsection{A Uniform Interface}\label{a-uniform-interface}
+
+In order to interchangeably use different means of communication, we
+begin by the definition of unique interface for asynchronous transports.
+This interface aims at \emph{transparently} modeling the different
+underlying implementations, meaning it does not add functionality but
+simply serves as a delegator.
+
+\transportInterface
+
+A \emph{Transport} can both \emph{listen} for incoming connections and
+\emph{connect} to remote \emph{Transports}. Platforms limited to act
+either as client or server will return a failed future for either of
+these methods. In order to listen for incoming connections, the user of
+a \emph{Transport} has to complete the promise returned by the listen
+method with a \emph{ConnectionListener}. To keep the definition generic,
+\emph{Address} is an abstract type. As we will see later, it varies
+greatly from one technology to another.
+
+\emph{ConnectionHandle} represents an opened connection. Thereby, it
+supports four type of interactions: writing a message, listening for
+incoming messages, closing the connection and being notified of
+connection closure. Similarly to \emph{Transport}, listening for
+incoming messages is achieved by completing a promise of
+\emph{MessageListener}.
+
+The presented \emph{Transport} and \emph{ConnectionHandle} interfaces
+have several advantages compared to alternative found in other
+languages, such the WebSocket interface in JavaScript. For example, none
+of the defined method throw exceptions, all errors are transmitted to
+the use as failed future. Also, some incorrect behaviors such as writing
+to a no yet opened connection, or receiving duplicate notifications for
+a closed connection, are made impossible by construction.
+
+\subsection{Implementations}\label{implementations}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  js (WebSocket client, SockJS client, WebRtc client)
+\item
+  netty (WebSocket server, SockJS server (next netty))
+\item
+  tyrus (WebSocket client)
+\item
+  play (WebSocket client, SockJS client (plugin))
+\end{itemize}
+
+\begin{longtable}[c]{@{}lccc@{}}
+\toprule\addlinespace
+Platform & WebSocket & SockJS & WebRTC
+\\\addlinespace
+\midrule\endhead
+JavaScript & client & client & client
+\\\addlinespace
+Play Framework & server & server & -
+\\\addlinespace
+Netty 4.0 & both & - & -
+\\\addlinespace
+Tyrus & client & - & -
+\\\addlinespace
+\bottomrule
+\addlinespace
+\caption{Here's the caption. It, too, may span}
+\end{longtable}
+
+\subsection{Wrappers}\label{wrappers}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Works fine with the raw api
+\item
+  Akka
+\item
+  Autowire (RPC)
+\end{itemize}
+
+\subsection{Going further}\label{going-further}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Testing infrastructure
+\item
+  Two configurable browsers
+\end{itemize}
+
+\section{Example: A Cross-platform Multiplayer
+Game}\label{example-a-cross-platform-multiplayer-game}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Goal: Cross platform JS/JVM realtime mutiplayer game
+\item
+  History: Scala.js port of a JS port of a Commodore 64 game
+\end{itemize}
+
+\subsection{Architecture}\label{architecture}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Purely functional multiplayer game engine
+\item
+  Clock synked, same game simulated on both platforms
+\item
+  Requires: initialState, nextState, render, transport
+\item
+  Result: Immutability everywhere
+\item
+  Result: everything but input handler \& UI is shared
+\end{itemize}
+
+\subsection{Compensate Network
+Latency}\label{compensate-network-latency}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Traditional solutions (actual lag, fixed delay with animation)
+\item
+  Solution: go back in time (Figure)
+\item
+  Scala List and Ref quality and fixed size buffer solution
+\end{itemize}
+
+\subsection{Implementation}\label{implementation}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  React UI (\& hack for the JVM version)
+\item
+  Simple Server for matchmaking
+\item
+  WebRtc with SockJS fallback
+\item
+  Results: 60FPS on both platforms, lag free gameplay
+\item
+  Results: Lag Compensation in action (Screenshots)
+\end{itemize}
+
+\section{Related Work}\label{related-work}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Js/NodeJs, relies on duck typing
+\item
+  Closure
+\item
+  Steam Engine/AoE/Sc2/Google docs
+\end{itemize}
+
+\newpage
+
+\section{Conclusion and Future Work}\label{conclusion-and-future-work}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Web workers
+\item
+  scalaz-stream/akka-stream wrappers
+\item
+  More utilities on top of Transport
+\end{itemize}
+
+\cite{Gil}

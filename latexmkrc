@@ -20,12 +20,14 @@ sub md2tex {
     ' | pandoc --listings --no-tex-ligatures -f markdown -t latex -o $_[0].mdtex");
 };
 
-add_cus_dep('scala', 'cache', 0, 'cleanscala');
-sub cleanscala {
+add_cus_dep('scala', 'listings', 0, 'scalalistings');
+sub scalalistings {
   return system("
+    echo '\\\\begin{lstlisting}' > $_[0].listings
     cat $_[0].scala | sed '
       /\*/d
       /package/d
       /import/d
-    ' | awk NF > $_[0].cache");
+    ' | awk NF >> $_[0].listings
+    echo '\\\\end{lstlisting}' >> $_[0].listings");
 };

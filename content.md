@@ -12,7 +12,6 @@ Introduction
     - Steams (scalaz, akka-stream)
 - Plan/Contributions
 
-
 \newpage
 
 Transport
@@ -20,13 +19,18 @@ Transport
 
 * This section, scala-js-transport library, main contribution
 
-### The interface:
+### A Uniform Interface
 
-In order to unify different means of communication, we begin by the definition of unique interface for asynchronous transports. This interface aims at *transparently* modeling the different underlying implementations, meaning it is not meant to add functionalities but rather to delegate its tasks to the underlying transport.
+In order to interchangeably use different means of communication, we begin by the definition of unique interface for asynchronous transports. This interface aims at *transparently* modeling the different underlying implementations, meaning it does not add functionality but simply serves as a delegator.
 
-\lstinputlisting{../transport/transport/shared/transport/Transport.cache}
+\transportInterface
 
-interface to build upon.
+A *Transport* can both *listen* for incoming connections and *connect* to remote *Transports*. Platforms limited to act either as client or server will return a failed future for either of these methods. In order to listen for incoming connections, the user of a *Transport* has to complete the promise returned by the listen method with a *ConnectionListener*. To keep the definition generic, *Address* is an abstract type. As we will see later, it varies greatly from one technology to another.
+
+*ConnectionHandle* represents an opened connection. Thereby, it supports four type of interactions: writing a message, listening for incoming messages, closing the connection and being notified of connection closure. Similarly to *Transport*, listening for incoming messages is achieved by completing a promise of *MessageListener*.
+
+The presented *Transport* and *ConnectionHandle* interfaces have several advantages compared to alternative found in other languages, such the WebSocket interface in JavaScript. For example, none of the defined method throw exceptions, all errors are transmitted to the use as failed future. Also, some incorrect behaviors such as writing to a no yet opened connection, or receiving duplicate notifications for a closed connection, are made impossible by construction.
+
 
 ### Implementations
 
@@ -35,6 +39,17 @@ interface to build upon.
 - tyrus (WebSocket client)
 - play (WebSocket client, SockJS client (plugin))
 
+
+Platform        WebSocket   SockJS   WebRTC
+-------------- ----------- -------- --------
+JavaScript        client    client   client    
+Play Framework    server    server     -     
+Netty 4.0         both         -       -      
+Tyrus             client       -       -      
+
+Table: Here's the caption. It, too, may span
+
+      
 ### Wrappers
 
 - Works fine with the raw api
@@ -46,8 +61,6 @@ interface to build upon.
 - Testing infrastructure
 - Two configurable browsers
 
-
-\newpage
 
 Example: A Cross-platform Multiplayer Game
 ========================================== 
@@ -77,8 +90,6 @@ Example: A Cross-platform Multiplayer Game
 - Results: 60FPS on both platforms, lag free gameplay
 - Results: Lag Compensation in action (Screenshots)
 
-
-\newpage
 
 Related Work
 ============

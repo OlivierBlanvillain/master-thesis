@@ -1,12 +1,14 @@
 % Fonts
 \usepackage[english]{babel}
 \usepackage[log-declarations=false]{xparse}
+\usepackage{luainputenc}
 \usepackage{fontspec}
 \pdfprotrudechars=2
 \pdfadjustspacing=2
 \newfontfeature{Microtype}{protrusion=default;expansion=default;}
-\setmainfont[Microtype]{Adobe Caslon Pro}
+\setmainfont[Microtype, Ligatures=TeX]{Adobe Caslon Pro}
 \setmonofont{Bitstream Vera Sans Mono}
+\directlua{fonts.protrusions.setups.default.factor=.5}
 
 % Scala format
 \usepackage{listings}
@@ -23,7 +25,7 @@
 
 \lstset{
   tabsize=2,
-  basicstyle=\ttfamily\fontsize{8pt}{1em}\selectfont,
+  basicstyle=\ttfamily\fontsize{9pt}{1.1em}\selectfont,
   keywordstyle=\bfseries,
   commentstyle=\itshape\rmfamily,
   language=scala,
@@ -32,7 +34,8 @@
   showspaces=false,
   showstringspaces=false,
   classoffset=0pt,
-  xleftmargin=20pt,
+  xleftmargin=40pt,
+  aboveskip=0pt,
   belowskip=0pt
 }
 
@@ -43,7 +46,6 @@
 % Margins
 \usepackage{titling}
 \setlength{\droptitle}{-1.9cm}
-\usepackage[parfill]{parskip}
 
 % Links
 \usepackage{silence}
@@ -51,8 +53,14 @@
 \usepackage[hidelinks]{hyperref}
 \WarningsOn
 
+% Tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\setlength\defaultaddspace{4pt}
+\setlength\belowrulesep{6pt}
+
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
-\newcommand\TODO[1]{\emph{\color{Red} TODO: #1}}
 
-\usepackage{keyval}
+\usepackage{color}
+\newcommand\TODO[1]{\emph{\color{red} TODO: #1}}
