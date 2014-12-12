@@ -13,8 +13,8 @@ sub md2tex {
     cat $_[0].md | sed -r '
       s/@@/@@ /g
       s/##/## /g
-      s/@([A-Za-z0-9]+)/\\\\cite{\\1}/g
-      s/#([A-Za-z0-9]+)/\\\\autoref{\\1}/g
+      s/@([A-Za-z0-9-]+)/\\\\cite{\\1}/g
+      s/#([A-Za-z0-9-]+)/\\\\autoref{\\1}/g
       s/@@ /@/g
       s/## /#/g
     ' | pandoc --listings --no-tex-ligatures -f markdown -t latex -o $_[0].mdtex");

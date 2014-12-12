@@ -14,7 +14,7 @@
   \item
     Comet
   \item
-    WebRtc
+    WebRTC
   \end{itemize}
 \item
   Motivation: Many network programing models
@@ -80,11 +80,33 @@ cross compiles to both Java bytecode and JavaScript.
 
 \subsection{Implementations}\label{implementations}
 
-The scala-js-transport library provides several implementations of
-Transport across three communication technologies: WebSocket, SockJS and
-WebRtc. We briefly present these implementations grouped by technology.
+The scala-js-transport library contains several implementations of
+\emph{Transports} across three communication technologies: WebSocket,
+SockJS and WebRTC. This subsection briefly presents the different
+technologies and their respective advantages. \autoref{impl-summary}
+summarizes the available \emph{Transports} by platform and technologies.
 
-\textbf{WebSocket} provides full-duplex communication over a single TCP
+\begin{longtable}[c]{@{}lccc@{}}
+\caption{Summary of the available \emph{Transports} by
+platform.\label{impl-summary}}\tabularnewline
+\toprule
+Platform & WebSocket & SockJS & WebRTC\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Platform & WebSocket & SockJS & WebRTC\tabularnewline
+\midrule
+\endhead
+JavaScript & client & client & client\tabularnewline
+Play Framework & server & server & -\tabularnewline
+Netty & both & - & -\tabularnewline
+Tyrus & client & - & -\tabularnewline
+\bottomrule
+\end{longtable}
+
+\subsubsection{WebSocket}\label{websocket}
+
+WebSocket provides full-duplex communication over a single TCP
 connection. Connections are established by emitting an HTTP request to
 initiate a handshake, the HTTP connection is then upgraded to become the
 WebSocket connection. This mechanism allows WebSocket to be wildly
@@ -93,6 +115,7 @@ supported over different network configurations.
 WebSocket is also well supported across different platforms. Our library
 provides four WebSocket \emph{Transports}, the native JavaScript client,
 the Play Framework server, the Netty client/server and the Tyrus client.
+
 While having all three Play, Netty and Tyrus might seem redundant, each
 of them has its advantages. Play is a complete web framework is more
 suitable to build every component of a web application. On the other
@@ -103,38 +126,51 @@ library offers a standalone WebSocket client which is lightweight
 compared to the equivalent Netty implementation. It would therefore be
 more suitable for a mobile JVM client.
 
-\textbf{SockJS} is a WebSocket emulation protocol which fallbacks to
-different protocol when WebSocket is not supported.
+\subsubsection{SockJS}\label{sockjs}
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  js (WebSocket client, SockJS client, WebRtc client)
-\item
-  netty (WebSocket server, SockJS server (next netty))
-\item
-  tyrus (WebSocket client)
-\item
-  play (WebSocket client, SockJS client (plugin))
-\end{itemize}
+SockJS is a WebSocket emulation protocol which fallbacks to different
+protocols when WebSocket is not supported. Is supports a large number of
+techniques to emulate the sending of messages from server to client,
+such as AJAX long polling, AJAX streaming, EventSource or streaming
+content by slowly loading an HTML file in an iframe. These technique are
+base on the following idea: by issuing a regular HTTP request from
+client to server, and voluntarily delaying the response from the server,
+the server side can decide when to release information. This allows to
+emulate the sending of messages from server to client which not
+supported in the traditional request-response communication model.
 
-\begin{longtable}[c]{@{}lccc@{}}
-\toprule\addlinespace
-Platform & WebSocket & SockJS & WebRTC
-\\\addlinespace
-\midrule\endhead
-JavaScript & client & client & client
-\\\addlinespace
-Play Framework & server & server & -
-\\\addlinespace
-Netty & both & - & -
-\\\addlinespace
-Tyrus & client & - & -
-\\\addlinespace
-\bottomrule
-\addlinespace
-\caption{Here's the caption. It, too, may span}
-\end{longtable}
+The scala-js-transport library provides a \emph{Transport} build on the
+official SockJS JavaScript client, and a second one for the Play
+Framework via a community plugin. Netty developers have scheduled SockJS
+support to be included in the next major release.
+
+\subsubsection{WebRTC}\label{webrtc}
+
+WebRTC is an experimental API to allow peer to peer communication
+between web browsers. Initially targeted as audio and video
+communication, WebRTC also provides \emph{Data Channels} to send
+arbitrary data. Contrary to WebSocket only supports TCP, WebRTC can be
+configures to use either TCP, UDP or SCTP.
+
+As opposed to WebSocket and SockJS which only need a URL to establish a
+connection, WebRTC requires a signaling channel between two peers in
+order to open the peer to peer connection. The signaling channel is not
+tight to a particular technology, its only requirement is to allow a
+back an forth communication between it's peers. This is commonly
+achieved by connecting both peers to WebSocket server which then serves
+as a relay for the WebRTC connection establishment.
+
+To simplify the process of relaying messages from one peer to another,
+our library implements picklers for \emph{ConnectionHandle}. Concretely,
+when a \emph{ConnectionHandle} object connecting node \emph{A} and
+\emph{B} is sent by \emph{B} over an already established connection with
+\emph{C}, the \emph{ConnectionHandle} received by \emph{C} will act as
+direct connection between \emph{A} and \emph{C}, hiding the fact that
+\emph{B} is a proxy between the two nodes.
+
+At the time of writing, WebRTC is implemented is Chrome, Firefox and
+Opera, and lakes support in Safari and Internet Explorer. The only non
+browser implementations are available on the node.js platform.
 
 \subsection{Wrappers}\label{wrappers}
 
@@ -157,6 +193,8 @@ Tyrus & client & - & -
 \item
   Two configurable browsers
 \end{itemize}
+
+\newpage
 
 \section{Example: A Cross-platform Multiplayer
 Game}\label{example-a-cross-platform-multiplayer-game}
@@ -207,12 +245,14 @@ Latency}\label{compensate-network-latency}
 \item
   Simple Server for matchmaking
 \item
-  WebRtc with SockJS fallback
+  WebRTC with SockJS fallback
 \item
   Results: 60FPS on both platforms, lag free gameplay
 \item
   Results: Lag Compensation in action (Screenshots)
 \end{itemize}
+
+\newpage
 
 \section{Related Work}\label{related-work}
 
