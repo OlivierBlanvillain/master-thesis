@@ -3,6 +3,7 @@
 \usepackage[log-declarations=false]{xparse}
 \usepackage{luainputenc}
 \usepackage{fontspec}
+\usepackage{color}
 % \pdfprotrudechars=2
 % \directlua{fonts.protrusions.setups.default.factor=.5}
 \pdfadjustspacing=2
@@ -51,6 +52,7 @@
 \WarningsOff*
 \usepackage[hidelinks]{hyperref}
 \WarningsOn
+\renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
 
 % Tables
 \usepackage{booktabs}
@@ -66,10 +68,6 @@
 \usepackage{floatrow}
 \floatsetup[table]{capposition=bottom}
 
-% @
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
-
-% TODO
-\usepackage{color}
 \newcommand\TODO[1]{\emph{\color{red} TODO: #1}}

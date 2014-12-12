@@ -44,11 +44,11 @@
 
 \subsection{A Uniform Interface}\label{a-uniform-interface}
 
-In order to interchangeably use different means of communication, we
-begin by the definition of an interface for asynchronous transports.
-This interface aims at \emph{transparently} modeling the different
-underlying technologies, meaning it does not add functionality but
-simply serves as a delegator.
+We begin our discussion by the definition of an interface for
+asynchronous transports. This interface aims at \emph{transparently}
+modeling the different underlying technologies, meaning that is simply
+delegates tasks to the actual implementation, without adding new
+functionalities.
 
 \transportInterface
 
@@ -63,32 +63,31 @@ greatly from one technology to another.
 
 \emph{ConnectionHandle} represents an opened connection. Thereby, it
 supports four type of interactions: writing a message, listening for
-incoming messages, closing the connection and being notified of
-connection closure. Similarly to \emph{Transport}, listening for
-incoming messages is achieved by completing a promise of
-\emph{MessageListener}.
+incoming messages, closing the connection and listening for connection
+closure. Similarly to \emph{Transport}, listening for incoming messages
+is achieved by completing a promise of \emph{MessageListener}.
 
 The presented \emph{Transport} and \emph{ConnectionHandle} interfaces
-have several advantages compared to alternative found in other
+have several advantages compared to their alternative in other
 languages, such the WebSocket interface in JavaScript. For example,
 errors are not transmitted by throwing exceptions, but simply returned
 as a failed future. Also, some incorrect behaviors such as writing to a
 no yet opened connection, or receiving duplicate notifications for a
 closed connection, are made impossible by construction. Thanks to
-support of futures and promises in Scala.js, these interfaces can be
-cross compiles to both Java bytecode and JavaScript.
+support of futures and promises in Scala.js, these interfaces cross
+compile to both Java bytecode and JavaScript.
 
 \subsection{Implementations}\label{implementations}
 
 The scala-js-transport library contains several implementations of
-\emph{Transports} across three communication technologies: WebSocket,
-SockJS and WebRTC. This subsection briefly presents the different
-technologies and their respective advantages. \autoref{impl-summary}
-summarizes the available \emph{Transports} by platform and technologies.
+\emph{Transports} for WebSocket, SockJS and WebRTC. This subsection
+briefly presents the different technologies and their respective
+advantages. \autoref{impl-summary} summarizes the available
+\emph{Transports} for each platform and technology.
 
 \begin{longtable}[c]{@{}lccc@{}}
-\caption{Summary of the available \emph{Transports} by
-platform.\label{impl-summary}}\tabularnewline
+\caption{Summary of the available
+\emph{Transports}.\label{impl-summary}}\tabularnewline
 \toprule
 Platform & WebSocket & SockJS & WebRTC\tabularnewline
 \midrule
@@ -107,66 +106,66 @@ Tyrus & client & - & -\tabularnewline
 \subsubsection{WebSocket}\label{websocket}
 
 WebSocket provides full-duplex communication over a single TCP
-connection. Connections are established by emitting an HTTP request to
-initiate a handshake, the HTTP connection is then upgraded to become the
-WebSocket connection. This mechanism allows WebSocket to be wildly
-supported over different network configurations.
+connection.
+
+Connection establishment begin with an HTTP request from client to
+server. After the handshake is completed, the TCP connection used for
+the initial HTTP request is \emph{upgraded} to change protocol, and kept
+open to become the actual WebSocket connection. This mechanism allows
+WebSocket to be wildly supported over different network configurations.
 
 WebSocket is also well supported across different platforms. Our library
-provides four WebSocket \emph{Transports}, the native JavaScript client,
-the Play Framework server, the Netty client/server and the Tyrus client.
-
-While having all three Play, Netty and Tyrus might seem redundant, each
-of them has its advantages. Play is a complete web framework is more
-suitable to build every component of a web application. On the other
-hand, Netty might be more suitable to build a standalone WebSocket
-server. Since Play is itself based on Netty, it adds some overhead in
-term of performances and dependencies. Regarding client side, the Tyrus
-library offers a standalone WebSocket client which is lightweight
-compared to the equivalent Netty implementation. It would therefore be
-more suitable for a mobile JVM client.
+provides four WebSocket \emph{Transports}, a native JavaScript client, a
+Play Framework server, a Netty client/server and a Tyrus client. While
+having all three Play, Netty and Tyrus might seem redundant, each of
+them comes with its own advantages. Play is a complete web framework,
+suitable to build every component of a web application. Play is based on
+Netty, which means that for a standalone WebSocket server, using Netty
+directly leads to better performances and less dependencies. Regarding
+client side, the Tyrus library offers a standalone WebSocket client
+which is lightweight compared to the Netty framework.
 
 \subsubsection{SockJS}\label{sockjs}
 
 SockJS is a WebSocket emulation protocol which fallbacks to different
 protocols when WebSocket is not supported. Is supports a large number of
 techniques to emulate the sending of messages from server to client,
-such as AJAX long polling, AJAX streaming, EventSource or streaming
-content by slowly loading an HTML file in an iframe. These technique are
-base on the following idea: by issuing a regular HTTP request from
+such as AJAX long polling, AJAX streaming, EventSource and streaming
+content by slowly loading an HTML file in an iframe. These techniques
+are based on the following idea: by issuing a regular HTTP request from
 client to server, and voluntarily delaying the response from the server,
 the server side can decide when to release information. This allows to
 emulate the sending of messages from server to client which not
 supported in the traditional request-response communication model.
 
 The scala-js-transport library provides a \emph{Transport} build on the
-official SockJS JavaScript client, and a second one for the Play
-Framework via a community plugin. Netty developers have scheduled SockJS
-support to be included in the next major release.
+official SockJS JavaScript client, and a server on the Play Framework
+via a community plugin \cite{play2-sockjs}. Netty developers have
+scheduled SockJS support for the next major release.
 
 \subsubsection{WebRTC}\label{webrtc}
 
-WebRTC is an experimental API to allow peer to peer communication
-between web browsers. Initially targeted as audio and video
-communication, WebRTC also provides \emph{Data Channels} to send
-arbitrary data. Contrary to WebSocket only supports TCP, WebRTC can be
-configures to use either TCP, UDP or SCTP.
+WebRTC is an experimental API for peer to peer communication between web
+browsers. Initially targeted at audio and video communication, WebRTC
+also provides \emph{Data Channels} to communicate arbitrary data.
+Contrary to WebSocket only supports TCP, WebRTC can be configures to use
+either TCP, UDP or SCTP.
 
 As opposed to WebSocket and SockJS which only need a URL to establish a
-connection, WebRTC requires a signaling channel between two peers in
-order to open the peer to peer connection. The signaling channel is not
-tight to a particular technology, its only requirement is to allow a
-back an forth communication between it's peers. This is commonly
-achieved by connecting both peers to WebSocket server which then serves
-as a relay for the WebRTC connection establishment.
+connection, WebRTC requires a \emph{signaling channel} in order to open
+the peer to peer connection. The \emph{signaling channel} is not tight
+to a particular technology, its only requirement is to allow a back an
+forth communication between peers. This is commonly achieved by
+connecting both peers via WebSocket to a server, which then serves as a
+relay for the WebRTC connection establishment.
 
 To simplify the process of relaying messages from one peer to another,
-our library implements picklers for \emph{ConnectionHandle}. Concretely,
-when a \emph{ConnectionHandle} object connecting node \emph{A} and
-\emph{B} is sent by \emph{B} over an already established connection with
-\emph{C}, the \emph{ConnectionHandle} received by \emph{C} will act as
-direct connection between \emph{A} and \emph{C}, hiding the fact that
-\emph{B} is a proxy between the two nodes.
+our library uses picklers for \emph{ConnectionHandle}. Concretely, when
+a \emph{ConnectionHandle} object connecting node \emph{A} and \emph{B}
+is sent by \emph{B} over an already established connection with
+\emph{C}, the \emph{ConnectionHandle} received by \emph{C} will act as a
+connection between \emph{A} and \emph{C}, hiding the fact that \emph{B}
+relays messages between the two nodes.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and
 Opera, and lakes support in Safari and Internet Explorer. The only non
@@ -174,17 +173,20 @@ browser implementations are available on the node.js platform.
 
 \subsection{Wrappers}\label{wrappers}
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Works fine with the raw api
-\item
-  Akka
-\item
-  Autowire (RPC)
-\end{itemize}
+Thanks to the \emph{Transport} interface, it is possible write programs
+with an abstract communication medium. We present two wrappers, for Akka
+\cite{akka} and Autowire~\cite{autowire}, which allow to work at
+different level of abstraction compared to the direct use of a
+\emph{Transport}. Because Autowire and Akka (via \cite{scala-js-actors})
+can both be used on the JVM and on JavaScript, these wrappers can be
+used to build cross compiling programs compatible with all the
+\emph{Transport} implementations presented in \autoref{implementations}.
 
-\subsection{Going further}\label{going-further}
+\subsubsection{Akka}\label{akka}
+
+\subsubsection{Autowire RPC}\label{autowire-rpc}
+
+\subsubsection{Going further}\label{going-further}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -279,5 +281,3 @@ Latency}\label{compensate-network-latency}
 \item
   More utilities on top of Transport
 \end{itemize}
-
-\cite{Gil}
