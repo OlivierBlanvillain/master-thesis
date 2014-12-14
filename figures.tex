@@ -2,9 +2,38 @@
   \begin{figure}[htp]
     \centering
     \begin{minipage}{0.8\linewidth}
+      \lstset{
+        caption=Definition of the core networking interfaces.
+        ,label=transportInterface
+      }
       \input{scala-js-transport/transport/shared/transport/Transport.listings}
-      \lstset{caption=Definition of the core networking interfaces.}
       \input{scala-js-transport/transport/shared/transport/package.listings}
+    \end{minipage}
+  \end{figure}
+}
+
+\newcommand\actorWrapper[0]{
+  \begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.9\linewidth}
+      \lstset{
+        caption=\emph{Transport} wrappers to handle connections with actors.
+        ,label=actorWrapper
+      }
+      \input{ActorWrapper.listings}
+      \end{minipage}
+  \end{figure}
+}
+
+\newcommand\yellingActor[0]{
+  \begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.8\linewidth}
+      \lstset{
+        caption=C.
+        ,label=yellingActor
+      }
+      \input{YellingActor.listings}
     \end{minipage}
   \end{figure}
 }

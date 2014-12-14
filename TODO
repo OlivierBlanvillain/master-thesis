@@ -20,19 +20,19 @@
 - [x] Single player version
 - [x] Independent repo
 - [x] Check for memory leaks on the server
+- [~] Fix JVM react UI
 
 
 # Pre Presentation
 
 - [] Use WebRTC in game
 
-- [] Fix JVM react UI
 - [] Delete objects on collision
 - [] Walls, bases and turrets
 
 - [] Clock synchronization
 - [] Setup online server
-- [] UI to measure/set latency
+- [] UI to measure/set latency http://foundation.zurb.com/docs/components/range_slider.html
 
 - [] Proper buffer
 - [] Proper connection proxy
@@ -43,6 +43,7 @@
 
 # Post Presentation
 
+- [] Use latest Scala.js dependency
 - [] Readmes
 - [] Message to the mailing list
 - [] Message to the survivor author

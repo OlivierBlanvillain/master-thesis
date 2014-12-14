@@ -22,7 +22,7 @@ Transport
 
 ### A Uniform Interface
 
-We begin our discussion by the definition of an interface for asynchronous transports. This interface aims at *transparently* modeling the different underlying technologies, meaning that is simply delegates tasks to the actual implementation, without adding new functionalities.
+We begin our discussion by the definition of an interface for asynchronous transports, presented in #transportInterface. This interface aims at *transparently* modeling the different underlying technologies, meaning that is simply delegates tasks to the actual implementation, without adding new functionalities.
 
 \transportInterface
 
@@ -68,43 +68,77 @@ At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and 
 
 ### Wrappers
 
-Thanks to the *Transport* interface, it is possible write programs with an abstract communication medium. We present two wrappers, for Akka @akka and Autowire\ @autowire, which allow to work at different level of abstraction compared to the direct use of a *Transport*. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.
+By using *Transport* interface, it is possible write programs with an abstract communication medium. We present two *Transport* wrappers, for Akka @akka and Autowire\ @autowire, which allow to work with different model of concurrency. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.
 
 ###### Akka
+The actor model is based on asynchronous message passing between primitive entities called actors. Featuring both location transparency and fault tolerance via supervision, the actor model is particularly adapted to distributed environment. Akka, a toolkit build around the actor model for the JVM, was partly ported to Scala.js by S. Doeraene in @scala-js-actors. The communication interface implemented in @scala-js-actors was revisited into the *Transport* wrapper presented in #actorWrapper.
+
+\actorWrapper
+
+The two methods *acceptWithActor* and *connectWithActor* use the underlying *listen* and *connect* methods of the wrapped *Transport*, and create an *handler* actor to handle the connection. The semantic is as follows: the *handler* actor is given an *ActorRef* in it is constructor, to which sending messages results in sending outgoing messages thought the connection, and messages received by the *handler* actor are incoming messages received from the connection. In addition, the life span of an *handler* actor is tight to life span of its connection, meaning that the *preStart* and *postStop* hooks can be used to detect the creation and the termination of the connection, and killing the *handler* actor results in closing the connection. #yellingActor shows an example of a simple *handler* actor which than sending back whatever it receives in uppercase.
+
+\yellingActor
+
+This semantic is inspired from actor interface for WebSocket implemented in the Play Framework, with the exception that it relies on the picking mechanism developed in @scala-js-actors. As a result, if \TODO{ActorRef}
 
 ###### Autowire RPC
 
+- Short intro
+- The interface
+- Some code
+- Strong point
+
 ###### Going further
 
-- Testing infrastructure
-- Two configurable browsers
+- Adding Wrappers, all Transports for free!
+- Adding Transports, all Wrappers for free!
+- A word on Integration Tests (Two browsers)
+
 
 \newpage
 
-Example: A Cross-platform Multiplayer Game
-========================================== 
+Lag Compensation Framework
+==========================
 
-- Goal: Cross platform JS/JVM realtime mutiplayer game
-- History: Scala.js port of a JS port of a Commodore 64 game
-
-### Architecture
-
-- Purely functional multiplayer game engine
-- Clock synked, same game simulated on both platforms
-- Requires: initialState, nextState, render, transport
-- Result: Immutability everywhere
-- Result: everything but input handler & UI is shared
+- Why do we need this
+- Google Docs
+- Goal: Cross platform JS/JVM realtime lag compensation framework
 
 ### Compensate Network Latency
 
 - Traditional solutions (actual lag, fixed delay with animation)
 - Solution: go back in time (Figure)
+- Clock synked, same game simulated on both platforms
+
+### Architecture
+
+- Requires: initialState, nextState, render, transport
+- Immutability everywhere
 - Scala List and Ref quality and fixed size buffer solution
 
-### Implementation
 
-- React UI (& hack for the JVM version)
-- Simple Server for matchmaking
+\newpage
+
+Example: A Real Time Multi-player Game
+======================================
+
+- History: Scala.js port of a JS port of a Commodore 64 game
+
+### Functional User Interface
+
+- React UI
+- React
+- Hack for the JVM version)
+
+### Functional User Interface
+
+- React UI
+- React
+- Hack for the JVM version)
+
+### Result
+
+- Everything but input handler shared (but UI shouldn't...)
 - WebRTC with SockJS fallback
 - Results: 60FPS on both platforms, lag free gameplay
 - Results: Lag Compensation in action (Screenshots)

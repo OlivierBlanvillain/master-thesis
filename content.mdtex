@@ -45,10 +45,10 @@
 \subsection{A Uniform Interface}\label{a-uniform-interface}
 
 We begin our discussion by the definition of an interface for
-asynchronous transports. This interface aims at \emph{transparently}
-modeling the different underlying technologies, meaning that is simply
-delegates tasks to the actual implementation, without adding new
-functionalities.
+asynchronous transports, presented in \autoref{transportInterface}. This
+interface aims at \emph{transparently} modeling the different underlying
+technologies, meaning that is simply delegates tasks to the actual
+implementation, without adding new functionalities.
 
 \transportInterface
 
@@ -173,56 +173,88 @@ browser implementations are available on the node.js platform.
 
 \subsection{Wrappers}\label{wrappers}
 
-Thanks to the \emph{Transport} interface, it is possible write programs
-with an abstract communication medium. We present two wrappers, for Akka
-\cite{akka} and Autowire~\cite{autowire}, which allow to work at
-different level of abstraction compared to the direct use of a
-\emph{Transport}. Because Autowire and Akka (via \cite{scala-js-actors})
-can both be used on the JVM and on JavaScript, these wrappers can be
-used to build cross compiling programs compatible with all the
-\emph{Transport} implementations presented in \autoref{implementations}.
+By using \emph{Transport} interface, it is possible write programs with
+an abstract communication medium. We present two \emph{Transport}
+wrappers, for Akka \cite{akka} and Autowire~\cite{autowire}, which allow
+to work with different model of concurrency. Because Autowire and Akka
+(via \cite{scala-js-actors}) can both be used on the JVM and on
+JavaScript, these wrappers can be used to build cross compiling programs
+compatible with all the \emph{Transport} implementations presented in
+\autoref{implementations}.
 
 \subsubsection{Akka}\label{akka}
 
+The actor model is based on asynchronous message passing between
+primitive entities called actors. Featuring both location transparency
+and fault tolerance via supervision, the actor model is particularly
+adapted to distributed environment. Akka, a toolkit build around the
+actor model for the JVM, was partly ported to Scala.js by S. Doeraene in
+\cite{scala-js-actors}. The communication interface implemented in
+\cite{scala-js-actors} was revisited into the \emph{Transport} wrapper
+presented in \autoref{actorWrapper}.
+
+\actorWrapper
+
+The two methods \emph{acceptWithActor} and \emph{connectWithActor} use
+the underlying \emph{listen} and \emph{connect} methods of the wrapped
+\emph{Transport}, and create an \emph{handler} actor to handle the
+connection. The semantic is as follows: the \emph{handler} actor is
+given an \emph{ActorRef} in it is constructor, to which sending messages
+results in sending outgoing messages thought the connection, and
+messages received by the \emph{handler} actor are incoming messages
+received from the connection. In addition, the life span of an
+\emph{handler} actor is tight to life span of its connection, meaning
+that the \emph{preStart} and \emph{postStop} hooks can be used to detect
+the creation and the termination of the connection, and killing the
+\emph{handler} actor results in closing the connection.
+\autoref{yellingActor} shows an example of a simple \emph{handler} actor
+which than sending back whatever it receives in uppercase.
+
+\yellingActor
+
+This semantic is inspired from actor interface for WebSocket implemented
+in the Play Framework, with the exception that it relies on the picking
+mechanism developed in \cite{scala-js-actors}. As a result, if
+\TODO{ActorRef}
+
 \subsubsection{Autowire RPC}\label{autowire-rpc}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Short intro
+\item
+  The interface
+\item
+  Some code
+\item
+  Strong point
+\end{itemize}
 
 \subsubsection{Going further}\label{going-further}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Testing infrastructure
+  Adding Wrappers, all Transports for free!
 \item
-  Two configurable browsers
+  Adding Transports, all Wrappers for free!
+\item
+  A word on Integration Tests (Two browsers)
 \end{itemize}
 
 \newpage
 
-\section{Example: A Cross-platform Multiplayer
-Game}\label{example-a-cross-platform-multiplayer-game}
+\section{Lag Compensation Framework}\label{lag-compensation-framework}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Goal: Cross platform JS/JVM realtime mutiplayer game
+  Why do we need this
 \item
-  History: Scala.js port of a JS port of a Commodore 64 game
-\end{itemize}
-
-\subsection{Architecture}\label{architecture}
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+  Google Docs
 \item
-  Purely functional multiplayer game engine
-\item
-  Clock synked, same game simulated on both platforms
-\item
-  Requires: initialState, nextState, render, transport
-\item
-  Result: Immutability everywhere
-\item
-  Result: everything but input handler \& UI is shared
+  Goal: Cross platform JS/JVM realtime lag compensation framework
 \end{itemize}
 
 \subsection{Compensate Network
@@ -235,17 +267,63 @@ Latency}\label{compensate-network-latency}
 \item
   Solution: go back in time (Figure)
 \item
-  Scala List and Ref quality and fixed size buffer solution
+  Clock synked, same game simulated on both platforms
 \end{itemize}
 
-\subsection{Implementation}\label{implementation}
+\subsection{Architecture}\label{architecture}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  React UI (\& hack for the JVM version)
+  Requires: initialState, nextState, render, transport
 \item
-  Simple Server for matchmaking
+  Immutability everywhere
+\item
+  Scala List and Ref quality and fixed size buffer solution
+\end{itemize}
+
+\newpage
+
+\section{Example: A Real Time Multi-player
+Game}\label{example-a-real-time-multi-player-game}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  History: Scala.js port of a JS port of a Commodore 64 game
+\end{itemize}
+
+\subsection{Functional User Interface}\label{functional-user-interface}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  React UI
+\item
+  React
+\item
+  Hack for the JVM version)
+\end{itemize}
+
+\subsection{Functional User
+Interface}\label{functional-user-interface-1}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  React UI
+\item
+  React
+\item
+  Hack for the JVM version)
+\end{itemize}
+
+\subsection{Result}\label{result}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Everything but input handler shared (but UI shouldn't...)
 \item
   WebRTC with SockJS fallback
 \item
