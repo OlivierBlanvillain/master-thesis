@@ -1,4 +1,10 @@
-\begin{titlepage}
+\thispagestyle{empty}
+
+\if@twoside
+ \begin{adjustwidth*}{}{-1.6cm}
+\else
+  \begin{adjustwidth*}{}{}
+\fi
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \newcommand{\person}[2]{
@@ -21,7 +27,7 @@
 {\huge \bfseries \thetitle}\\[0.2cm]
 \HRule \\[1cm]
 
-\person{Student}{Olivier Blanvillain}
+\person{Student}{\theauthor}
 \person{Assistant}{Sébastien Doeraene}
 \person{Responsible professor}{Martin Odersky}
 \person{External expert}{Aleksandar Prokopec}
@@ -34,8 +40,6 @@
 
 \vfill
 
-\end{titlepage}
+\end{adjustwidth*}
 
-\begin{titlepage}
-~\vfill
-\end{titlepage}
+\newpage\thispagestyle{empty}\null\newpage

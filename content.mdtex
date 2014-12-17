@@ -50,7 +50,7 @@ interface aims at \emph{transparently} modeling the different underlying
 technologies, meaning that is simply delegates tasks to the actual
 implementation, without adding new functionalities.
 
-\transportInterface
+\transportInterface{Definition of the core networking interfaces.}
 
 A \emph{Transport} can both \emph{listen} for incoming connections and
 \emph{connect} to remote \emph{Transports}. Platforms limited to act
@@ -87,7 +87,7 @@ advantages. \autoref{impl-summary} summarizes the available
 
 \begin{longtable}[c]{@{}lccc@{}}
 \caption{Summary of the available
-\emph{Transports}.\label{impl-summary}}\tabularnewline
+Transports.\label{impl-summary}}\tabularnewline
 \toprule
 Platform & WebSocket & SockJS & WebRTC\tabularnewline
 \midrule
@@ -193,7 +193,7 @@ actor model for the JVM, was partly ported to Scala.js by S. Doeraene in
 \cite{scala-js-actors} was revisited into the \emph{Transport} wrapper
 presented in \autoref{actorWrapper}.
 
-\actorWrapper
+\actorWrapper{Transport wrappers to handle connections with actors.}
 
 The two methods \emph{acceptWithActor} and \emph{connectWithActor} use
 the underlying \emph{listen} and \emph{connect} methods of the wrapped
@@ -210,7 +210,7 @@ the creation and the termination of the connection, and killing the
 \autoref{yellingActor} shows an example of a simple \emph{handler} actor
 which than sending back whatever it receives in uppercase.
 
-\yellingActor
+\yellingActor{Example of a connection handling actor.}
 
 Thanks to the picking mechanism developed in \cite{scala-js-actors}, it
 is possible to sent messages of any type thought a connection, given
@@ -233,17 +233,12 @@ The scala-js-transport library offers a \emph{RpcWrapper}, which makes
 internal use of Autowire to provide remote provide call on top of any of
 the available \emph{Transports}. Because the \emph{Transport} interface
 communicates with \emph{Strings}, the \emph{RpcWrapper} is able to set
-all the type parameters of Autowire, as well embedding uPickle
-\cite{upickle} as its serialization library, thus trading flexibility to
-reduce boilerplate. The following example shows a complete remote
-procedure call implementation on top of WebSocket;
-\autoref{rpcExampleApi} contains the code shared between client and
-server, the server side code is showed in \autoref{rpcExampleServer} and
-the client side code in \autoref{rpcExampleClient}.
+all the type parameters of Autowire, as well embedding the uPickle
+serialization library \cite{upickle}, thus trading flexibility to reduce
+boilerplate. \autoref{rpcExample} shows a complete remote procedure call
+implementation on top of WebSocket.
 
-\rpcExampleApi
-\rpcExampleServer
-\rpcExampleClient
+\rpcExample{Example of remote procedure call implementation.}
 
 The main strength of remote procedure calls are their simplicity and
 type-safety. Indeed, because of how similar remote procedure calls are
@@ -274,10 +269,11 @@ implementations.
 All the implementations and wrappers are accompanied by integration
 tests. In most cases, these tests are built using the \emph{Selenium
 WebDriver} included in the Play Framework test tools, which allow to
-access proper behavior of the library using real web browsers. Our test
-case for WebRTC include an extension of the default Play test tools to
-start two browsers for a single test. It is then possible to run a test
-with two different browsers to test their compatibility.
+access proper behavior of the library using real web browsers. Our tests
+for WebRTC include an extension of the default Play test tools to use
+two browsers on a single test. The tests can then be configures to run
+with two different browsers, such as Chrome and Firefox, to test their
+compatibility.
 
 \chapter{Lag Compensation Framework}\label{lag-compensation-framework}
 

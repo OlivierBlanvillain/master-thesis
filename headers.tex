@@ -3,9 +3,8 @@
 \usepackage[log-declarations=false]{xparse}
 \usepackage{luainputenc}
 \usepackage{fontspec}
-\usepackage{color}
-% \pdfprotrudechars=2
-% \directlua{fonts.protrusions.setups.default.factor=.5}
+\pdfprotrudechars=2
+\directlua{fonts.protrusions.setups.default.factor=.5}
 \pdfadjustspacing=2
 \newfontfeature{Microtype}{protrusion=default;expansion=default;}
 \setmainfont[Microtype, Ligatures=TeX]{Adobe Caslon Pro}
@@ -13,7 +12,6 @@
 
 % Scala format
 \usepackage{listings}
-
 \lstdefinelanguage{Scala}{
   morekeywords={abstract, case, catch, char, class, def, else, extends, final, if, import, match, module, new, null, object, override, package, private, protected, public, return, super, this, throw, trait, try, type, val, var, with, implicit, macro, sealed, true, false},
   sensitive,
@@ -23,12 +21,11 @@
   morestring=[b]',
   showstringspaces=false
 }[keywords, comments, strings]
-
 \lstset{
   tabsize=2,
   basicstyle=\ttfamily\fontsize{9pt}{1.1em}\selectfont,
   keywordstyle=\bfseries,
-  commentstyle=\itshape\rmfamily,
+  commentstyle=\itshape\ttfamily\fontsize{9pt}{1.1em}\selectfont,
   language=scala,
   breaklines=false,
   mathescape=false,
@@ -43,16 +40,13 @@
 \usepackage[autostyle=false, style=english]{csquotes}
 \MakeOuterQuote{"}
 
-% Margins
-\usepackage{t itling}
-\setlength{\droptitle}{-1.9cm}
-
 % Links
 \usepackage{silence}
 \WarningsOff*
 \usepackage[hidelinks]{hyperref}
 \WarningsOn
 \renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
+\hypersetup{pageanchor=false}
 
 % Tables
 \usepackage{booktabs}
@@ -61,13 +55,21 @@
 \setlength\belowrulesep{6pt}
 \usepackage{caption} 
 \captionsetup[table]{skip=6pt}
-% \captionsetup{font=bf}
+
+% Table of contents & co
+\usepackage{changepage}
+\usepackage{titling}
+\usepackage{tocloft}
+\renewcommand{\lstlistlistingname}{List of Listings}
 
 % Figures
 \usepackage{graphicx}
+\graphicspath{{figures/}}
 \usepackage{floatrow}
 \floatsetup[table]{capposition=bottom}
 
+
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
+\usepackage{color}
 \newcommand\TODO[1]{\emph{\color{red} TODO: #1}}
