@@ -13,8 +13,6 @@ Introduction
 - Plan/Contributions
 
 
-\newpage
-
 Transport
 =========
 
@@ -46,9 +44,7 @@ Netty            both          -       -
 Tyrus            client        -       -      
 
 ###### WebSocket
-WebSocket provides full-duplex communication over a single TCP connection. 
-
-Connection establishment begin with an HTTP request from client to server. After the handshake is completed, the TCP connection used for the initial HTTP request is *upgraded* to change protocol, and kept open to become the actual WebSocket connection. This mechanism allows WebSocket to be wildly supported over different network configurations.
+WebSocket provides full-duplex communication over a single TCP connection. Connection establishment begin with an HTTP request from client to server. After the handshake is completed, the TCP connection used for the initial HTTP request is *upgraded* to change protocol, and kept open to become the actual WebSocket connection. This mechanism allows WebSocket to be wildly supported over different network configurations.
 
 WebSocket is also well supported across different platforms. Our library provides four WebSocket *Transports*, a native JavaScript client, a Play Framework server, a Netty client/server and a Tyrus client. While having all three Play, Netty and Tyrus might seem redundant, each of them comes with its own advantages. Play is a complete web framework, suitable to build every component of a web application. Play is based on Netty, which means that for a standalone WebSocket server, using Netty directly leads to better performances and less dependencies. Regarding client side, the Tyrus library offers a standalone WebSocket client which is lightweight compared to the Netty framework.
 
@@ -97,64 +93,56 @@ The different *Transport* implementations and wrappers presented is this section
 All the implementations and wrappers are accompanied by integration tests. In most cases, these tests are built using the *Selenium WebDriver* included in the Play Framework test tools, which allow to access proper behavior of the library using real web browsers. Our tests for WebRTC include an extension of the default Play test tools to use two browsers on a single test. The tests can then be configures to run with two different browsers, such as Chrome and Firefox, to test their compatibility.
 
 
-Lag Compensation Framework
-==========================
+Hiding Latency, the Functional Way
+==================================
 
-- Why do we need this
+- This section, the framework, the game
+
+### The problem
+
+Working with distributed systems introduces numerous challenges compared to the use of a single machine. Much of the complexity comes from the communication links; limited throughput, risk of failure, and latency all have to taken into consideration. Our discussion will be focused on issues related to latency.
+
+When thinking about latency sensitive application, the things that comes to mind might be multiplayer video games. In order to provide a fun and immersive experience, real-time games have to feel reactive. Techniques to compensate network latency also have uses in online communication/collaboration tools. Essentially, any application where a shared state can be simultaneously mutated by different peers is confronted with this problem.
+
+that allows simultaneity mutation of a 
+
+
+
+- Why do we need this, atomic operation on a shared mutable state
 - Google Docs
-- Goal: Cross platform JS/JVM realtime lag compensation framework
+- Traditional solutions (actual lag, fixed delay with animation), explained for the sake of showing that this is not a trivial problem
+- They use a server, 
 
-### Compensate Network Latency
+### The Solution
 
-- Traditional solutions (actual lag, fixed delay with animation)
-- Solution: go back in time (Figure)
-- Clock synked, same game simulated on both platforms
+- Go back in time (Figure)
+- Where do we cheat: clock sync
 
-### Architecture
+### Functional Architecture and Implementation
 
+- Same simulation  on both platforms
 - Requires: initialState, nextState, render, transport
 - Immutability everywhere
 - Scala List and Ref quality and fixed size buffer solution
+- Goal: Cross platform JS/JVM realtime lag compensation framework
 
-
-\newpage
-
-Example: A Real Time Multi-player Game
-======================================
+### Putting It All Together: A Real Time Multi Player Game
 
 - History: Scala.js port of a JS port of a Commodore 64 game
-
-### Functional User Interface
-
-- React UI
-- React
-- Hack for the JVM version)
-
-### Functional User Interface
-
-- React UI
-- React
-- Hack for the JVM version)
-
-### Result
-
+- Functional GUI with React (Hack for the JVM version)
 - Everything but input handler shared (but UI shouldn't...)
 - WebRTC with SockJS fallback
 - Results: 60FPS on both platforms, lag free gameplay
 - Results: Lag Compensation in action (Screenshots)
 
 
-\newpage
-
 Related Work
 ============
 
 - Js/NodeJs, relies on duck typing
 - Closure
-- Steam Engine/AoE/Sc2/Google docs
-
-
-\newpage
+- Steam Engine/AoE/Sc2
+- Cheating concerns
 
 Conclusion and Future Work
 ==========================
@@ -162,3 +150,28 @@ Conclusion and Future Work
 - Web workers
 - scalaz-stream/akka-stream wrappers
 - More utilities on top of Transport
+
+\appendix\clearpage\addappheadtotoc
+
+Scala.js
+========
+
+\TODO{Scala.js} compiles Scala code to JavaScript, allowing you to write your Web application entirely in Scala!
+
+Noteworthy features are:
+
+- Support all of Scala (including macros!), modulo a few semantic differences
+- Very good interoperability with JavaScript code. For example, use jQuery and HTML5 from your Scala.js code, either in a typed or untyped way. Or create Scala.js objects and call their methods from JavaScript.
+- Integrated with sbt (including support for dependency management and incremental compilation)
+- Can be used with your favorite IDE for Scala
+- Generates Source Maps for a smooth debugging experience (step through your Scala code from within your browser supporting source maps)
+- Integrates Google Closure Compiler for producing minimal code for production.
+
+React
+=====
+
+\TODO{React} @react is a JavaScript library for building user interfaces.
+
+- Just the UI: Lots of people use React as the V in MVC. Since React makes no assumptions about the rest of your technology stack, it's easy to try it out on a small feature in an existing project.
+- Virtual DOM: React uses a virtual DOM diff implementation for ultra-high performance. It can also render on the server using Node.js, no heavy browser DOM required.
+- Data flow: React implements one-way reactive data flow which reduces boilerplate and is easier to reason about than traditional data binding.

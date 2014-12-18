@@ -32,8 +32,6 @@
   Plan/Contributions
 \end{itemize}
 
-\newpage
-
 \chapter{Transport}\label{transport}
 
 \begin{itemize}
@@ -106,13 +104,12 @@ Tyrus & client & - & -\tabularnewline
 \subsection{WebSocket}\label{websocket}
 
 WebSocket provides full-duplex communication over a single TCP
-connection.
-
-Connection establishment begin with an HTTP request from client to
-server. After the handshake is completed, the TCP connection used for
-the initial HTTP request is \emph{upgraded} to change protocol, and kept
-open to become the actual WebSocket connection. This mechanism allows
-WebSocket to be wildly supported over different network configurations.
+connection. Connection establishment begin with an HTTP request from
+client to server. After the handshake is completed, the TCP connection
+used for the initial HTTP request is \emph{upgraded} to change protocol,
+and kept open to become the actual WebSocket connection. This mechanism
+allows WebSocket to be wildly supported over different network
+configurations.
 
 WebSocket is also well supported across different platforms. Our library
 provides four WebSocket \emph{Transports}, a native JavaScript client, a
@@ -275,81 +272,82 @@ two browsers on a single test. The tests can then be configures to run
 with two different browsers, such as Chrome and Firefox, to test their
 compatibility.
 
-\chapter{Lag Compensation Framework}\label{lag-compensation-framework}
+\chapter{Hiding Latency, the Functional
+Way}\label{hiding-latency-the-functional-way}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Why do we need this
+  This section, the framework, the game
+\end{itemize}
+
+\section{The problem}\label{the-problem}
+
+Working with distributed systems introduces numerous challenges compared
+to the use of a single machine. Much of the complexity comes from the
+communication links; limited throughput, risk of failure, and latency
+all have to taken into consideration. Our discussion will be focused on
+issues related to latency.
+
+When thinking about latency sensitive application, the things that comes
+to mind might be multiplayer video games. In order to provide a fun and
+immersive experience, real-time games have to feel reactive. Techniques
+to compensate network latency also have uses in online
+communication/collaboration tools. Essentially, any application where a
+shared state can be simultaneously mutated by different peers is
+confronted with this problem.
+
+that allows simultaneity mutation of a
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Why do we need this, atomic operation on a shared mutable state
 \item
   Google Docs
 \item
-  Goal: Cross platform JS/JVM realtime lag compensation framework
+  Traditional solutions (actual lag, fixed delay with animation),
+  explained for the sake of showing that this is not a trivial problem
+\item
+  They use a server,
 \end{itemize}
 
-\section{Compensate Network Latency}\label{compensate-network-latency}
+\section{The Solution}\label{the-solution}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Traditional solutions (actual lag, fixed delay with animation)
+  Go back in time (Figure)
 \item
-  Solution: go back in time (Figure)
-\item
-  Clock synked, same game simulated on both platforms
+  Where do we cheat: clock sync
 \end{itemize}
 
-\section{Architecture}\label{architecture}
+\section{Functional Architecture and
+Implementation}\label{functional-architecture-and-implementation}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
+\item
+  Same simulation on both platforms
 \item
   Requires: initialState, nextState, render, transport
 \item
   Immutability everywhere
 \item
   Scala List and Ref quality and fixed size buffer solution
+\item
+  Goal: Cross platform JS/JVM realtime lag compensation framework
 \end{itemize}
 
-\newpage
-
-\chapter{Example: A Real Time Multi-player
-Game}\label{example-a-real-time-multi-player-game}
+\section{Putting It All Together: A Real Time Multi Player
+Game}\label{putting-it-all-together-a-real-time-multi-player-game}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
   History: Scala.js port of a JS port of a Commodore 64 game
-\end{itemize}
-
-\section{Functional User Interface}\label{functional-user-interface}
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  React UI
-\item
-  React
-\item
-  Hack for the JVM version)
-\end{itemize}
-
-\section{Functional User Interface}\label{functional-user-interface-1}
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  React UI
-\item
-  React
-\item
-  Hack for the JVM version)
-\end{itemize}
-
-\section{Result}\label{result}
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+  Functional GUI with React (Hack for the JVM version)
 \item
   Everything but input handler shared (but UI shouldn't...)
 \item
@@ -360,8 +358,6 @@ Game}\label{example-a-real-time-multi-player-game}
   Results: Lag Compensation in action (Screenshots)
 \end{itemize}
 
-\newpage
-
 \chapter{Related Work}\label{related-work}
 
 \begin{itemize}
@@ -371,10 +367,10 @@ Game}\label{example-a-real-time-multi-player-game}
 \item
   Closure
 \item
-  Steam Engine/AoE/Sc2/Google docs
+  Steam Engine/AoE/Sc2
+\item
+  Cheating concerns
 \end{itemize}
-
-\newpage
 
 \chapter{Conclusion and Future Work}\label{conclusion-and-future-work}
 
@@ -386,4 +382,57 @@ Game}\label{example-a-real-time-multi-player-game}
   scalaz-stream/akka-stream wrappers
 \item
   More utilities on top of Transport
+\end{itemize}
+
+\appendix\clearpage\addappheadtotoc
+
+\chapter{Scala.js}\label{scala.js}
+
+\TODO{Scala.js} compiles Scala code to JavaScript, allowing you to write
+your Web application entirely in Scala!
+
+Noteworthy features are:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Support all of Scala (including macros!), modulo a few semantic
+  differences
+\item
+  Very good interoperability with JavaScript code. For example, use
+  jQuery and HTML5 from your Scala.js code, either in a typed or untyped
+  way. Or create Scala.js objects and call their methods from
+  JavaScript.
+\item
+  Integrated with sbt (including support for dependency management and
+  incremental compilation)
+\item
+  Can be used with your favorite IDE for Scala
+\item
+  Generates Source Maps for a smooth debugging experience (step through
+  your Scala code from within your browser supporting source maps)
+\item
+  Integrates Google Closure Compiler for producing minimal code for
+  production.
+\end{itemize}
+
+\chapter{React}\label{react}
+
+\TODO{React} \cite{react} is a JavaScript library for building user
+interfaces.
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Just the UI: Lots of people use React as the V in MVC. Since React
+  makes no assumptions about the rest of your technology stack, it's
+  easy to try it out on a small feature in an existing project.
+\item
+  Virtual DOM: React uses a virtual DOM diff implementation for
+  ultra-high performance. It can also render on the server using
+  Node.js, no heavy browser DOM required.
+\item
+  Data flow: React implements one-way reactive data flow which reduces
+  boilerplate and is easier to reason about than traditional data
+  binding.
 \end{itemize}
