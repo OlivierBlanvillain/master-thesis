@@ -291,18 +291,52 @@ issues related to latency.
 
 When thinking about latency sensitive application, the things that comes
 to mind might be multiplayer video games. In order to provide a fun and
-immersive experience, real-time games have to feel reactive. Techniques
-to compensate network latency also have uses in online
+immersive experience, real-time games have to \emph{feel} reactive.
+Techniques to compensate network latency also have uses in online
 communication/collaboration tools. Essentially, any application where a
 shared state can be simultaneously mutated by different peers is
-confronted with this problem.
+confronted with this problem. According to \cite{timelines2013}, the
+different latency compensation mechanisms can be divided into three
+categories: predictive techniques, delayed input techniques and
+time-offsettings techniques.
 
-that allows simultaneity mutation of a
+\emph{Predictive techniques} estimate the current value of the global
+state using information available locally. These techniques are
+traditionally implemented using a central authoritative server which
+gathers inputs from all clients, computes the value of global state, and
+broadcasts this state back to all clients. It then possible to do
+prediction on the client side by computing a "throwaway" state using the
+latest local inputs, which is then replaced by the state the server as
+soon as it is received. \TODO{Steam engine}
+
+\emph{Delayed input techniques} defer the execution of all actions to
+allow simultaneous execution by all client. Very often, the perceived
+latency can be reduced by instantly starting a purely visual animation
+as soon as the an input is entered but still delaying the any actual
+effect of the action. This solution is typically used in peer to peer
+configurations where \TODO{AoE}
+
+thrownaway values
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Why do we need this, atomic operation on a shared mutable state
+  predictive \cite{distributed-interactive-simulation1995},
+\item
+  delayed input \cite{dead-man-shooting2000},
+\item
+  time-offsettings techniques \cite{local-perception-filter1998}.
+\end{itemize}
+
+treadeoffs
+
+divides the mechanisms for lag comp into 3 categories.
+
+predictive, delayed input, time-offsettings techniques.
+
+consistency vs responsiveness Often used in conjoncture.
+
+\begin{itemize}
 \item
   Google Docs
 \item
@@ -368,6 +402,8 @@ Game}\label{putting-it-all-together-a-real-time-multi-player-game}
   Closure
 \item
   Steam Engine/AoE/Sc2
+\item
+  \cite{timelines2013}
 \item
   Cheating concerns
 \end{itemize}

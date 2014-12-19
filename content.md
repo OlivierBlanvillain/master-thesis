@@ -102,14 +102,33 @@ Hiding Latency, the Functional Way
 
 Working with distributed systems introduces numerous challenges compared to the use of a single machine. Much of the complexity comes from the communication links; limited throughput, risk of failure, and latency all have to taken into consideration. Our discussion will be focused on issues related to latency.
 
-When thinking about latency sensitive application, the things that comes to mind might be multiplayer video games. In order to provide a fun and immersive experience, real-time games have to feel reactive. Techniques to compensate network latency also have uses in online communication/collaboration tools. Essentially, any application where a shared state can be simultaneously mutated by different peers is confronted with this problem.
+When thinking about latency sensitive application, the things that comes to mind might be multiplayer video games. In order to provide a fun and immersive experience, real-time games have to *feel* reactive. Techniques to compensate network latency also have uses in online communication/collaboration tools. Essentially, any application where a shared state can be simultaneously mutated by different peers is confronted with this problem. According to @timelines2013, the different latency compensation mechanisms can be divided into three categories: predictive techniques, delayed input techniques and time-offsettings techniques.
 
-that allows simultaneity mutation of a 
+*Predictive techniques* estimate the current value of the  global state using information available locally. These techniques are traditionally implemented using a central authoritative server which gathers inputs from all clients, computes the value of global state, and broadcasts this state back to all clients. It then possible to do prediction on the client side by computing a "throwaway" state using the latest local inputs, which is then replaced by the state the server as soon as it is received. \TODO{Steam engine}
+
+*Delayed input techniques* defer the execution of all actions to allow simultaneous execution by all client. Very often, the perceived latency can be reduced by instantly starting a purely visual animation as soon as the an input is entered but still delaying the any actual effect of the action. This solution is typically used in peer to peer configurations where 
+\TODO{AoE}
+
+thrownaway values 
+
+
+- predictive @distributed-interactive-simulation1995,
+- delayed input @dead-man-shooting2000,
+- time-offsettings techniques @local-perception-filter1998.
+
+treadeoffs
+
+divides the mechanisms for lag comp into 3 categories.
+
+predictive, delayed input, time-offsettings techniques.
 
 
 
-- Why do we need this, atomic operation on a shared mutable state
+consistency vs responsiveness
+Often used in conjoncture.
+
 - Google Docs
+
 - Traditional solutions (actual lag, fixed delay with animation), explained for the sake of showing that this is not a trivial problem
 - They use a server, 
 
@@ -142,6 +161,7 @@ Related Work
 - Js/NodeJs, relies on duck typing
 - Closure
 - Steam Engine/AoE/Sc2
+- @timelines2013
 - Cheating concerns
 
 Conclusion and Future Work
