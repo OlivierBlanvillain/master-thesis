@@ -93,63 +93,55 @@ The different *Transport* implementations and wrappers presented is this section
 All the implementations and wrappers are accompanied by integration tests. In most cases, these tests are built using the *Selenium WebDriver* included in the Play Framework test tools, which allow to access proper behavior of the library using real web browsers. Our tests for WebRTC include an extension of the default Play test tools to use two browsers on a single test. The tests can then be configures to run with two different browsers, such as Chrome and Firefox, to test their compatibility.
 
 
-Hiding Latency, the Functional Way
-==================================
+Dealing with latency
+====================
 
 - This section, the framework, the game
 
-### The problem
+### Latency Compensation
 
 Working with distributed systems introduces numerous challenges compared to the use of a single machine. Much of the complexity comes from the communication links; limited throughput, risk of failure, and latency all have to taken into consideration. Our discussion will be focused on issues related to latency.
 
 When thinking about latency sensitive application, the things that comes to mind might be multiplayer video games. In order to provide a fun and immersive experience, real-time games have to *feel* reactive. Techniques to compensate network latency also have uses in online communication/collaboration tools. Essentially, any application where a shared state can be simultaneously mutated by different peers is confronted with this problem. According to @timelines2013, the different latency compensation mechanisms can be divided into three categories: predictive techniques, delayed input techniques and time-offsettings techniques.
 
-*Predictive techniques* estimate the current value of the  global state using information available locally. These techniques are traditionally implemented using a central authoritative server which gathers inputs from all clients, computes the value of global state, and broadcasts this state back to all clients. It then possible to do prediction on the client side by computing a "throwaway" state using the latest local inputs, which is then replaced by the state the server as soon as it is received. \TODO{Steam engine}
+*Predictive techniques* estimate the current value of the  global state using information available locally. These techniques are traditionally implemented using a central authoritative server which gathers inputs from all clients, computes the value of global state, and broadcasts this state back to all clients. It then possible to do prediction on the client side by computing a "throwaway" state using the latest local inputs, which is later replaced by the state the server as soon as it is received. This architecture with a central authoritative server is used in most *First person shooter* games, such as the ones built using the Source Engine @source-engine.
 
-*Delayed input techniques* defer the execution of all actions to allow simultaneous execution by all client. Very often, the perceived latency can be reduced by instantly starting a purely visual animation as soon as the an input is entered but still delaying the any actual effect of the action. This solution is typically used in peer to peer configurations where 
-\TODO{AoE}
+*Delayed input techniques* defer the execution of all actions to allow simultaneous execution by all client. Very often, the perceived latency can be reduced by instantly starting a purely visual animation as soon as the an input is entered but still delaying the any actual effect of the action. This solution is typically used in games where the game state is too large to be frequently sent over the network. In this case, peers would directly exchange the user inputs and simultaneously simulate the game with a fixed delay. Having a centralized server is then not mandatory, and peer to peer configurations might be used to reduce communication latency. The classical *Age of Empires* uses the input delayed techniques with a fixed delay of 500 ms @aoe.
 
-thrownaway values 
+\TODO{*Time-offsettings techniques*}... @local-perception-filter1998.
 
+Each technique comes with its own advantages and disadvantages, and are essentially making different tradeoffs between consistency and responsiveness. Without going into further details on the different latency compensation techniques, this introduction should give the reader an idea of the variety of possible solutions and their respective sophistication.
 
-- predictive @distributed-interactive-simulation1995,
-- delayed input @dead-man-shooting2000,
-- time-offsettings techniques @local-perception-filter1998.
+### A Functional Framework
 
-treadeoffs
+- correctness and simplicity of implementation
+- @aoe issues about determinism and game states getting out-of-sync
 
-divides the mechanisms for lag comp into 3 categories.
-
-predictive, delayed input, time-offsettings techniques.
-
-
-
-consistency vs responsiveness
-Often used in conjoncture.
-
-- Google Docs
-
-- Traditional solutions (actual lag, fixed delay with animation), explained for the sake of showing that this is not a trivial problem
-- They use a server, 
-
-### The Solution
-
-- Go back in time (Figure)
-- Where do we cheat: clock sync
-
-### Functional Architecture and Implementation
-
-- Same simulation  on both platforms
+- Predictive techniques
+- Without authoritative server, fully distributed/p2p
+- The solution: simulate with local inputs, go back in time when getting remote inputs (Figure)
+- Functional interface (Listing)
 - Requires: initialState, nextState, render, transport
+
+### Architecture and Implementation
+
+- Identical simulation on all peers
 - Immutability everywhere
-- Scala List and Ref quality and fixed size buffer solution
+- Pure function
 - Goal: Cross platform JS/JVM realtime lag compensation framework
 
-### Putting It All Together: A Real Time Multi Player Game
+###### clock sync
+- Where do we cheat: clock sync
+
+###### back in time
+- Scala List and Ref quality and fixed size buffer solution
+
+### Putting It All Together: A Real-Time Multiplayer Game
 
 - History: Scala.js port of a JS port of a Commodore 64 game
 - Functional GUI with React (Hack for the JVM version)
 - Everything but input handler shared (but UI shouldn't...)
+- Functional design of gun fire (-> function of time!)
 - WebRTC with SockJS fallback
 - Results: 60FPS on both platforms, lag free gameplay
 - Results: Lag Compensation in action (Screenshots)
