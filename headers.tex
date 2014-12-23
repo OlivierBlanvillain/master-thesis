@@ -43,7 +43,17 @@
 % Links
 \usepackage{silence}
 \WarningsOff*
-\usepackage[hidelinks]{hyperref}
+\usepackage[
+  breaklinks=true,
+  colorlinks=true,
+  urlcolor=blue,
+  citecolor=blue,
+  linkcolor=blue,
+  pdfstartview=Fit,
+  pdfview=Fit,
+  pagebackref,
+  linktocpage=true
+]{hyperref}
 \WarningsOn
 \renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
 \hypersetup{pageanchor=false}

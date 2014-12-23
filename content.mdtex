@@ -3,6 +3,8 @@
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
+  Context: What is Scala.js
+\item
   Relevance: importance of networking for Scala.js
 \item
   Motivation: Many JS APIs
@@ -334,16 +336,36 @@ sophistication.
 
 \section{A Functional Framework}\label{a-functional-framework}
 
+We now present a Scala framework for latency compensation. By imposing a
+purely functional design to its users, the framework is focused on
+correctness, leaving very little room for runtime errors.
+
+It implements predictive latency compensation in a distributed fashion.
+As opposed to traditional architecture for prediction such as the one
+described in \cite{source-engine}, our framework does uses any
+authoritative node to hold the global state of the application, but
+functions in a purely peer to peer fashion.
+
+To do so, each peer runs a local simulation of the application up to the
+current time, using all the inputs available. Whenever an input is
+transmitted at a peer via the network, this remote input is necessarily
+slightly out of date because of the communication latency. In order to
+incorporate out of date input into the local simulation, the framework
+rolls back the state of the simulation as it was just before the time of
+emission of this input, and replays the simulation until the current
+time, thus taking into account the remote input. \autoref{stateGraph}
+shows this process in action from the point of view of peer \emph{P1}.
+In this example, \emph{P1} emits an input at time \emph{t2}, and then,
+at time \emph{t3}, receives an input from \emph{P2} which was emitted at
+time \emph{t1}. The framework then invalidates a branch of the state
+tree, \emph{S2-S3}, and computes \emph{S2'-S3'-S4'} which take into
+account both inputs.
+
+\stateGraph{The figure...}
+
+eventually consistent instant feed back
+
 \begin{itemize}
-\item
-  correctness and simplicity of implementation
-\item
-  \cite{aoe} issues about determinism and game states getting
-  out-of-sync
-\item
-  Predictive techniques
-\item
-  Without authoritative server, fully distributed/p2p
 \item
   The solution: simulate with local inputs, go back in time when getting
   remote inputs (Figure)
@@ -357,7 +379,9 @@ sophistication.
 Implementation}\label{architecture-and-implementation}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \cite{aoe} issues about determinism and game states getting
+  out-of-sync
 \item
   Identical simulation on all peers
 \item
@@ -400,6 +424,8 @@ Game}\label{putting-it-all-together-a-real-time-multiplayer-game}
 \item
   WebRTC with SockJS fallback
 \item
+  Live reload heaven
+\item
   Results: 60FPS on both platforms, lag free gameplay
 \item
   Results: Lag Compensation in action (Screenshots)
@@ -434,36 +460,6 @@ Game}\label{putting-it-all-together-a-real-time-multiplayer-game}
 \end{itemize}
 
 \appendix\clearpage\addappheadtotoc
-
-\chapter{Scala.js}\label{scala.js}
-
-\TODO{Scala.js} compiles Scala code to JavaScript, allowing you to write
-your Web application entirely in Scala!
-
-Noteworthy features are:
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Support all of Scala (including macros!), modulo a few semantic
-  differences
-\item
-  Very good interoperability with JavaScript code. For example, use
-  jQuery and HTML5 from your Scala.js code, either in a typed or untyped
-  way. Or create Scala.js objects and call their methods from
-  JavaScript.
-\item
-  Integrated with sbt (including support for dependency management and
-  incremental compilation)
-\item
-  Can be used with your favorite IDE for Scala
-\item
-  Generates Source Maps for a smooth debugging experience (step through
-  your Scala code from within your browser supporting source maps)
-\item
-  Integrates Google Closure Compiler for producing minimal code for
-  production.
-\end{itemize}
 
 \chapter{React}\label{react}
 

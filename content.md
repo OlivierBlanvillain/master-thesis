@@ -1,6 +1,7 @@
 Introduction
 ============
 
+- Context: What is Scala.js
 - Relevance: importance of networking for Scala.js
 - Motivation: Many JS APIs
     - Websocket
@@ -114,16 +115,25 @@ Each technique comes with its own advantages and disadvantages, and are essentia
 
 ### A Functional Framework
 
-- correctness and simplicity of implementation
-- @aoe issues about determinism and game states getting out-of-sync
+We now present a Scala framework for latency compensation. By imposing a purely functional design to its users, the framework is focused on correctness, leaving very little room for runtime errors.
 
-- Predictive techniques
-- Without authoritative server, fully distributed/p2p
+It implements predictive latency compensation in a distributed fashion. As opposed to traditional architecture for prediction such as the one described in @source-engine, our framework does uses any authoritative node to hold the global state of the application, but functions in a purely peer to peer fashion.
+
+To do so, each peer runs a local simulation of the application up to the current time, using all the inputs available. Whenever an input is transmitted at a peer via the network, this remote input is necessarily slightly out of date because of the communication latency. In order to incorporate out of date input into the local simulation, the framework rolls back the state of the simulation as it was just before the time of emission of this input, and replays the simulation until the current time, thus taking into account the remote input. #stateGraph shows this process in action from the point of view of peer *P1*. In this example, *P1* emits an input at time *t2*, and then, at time *t3*, receives an input from *P2* which was emitted at time *t1*. The framework then invalidates a branch of the state tree, *S2-S3*, and computes *S2'-S3'-S4'* which take into account both inputs.
+
+\stateGraph{The figure...}
+
+eventually consistent 
+instant feed back
+
 - The solution: simulate with local inputs, go back in time when getting remote inputs (Figure)
+
 - Functional interface (Listing)
 - Requires: initialState, nextState, render, transport
 
 ### Architecture and Implementation
+
+- @aoe issues about determinism and game states getting out-of-sync
 
 - Identical simulation on all peers
 - Immutability everywhere
@@ -143,6 +153,7 @@ Each technique comes with its own advantages and disadvantages, and are essentia
 - Everything but input handler shared (but UI shouldn't...)
 - Functional design of gun fire (-> function of time!)
 - WebRTC with SockJS fallback
+- Live reload heaven
 - Results: 60FPS on both platforms, lag free gameplay
 - Results: Lag Compensation in action (Screenshots)
 
@@ -164,20 +175,6 @@ Conclusion and Future Work
 - More utilities on top of Transport
 
 \appendix\clearpage\addappheadtotoc
-
-Scala.js
-========
-
-\TODO{Scala.js} compiles Scala code to JavaScript, allowing you to write your Web application entirely in Scala!
-
-Noteworthy features are:
-
-- Support all of Scala (including macros!), modulo a few semantic differences
-- Very good interoperability with JavaScript code. For example, use jQuery and HTML5 from your Scala.js code, either in a typed or untyped way. Or create Scala.js objects and call their methods from JavaScript.
-- Integrated with sbt (including support for dependency management and incremental compilation)
-- Can be used with your favorite IDE for Scala
-- Generates Source Maps for a smooth debugging experience (step through your Scala code from within your browser supporting source maps)
-- Integrates Google Closure Compiler for producing minimal code for production.
 
 React
 =====
