@@ -241,38 +241,35 @@ implementation on top of WebSocket.
 
 The main strength of remote procedure calls are their simplicity and
 type-safety. Indeed, because of how similar remote procedure calls are
-to actual method calls, they can be used without any learning curve, and
-consistency between client and server side is can be verified by the
-compiler. However, this simplicity also comes with some draw backs.
-Contrary to the actor model which can be used to explicitly model the
-life span of connections, and different types of failures, there are no
-such things build in when using remote procedure calls. In order to
-implement a fine grain error detection and recovery mechanism on top of
-recovery procedure calls, one would have to work at a lower lever than
-the one offered by the model it self, which is with the \emph{Transport}
-interface in our case.
+to actual method calls, they require little learning for the programmer.
+In addition, consistency between client and server side can be verified
+at compile time, and integrated development environment functionalities
+such as \emph{refactoring} and \emph{go to definition} work out of the
+box. However, this simplicity also comes with some draw backs. Contrary
+to the actor model which explicitly models the life span of connections,
+and different failure scenarios, this is not build in when using remote
+procedure calls. In order to implement fine grain error handling and
+recovery mechanism on top of remote procedure calls, one would have to
+work at a lower lever than the one offered by the model itself, that is
+with the \emph{Transport} interface in our case.
 
 \section{Going further}\label{going-further}
 
 The different \emph{Transport} implementations and wrappers presented is
 this section allows for several interesting combinations. Because the
-scala-js-transport library is built with a central communication
-interface (presented in \autoref{a-uniform-interface}), it is easily
-expendable in both directions. Indeed, any new implementation of the
-\emph{Transport} interface with a different underlaying technologies
-would immediately be usable with the different wrappers. Analogously,
-any new wrapper on top of the \emph{Transport} interface would
+scala-js-transport library is built around a central communication
+interface, it is easily expendable in both directions. Any new
+implementation of the \emph{Transport} interface with for a different
+platform or technology would immediately be usable with all the
+wrappers. Analogously, any new \emph{Transport} wrapper would
 automatically be compatible with the variety of available
 implementations.
 
 All the implementations and wrappers are accompanied by integration
-tests. In most cases, these tests are built using the \emph{Selenium
-WebDriver} included in the Play Framework test tools, which allow to
-access proper behavior of the library using real web browsers. Our tests
-for WebRTC include an extension of the default Play test tools to use
-two browsers on a single test. The tests can then be configures to run
-with two different browsers, such as Chrome and Firefox, to test their
-compatibility.
+tests. These tests are built using the \emph{Selenium WebDriver} to
+check proper behavior of the library using real web browsers. Our tests
+for WebRTC use two browsers, wich can be configured to be run with two
+different browsers to test their compatibility.
 
 \chapter{Dealing with latency}\label{dealing-with-latency}
 
@@ -285,21 +282,26 @@ compatibility.
 \section{Latency Compensation}\label{latency-compensation}
 
 Working with distributed systems introduces numerous challenges compared
-to the use of a single machine. Much of the complexity comes from the
-communication links; limited throughput, risk of failure, and latency
-all have to taken into consideration. Our discussion will be focused on
-issues related to latency.
+the development of single machine applications. Much of the complexity
+comes from the communication links; limited throughput, risk of failure,
+and latency all have to be taken into consideration when information has
+to be transfered from one machine to another. Our discussion will be
+focused on issues related to latency.
 
-When thinking about latency sensitive application, the things that comes
-to mind might be multiplayer video games. In order to provide a fun and
+When thinking about latency sensitive application, the example coming to
+mind might be multiplayer video games. In order to provide a fun and
 immersive experience, real-time games have to \emph{feel} reactive.
 Techniques to compensate network latency also have uses in online
-communication/collaboration tools. Essentially, any application where a
-shared state can be simultaneously mutated by different peers is
-confronted with this problem. According to \cite{timelines2013}, the
-different latency compensation mechanisms can be divided into three
-categories: predictive techniques, delayed input techniques and
-time-offsettings techniques.
+communication/collaboration tools such as \emph{Google Docs}.
+Essentially, any application where a shared state can be simultaneously
+mutated by different peers is confronted to issues related to latency.
+
+While little information is available about the most recent games and
+collaborative applications, the literature contains some insightful
+material about the theoretical aspects of latency compensation.
+According to \cite{timelines2013}, the different mechanisms can be
+divided into three categories: predictive techniques, delayed input
+techniques and time-offsettings techniques.
 
 \emph{Predictive techniques} estimate the current value of the global
 state using information available locally. These techniques are
@@ -308,21 +310,28 @@ gathers inputs from all clients, computes the value of global state, and
 broadcasts this state back to all clients. It then possible to do
 prediction on the client side by computing a "throwaway" state using the
 latest local inputs, which is later replaced by the state the server as
-soon as it is received. This architecture with a central authoritative
-server is used in most \emph{First person shooter} games, such as the
-ones built using the Source Engine \cite{source-engine}.
+soon as it is received. The described architecture with a central
+authoritative server is used in most \emph{First person shooter} games,
+including the recent titles built using the Source Engine
+\cite{source-engine}. Predictions are sometimes limited to certain type
+of objects and interactions, such as with the \emph{dead reckoning}
+\cite{ieee-dead-reckoning1995} technique that estimate the current
+positions of moving objects based on their earlier position, velocity
+and acceleration information.
 
 \emph{Delayed input techniques} defer the execution of all actions to
-allow simultaneous execution by all client. Very often, the perceived
-latency can be reduced by instantly starting a purely visual animation
-as soon as the an input is entered but still delaying the any actual
-effect of the action. This solution is typically used in games where the
-game state is too large to be frequently sent over the network. In this
-case, peers would directly exchange the user inputs and simultaneously
-simulate the game with a fixed delay. Having a centralized server is
-then not mandatory, and peer to peer configurations might be used to
-reduce communication latency. The classical \emph{Age of Empires} uses
-the input delayed techniques with a fixed delay of 500 ms \cite{aoe}.
+allow simultaneous execution by all peers. This solution is typically
+used in application where the state, or variations of state, are too
+large to be frequently sent over the network. In this case, peers would
+directly exchange the user inputs and simultaneously simulate
+application with a fixed delay. Having a centralized server is then not
+mandatory, and peer to peer configurations might be used to reduce
+communication latency. Very often, the perceived latency is reduced by
+instantly emitting a purely aesthetic feedback (visual and/or sonorous)
+as soon as the an input is entered, but delaying the actual effects of
+the action. The classical \emph{Age of Empires} series uses this
+techniques with a fixed delay of 500 ms, and supports up to 8 players
+and 1600 independently controllable entities \cite{aoe}.
 
 \TODO{*Time-offsettings techniques*}...
 \cite{local-perception-filter1998}.
@@ -338,34 +347,36 @@ sophistication.
 
 We now present a Scala framework for latency compensation. By imposing a
 purely functional design to its users, the framework is focused on
-correctness, leaving very little room for runtime errors.
-
-It implements predictive latency compensation in a distributed fashion.
-As opposed to traditional architecture for prediction such as the one
-described in \cite{source-engine}, our framework does uses any
-authoritative node to hold the global state of the application, but
-functions in a purely peer to peer fashion.
+correctness and leaves very little room for runtime errors. It
+implements predictive latency compensation in a fully distributed
+fashion. As opposed to the traditional architectures implementing
+prediction techniques, such as the one described in
+\cite{source-engine}, our framework does uses any authoritative node to
+hold the global state of the application, and can therefore functions in
+a purely peer to peer fashion.
 
 To do so, each peer runs a local simulation of the application up to the
-current time, using all the inputs available. Whenever an input is
-transmitted at a peer via the network, this remote input is necessarily
-slightly out of date because of the communication latency. In order to
-incorporate out of date input into the local simulation, the framework
-rolls back the state of the simulation as it was just before the time of
-emission of this input, and replays the simulation until the current
-time, thus taking into account the remote input. \autoref{stateGraph}
-shows this process in action from the point of view of peer \emph{P1}.
-In this example, \emph{P1} emits an input at time \emph{t2}, and then,
-at time \emph{t3}, receives an input from \emph{P2} which was emitted at
-time \emph{t1}. The framework then invalidates a branch of the state
-tree, \emph{S2-S3}, and computes \emph{S2'-S3'-S4'} which take into
-account both inputs.
+current time, using all the information available locally. Whenever an
+input is transmitted to a peer via the network, this remote input will
+necessarily be slightly out of date because of communication latency. In
+order to incorporate this out of date input into the local simulation,
+the framework \emph{rolls back} the state of the simulation as it was
+just before the time of emission of this remote input, and then replays
+the simulation up to the current time. \autoref{stateGraph} shows this
+process in action from the point of view of peer \emph{P1}. In this
+example, \emph{P1} emits an input at time \emph{t2}. Then, at time
+\emph{t3}, \emph{P1} receives an input from \emph{P2} which was emitted
+at time \emph{t1}. At this point, the framework invalidates a branch of
+the state tree, \emph{S2-S3}, and computes \emph{S2'-S3'-S4'} to take
+into account both inputs.
 
-\stateGraph{The figure...}
-
-eventually consistent instant feed back
+\stateGraph{Caption.}
 
 \begin{itemize}
+\item
+  eventually consistent
+\item
+  instant feed back
 \item
   The solution: simulate with local inputs, go back in time when getting
   remote inputs (Figure)

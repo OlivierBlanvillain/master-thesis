@@ -46,17 +46,12 @@
 \usepackage[
   breaklinks=true,
   colorlinks=true,
-  urlcolor=blue,
-  citecolor=blue,
-  linkcolor=blue,
-  pdfstartview=Fit,
-  pdfview=Fit,
+  allcolors=blue,
   pagebackref,
   linktocpage=true
 ]{hyperref}
 \WarningsOn
 \renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
-\hypersetup{pageanchor=false}
 \expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks
   \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j
   \do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t
@@ -80,13 +75,11 @@
 \renewcommand{\lstlistlistingname}{List of Source Code Listings}
 \usepackage{appendix}
 
-
 % Figures
 \usepackage{graphicx}
 \graphicspath{{figures/}}
 \usepackage{floatrow}
 \floatsetup[table]{capposition=bottom}
-
 
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
