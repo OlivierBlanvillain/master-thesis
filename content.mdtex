@@ -333,8 +333,19 @@ the action. The classical \emph{Age of Empires} series uses this
 techniques with a fixed delay of 500 ms, and supports up to 8 players
 and 1600 independently controllable entities \cite{aoe}.
 
-\TODO{*Time-offsettings techniques*}...
-\cite{local-perception-filter1998}.
+\emph{Time-offsettings techniques} add a delay in the application of
+remote inputs. Different peers will then see different versions of the
+application state over time. Local perception filters
+\cite{local-perception-filter1998} are an example of time-offsettings
+technique where the amount of delayed applied to world entities is
+proportional to their distance to peer avatar. As a result, a user can
+interact in real time with entities spatially close to him, and see the
+interaction at a distance as if they where appending in real time. The
+most important limitation of local perception filters is that peers
+avatar have to be kept at a minimum distance from each other, and can
+only interact by exchanging passive entities (such as bullets). Indeed,
+passed a certain proximity threshold the time distortion becomes smaller
+than the network latency which invalidates the model.
 
 Each technique comes with its own advantages and disadvantages, and are
 essentially making different tradeoffs between consistency and
@@ -370,18 +381,25 @@ at time \emph{t1}. At this point, the framework invalidates a branch of
 the state tree, \emph{S2-S3}, and computes \emph{S2'-S3'-S4'} to take
 into account both inputs.
 
-\stateGraph{Caption.}
+\stateGraph{Growth of the state graph over time, from the point of view of \emph{P1}.}
+
+By instantaneously applying local input, the application feels highly
+reactive to the end user, and this reactiveness is not affected by
+variations on the quality of the connection. This comes with the price
+of having short periods of times where the state is inconsistent between
+peers, which lasts until all peers are eventually aware of all inputs,
+at which point the simulation recovers its global consistency.
 
 \begin{itemize}
-\item
-  eventually consistent
-\item
-  instant feed back
-\item
-  The solution: simulate with local inputs, go back in time when getting
-  remote inputs (Figure)
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Functional interface (Listing)
+\end{itemize}
+
+\engineInterface{here it is}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Requires: initialState, nextState, render, transport
 \end{itemize}

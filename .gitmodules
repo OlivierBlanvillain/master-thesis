@@ -1,3 +1,6 @@
 [submodule "scala-js-transport"]
-	path = scala-js-transport
-	url = git@github.com:OlivierBlanvillain/scala-js-transport.git
+  path = scala-js-transport
+  url = git@github.com:OlivierBlanvillain/scala-js-transport.git
+[submodule "survivor"]
+	path = survivor
+	url = git@github.com:OlivierBlanvillain/survivor.git

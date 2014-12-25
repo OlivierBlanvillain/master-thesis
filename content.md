@@ -111,7 +111,7 @@ While little information is available about the most recent games and collaborat
 
 *Delayed input techniques* defer the execution of all actions to allow simultaneous execution by all peers. This solution is typically used in application where the state, or variations of state, are too large to be frequently sent over the network. In this case, peers would directly exchange the user inputs and simultaneously simulate application with a fixed delay. Having a centralized server is then not mandatory, and peer to peer configurations might be used to reduce communication latency. Very often, the perceived latency is reduced by instantly emitting a purely aesthetic feedback (visual and/or sonorous) as soon as the an input is entered, but delaying the actual effects of the action. The classical *Age of Empires* series uses this techniques with a fixed delay of 500 ms, and supports up to 8 players and 1600 independently controllable entities @aoe.
 
-\TODO{*Time-offsettings techniques*}... @local-perception-filter1998.
+*Time-offsettings techniques* add a delay in the application of remote inputs. Different peers will then see different versions of the application state over time. Local perception filters @local-perception-filter1998 are an example of time-offsettings technique where the amount of delayed applied to world entities is proportional to their distance to peer avatar. As a result, a user can interact in real time with entities spatially close to him, and see the interaction at a distance as if they where appending in real time. The most important limitation of local perception filters is that peers avatar have to be kept at a minimum distance from each other, and can only interact by exchanging passive entities (such as bullets). Indeed, passed a certain proximity threshold the time distortion becomes smaller than the network latency which invalidates the model.
 
 Each technique comes with its own advantages and disadvantages, and are essentially making different tradeoffs between consistency and responsiveness. Without going into further details on the different latency compensation techniques, this introduction should give the reader an idea of the variety of possible solutions and their respective sophistication.
 
@@ -121,14 +121,14 @@ We now present a Scala framework for latency compensation. By imposing a purely 
 
 To do so, each peer runs a local simulation of the application up to the current time, using all the information available locally. Whenever an input is transmitted to a peer via the network, this remote input will necessarily be slightly out of date because of communication latency. In order to incorporate this out of date input into the local simulation, the framework *rolls back* the state of the simulation as it was just before the time of emission of this remote input, and then replays the simulation up to the current time. #stateGraph shows this process in action from the point of view of peer *P1*. In this example, *P1* emits an input at time *t2*. Then, at time *t3*, *P1* receives an input from *P2* which was emitted at time *t1*. At this point, the framework invalidates a branch of the state tree, *S2-S3*, and computes *S2'-S3'-S4'* to take into account both inputs.
 
-\stateGraph{Caption.}
+\stateGraph{Growth of the state graph over time, from the point of view of \emph{P1}.}
 
-- eventually consistent 
-- instant feed back
-
-- The solution: simulate with local inputs, go back in time when getting remote inputs (Figure)
+By instantaneously applying local input, the application feels highly reactive to the end user, and this reactiveness is not affected by variations on the quality of the connection. This comes with the price of having short periods of times where the state is inconsistent between peers, which lasts until all peers are eventually aware of all inputs, at which point the simulation recovers its global consistency.
 
 - Functional interface (Listing)
+
+\engineInterface{here it is}
+
 - Requires: initialState, nextState, render, transport
 
 ### Architecture and Implementation
