@@ -20,6 +20,7 @@
 - [x] Single player version
 - [x] Independent repo
 - [x] Check for memory leaks on the server
+- [x] WebRTC with signaling fallback
 - [~] Fix JVM react UI
 
 
@@ -45,6 +46,7 @@
 
 - [] Use latest Scala.js dependency
 - [] Readmes
+- [] Remove all TODOCs
 - [] Message to the mailing list
 - [] Message to the survivor author
 - [] Message to Odersky

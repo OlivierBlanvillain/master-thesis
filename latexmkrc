@@ -28,6 +28,6 @@ sub scalalistings {
       /\*/d
       /package/d
       /import/d
-    ' | awk NF >> $_[0].listings
+    ' | awk NF | sed 's/[aA]bstract//' >> $_[0].listings
     echo '\\\\end{lstlisting}' >> $_[0].listings");
 };

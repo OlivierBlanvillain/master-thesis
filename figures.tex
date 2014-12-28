@@ -2,7 +2,7 @@
 \newcommand\bottomlisting[0]{\vspace{4px}\hrule}
 
 \newcommand\customlisting[4]{
-  \begin{figure}[htp]
+  \begin{figure}[h]
     \centering
     \begin{minipage}{#2\linewidth}
       \toplisting
@@ -14,7 +14,7 @@
 }
 
 \newcommand\transportInterface[1]{
-  \begin{figure}[htp]
+  \begin{figure}[h]
     \centering
     \begin{minipage}{0.8\linewidth}
       \toplisting
@@ -37,7 +37,7 @@
 }
 
 \newcommand\rpcExample[1]{
-  \begin{figure}[htp]
+  \begin{figure}[h]
     \centering
     \begin{minipage}{0.74\linewidth}
       \toplisting
@@ -53,13 +53,14 @@
 }
 
 \newcommand\engineInterface[1]{
-  \customlisting{engineInterface}{0.68}{#1}{engine.listings}
+  \customlisting{engineInterface}{0.75}{#1}
+    {survivor/latency-compensation/shared/AbstractEngine.listings}
 }
 
 \newcommand\stateGraph[1]{
-  \begin{figure}[htp]
+  \begin{figure}[h]
     \centering
-    \includegraphics[width=1\textwidth]{state-graph}
+    \includegraphics[width=0.8\textwidth]{state-graph}
     \caption{#1}
     \label{stateGraph}
   \end{figure}

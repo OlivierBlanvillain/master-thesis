@@ -123,21 +123,18 @@ To do so, each peer runs a local simulation of the application up to the current
 
 \stateGraph{Growth of the state graph over time, from the point of view of \emph{P1}.}
 
-By instantaneously applying local input, the application feels highly reactive to the end user, and this reactiveness is not affected by variations on the quality of the connection. This comes with the price of having short periods of times where the state is inconsistent between peers, which lasts until all peers are eventually aware of all inputs, at which point the simulation recovers its global consistency.
+By instantaneously applying local input, the application feels highly reactive to the end user, and this reactiveness is not affected by variations on the quality of the connection. This property comes with the price of having short periods inconsistency between the application state on the different peers. This inconsistency lasts until all peers are aware of all inputs, at which point the simulation recovers its global consistency.
 
-- Functional interface (Listing)
+By nature, this design requires a careful management of the application state and it evolutions over time. Indeed, even a small variation between two remote simulations can cause a divergence, and result in out-of-sync application states. @aoe\ reports out-of-sync issues as having been one of the main difficulty during the development of multiplayer features. In our case, the *roll back in time* procedure introduces another source of potential mistake. Any mutation in a branch of the simulation that would not properly be canceled when rolling back to a previous state could induce serious bugs, of the hard to find and hard to reproduce kind.
 
-\engineInterface{here it is}
+To cope with these issues, our framework takes entirely care of state management and imposes a functional programming style to its users. #engineInterface defines the unique interface exposed by the framework: *Engine*. 
 
-- Requires: initialState, nextState, render, transport
+\engineInterface{Interface of the latency compensation framework.}
+
+An application is entirely defined by its *initialState*, a *nextState* function that given a *State* and some *Inputs* emitted during a time unit computer the *State* at the next time unit, and a *render* function to display *States* to the users. All *States* and *Inputs* objects must be immutable, and *nextState* must be a pure function. User inputs must be transmitted to an *Engine* via the function returned by *futureAct*, and *triggerRendering* should be called whenever the hardware is able to display the current *State*, at most every 1/60th of seconds. Finally, an *Engine* must be given a *connection* to communicate in broadcast with all the concerned peers.
 
 ### Architecture and Implementation
 
-- @aoe issues about determinism and game states getting out-of-sync
-
-- Identical simulation on all peers
-- Immutability everywhere
-- Pure function
 - Goal: Cross platform JS/JVM realtime lag compensation framework
 
 ###### clock sync
@@ -175,6 +172,14 @@ Conclusion and Future Work
 - More utilities on top of Transport
 
 \appendix\clearpage\addappheadtotoc
+
+Scala Futures and Promises
+==========================
+
+Futures provide a nice way to reason about performing many operations in parallel– in an efficient and non-blocking way. The idea is simple, a Future is a sort of a placeholder object that you can create for a result that does not yet exist. Generally, the result of the Future is computed concurrently and can be later collected. Composing concurrent tasks in this way tends to result in faster, asynchronous, non-blocking parallel code.
+
+By default, futures and promises are non-blocking, making use of callbacks instead of typical blocking operations. To simplify the use of callbacks both syntactically and conceptually, Scala provides combinators such as flatMap, foreach, and filter used to compose futures in a non-blocking way. Blocking is still possible - for cases where it is absolutely necessary, futures can be blocked on (although this is discouraged).
+
 
 React
 =====
