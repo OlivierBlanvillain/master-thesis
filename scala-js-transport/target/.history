@@ -1,0 +1,15 @@
+compile
+project examples
+project chatWebRTCJVM
+compile
+publish-local
+reload
+publish-local
+~
+publish-local
+reload
+publish-local
+;reload ;publish-local
+reload
+compile
+project examples

@@ -2,7 +2,7 @@
 \newcommand\bottomlisting[0]{\vspace{4px}\hrule}
 
 \newcommand\customlisting[4]{
-  \begin{figure}[h]
+  \begin{figure}[ht]
     \centering
     \begin{minipage}{#2\linewidth}
       \toplisting
@@ -14,7 +14,7 @@
 }
 
 \newcommand\transportInterface[1]{
-  \begin{figure}[h]
+  \begin{figure}[ht]
     \centering
     \begin{minipage}{0.8\linewidth}
       \toplisting
@@ -37,7 +37,7 @@
 }
 
 \newcommand\rpcExample[1]{
-  \begin{figure}[h]
+  \begin{figure}[ht]
     \centering
     \begin{minipage}{0.74\linewidth}
       \toplisting
@@ -58,10 +58,19 @@
 }
 
 \newcommand\stateGraph[1]{
-  \begin{figure}[h]
+  \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{state-graph}
     \caption{#1}
     \label{stateGraph}
+  \end{figure}
+}
+
+\newcommand\lagcompEngine[1]{
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{lagcomp-engine}
+    \caption{#1}
+    \label{lagcompEngine}
   \end{figure}
 }

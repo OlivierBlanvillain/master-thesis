@@ -135,6 +135,8 @@ An application is entirely defined by its *initialState*, a *nextState* function
 
 ### Architecture and Implementation
 
+\lagcompEngine{wow}
+
 - Goal: Cross platform JS/JVM realtime lag compensation framework
 
 ###### clock sync
@@ -171,12 +173,13 @@ Conclusion and Future Work
 - scalaz-stream/akka-stream wrappers
 - More utilities on top of Transport
 
+
 \appendix\clearpage\addappheadtotoc
 
 Scala Futures and Promises
 ==========================
 
-Futures provide a nice way to reason about performing many operations in parallel– in an efficient and non-blocking way. The idea is simple, a Future is a sort of a placeholder object that you can create for a result that does not yet exist. Generally, the result of the Future is computed concurrently and can be later collected. Composing concurrent tasks in this way tends to result in faster, asynchronous, non-blocking parallel code.
+\TODO{Futures} provide a nice way to reason about performing many operations in parallel– in an efficient and non-blocking way. The idea is simple, a Future is a sort of a placeholder object that you can create for a result that does not yet exist. Generally, the result of the Future is computed concurrently and can be later collected. Composing concurrent tasks in this way tends to result in faster, asynchronous, non-blocking parallel code.
 
 By default, futures and promises are non-blocking, making use of callbacks instead of typical blocking operations. To simplify the use of callbacks both syntactically and conceptually, Scala provides combinators such as flatMap, foreach, and filter used to compose futures in a non-blocking way. Blocking is still possible - for cases where it is absolutely necessary, futures can be blocked on (although this is discouraged).
 
