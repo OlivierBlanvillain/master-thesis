@@ -23,23 +23,20 @@
 - [x] WebRTC with signaling fallback
 - [x] Fix JVM react UI
 - [x] Update to latest Scala.js
-
+- [x] Use WebRTC in game
+- [-] Live reload
+- [x] Delete objects on collision
+- [~] Setup online server
 
 # Pre Presentation
 
-- [] Use WebRTC in game
-
-- [] Delete objects on collision
 - [] Walls, bases and turrets
 
 - [] Clock synchronization
-- [] Setup online server
 - [] UI to measure/set latency http://foundation.zurb.com/docs/components/range_slider.html
 
 - [] Proper buffer
 - [] Proper connection proxy
-
-- [] Live reload
 
 
 # Post Presentation

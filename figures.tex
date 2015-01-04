@@ -18,9 +18,9 @@
     \centering
     \begin{minipage}{0.8\linewidth}
       \toplisting
-      \input{scala-js-transport/transport/shared/transport/Transport.listings}
+      \input{transport/transport/core/src/main/scala/transport/Transport.listings}
       \lstset{caption=#1,label=transportInterface}
-      \input{scala-js-transport/transport/shared/transport/package.listings}
+      \input{transport/transport/core/src/main/scala/transport/package.listings}
       \bottomlisting
     \end{minipage}
   \end{figure}
@@ -28,12 +28,12 @@
 
 \newcommand\actorWrapper[1]{
   \customlisting{actorWrapper}{0.92}{#1}
-    {scala-js-transport/examples/report-listings/src/main/scala/examples/ActorWrapper.listings}
+    {transport/examples/report-listings/jvm/src/main/scala/examples/ActorWrapper.listings}
 }
 
 \newcommand\yellingActor[1]{
   \customlisting{yellingActor}{0.68}{#1}
-    {scala-js-transport/examples/report-listings/src/main/scala/examples/YellingActor.listings}
+    {transport/examples/report-listings/jvm/src/main/scala/examples/YellingActor.listings}
 }
 
 \newcommand\rpcExample[1]{
@@ -41,12 +41,12 @@
     \centering
     \begin{minipage}{0.74\linewidth}
       \toplisting
-      \input{scala-js-transport/examples/report-listings/src/main/scala/examples/RpcExampleApi.listings}
+      \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleApi.listings}
       \vspace{12px}
-      \input{scala-js-transport/examples/report-listings/src/main/scala/examples/RpcExampleServer.listings}
+      \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleServer.listings}
       \vspace{12px}
       \lstset{caption=#1,label=rpcExample}
-      \input{scala-js-transport/examples/report-listings/src/main/scala/examples/RpcExampleClient.listings}
+      \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleClient.listings}
       \bottomlisting
     \end{minipage}
   \end{figure}
@@ -54,7 +54,7 @@
 
 \newcommand\engineInterface[1]{
   \customlisting{engineInterface}{0.75}{#1}
-    {survivor/latency-compensation/shared/AbstractEngine.listings}
+    {survivor/lag-comp/src/main/scala/AbstractEngine.listings}
 }
 
 \newcommand\stateGraph[1]{

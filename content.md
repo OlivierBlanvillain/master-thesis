@@ -17,7 +17,7 @@ Introduction
 Transport
 =========
 
-* This section, scala-js-transport library, main contribution
+\TODO{This section, scala-js-transport library, main contribution}
 
 ### A Uniform Interface
 
@@ -57,9 +57,11 @@ The scala-js-transport library provides a *Transport* build on the official Sock
 ###### WebRTC
 WebRTC is an experimental API for peer to peer communication between web browsers. Initially targeted at audio and video communication, WebRTC also provides *Data Channels* to communicate arbitrary data. Contrary to WebSocket only supports TCP, WebRTC can be configures to use either TCP, UDP or SCTP.
 
-As opposed to WebSocket and SockJS which only need a URL to establish a connection, WebRTC requires a *signaling channel* in order to open the peer to peer connection. The *signaling channel* is not tight to a particular technology, its only requirement is to allow a back an forth communication between peers. This is commonly achieved by connecting both peers via WebSocket to a server, which then serves as a relay for the WebRTC connection establishment.
+As opposed to WebSocket and SockJS which only need a URL to establish a connection, WebRTC requires a *signaling channel* in order to open the peer to peer connection. The *signaling channel* is not tight to a particular technology, its only requirement is to allow a back an forth communication between peers. This is commonly achieved by connecting both peers via WebSocket to a server, which then acts as a relay for the WebRTC connection establishment.
 
 To simplify the process of relaying messages from one peer to another, our library uses picklers for *ConnectionHandle*. Concretely, when a *ConnectionHandle* object connecting node *A* and *B* is sent by *B* over an already established connection with *C*, the *ConnectionHandle* received by *C* will act as a connection between *A* and *C*, hiding the fact that *B* relays messages between the two nodes.
+
+The scala-js-transport library provides two WebRTC *Transports*, *WebRTCClient* and *WebRTCClientFallback*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
 
@@ -97,7 +99,7 @@ All the implementations and wrappers are accompanied by integration tests. These
 Dealing with latency
 ====================
 
-- This section, the framework, the game
+\TODO{This section, the framework, the game}
 
 ### Latency Compensation
 
@@ -117,7 +119,9 @@ Each technique comes with its own advantages and disadvantages, and are essentia
 
 ### A Functional Framework
 
-We now present a Scala framework for latency compensation. By imposing a purely functional design to its users, the framework is focused on correctness and leaves very little room for runtime errors. It implements predictive latency compensation in a fully distributed fashion. As opposed to the traditional architectures implementing prediction techniques, such as the one described in @source-engine, our framework does uses any authoritative node to hold the global state of the application, and can therefore functions in a purely peer to peer fashion.
+We now present scala-lag-comp, a Scala framework for predictive latency compensation.
+
+By imposing a purely functional design to its users, the framework focuses on correctness and leaves very little room for runtime errors. It implements predictive latency compensation in a fully distributed fashion. As opposed to the traditional architectures implementing prediction techniques, such as the one described in\ @source-engine, our framework does uses any authoritative node to hold the global state of the application, and can therefore functions in a purely peer to peer fashion.
 
 To do so, each peer runs a local simulation of the application up to the current time, using all the information available locally. Whenever an input is transmitted to a peer via the network, this remote input will necessarily be slightly out of date because of communication latency. In order to incorporate this out of date input into the local simulation, the framework *rolls back* the state of the simulation as it was just before the time of emission of this remote input, and then replays the simulation up to the current time. #stateGraph shows this process in action from the point of view of peer *P1*. In this example, *P1* emits an input at time *t2*. Then, at time *t3*, *P1* receives an input from *P2* which was emitted at time *t1*. At this point, the framework invalidates a branch of the state tree, *S2-S3*, and computes *S2'-S3'-S4'* to take into account both inputs.
 
@@ -125,24 +129,28 @@ To do so, each peer runs a local simulation of the application up to the current
 
 By instantaneously applying local input, the application feels highly reactive to the end user, and this reactiveness is not affected by variations on the quality of the connection. This property comes with the price of having short periods inconsistency between the application state on the different peers. This inconsistency lasts until all peers are aware of all inputs, at which point the simulation recovers its global consistency.
 
-By nature, this design requires a careful management of the application state and it evolutions over time. Indeed, even a small variation between two remote simulations can cause a divergence, and result in out-of-sync application states. @aoe\ reports out-of-sync issues as having been one of the main difficulty during the development of multiplayer features. In our case, the *roll back in time* procedure introduces another source of potential mistake. Any mutation in a branch of the simulation that would not properly be canceled when rolling back to a previous state could induce serious bugs, of the hard to find and hard to reproduce kind.
+By nature, this design requires a careful management of the application state and it evolutions over time. Indeed, even a small variation between two remote simulations can cause a divergence, and result in out-of-sync application states. @aoe\ reports out-of-sync issues as having been one of their main difficulty during the development of multiplayer features. In our case, the *roll back in time* procedure introduces another source of potential mistake. Any mutation in a branch of the simulation that would not properly be canceled when rolling back to a previous state could induce serious bugs, of the hard to find and hard to reproduce kind.
 
-To cope with these issues, our framework takes entirely care of state management and imposes a functional programming style to its users. #engineInterface defines the unique interface exposed by the framework: *Engine*. 
+To cope with these issues, the scala-lag-comp framework takes entirely care of state management and imposes a functional programming style to its users. #engineInterface defines the unique interface exposed by the framework: *Engine*. 
 
 \engineInterface{Interface of the latency compensation framework.}
 
-An application is entirely defined by its *initialState*, a *nextState* function that given a *State* and some *Inputs* emitted during a time unit computer the *State* at the next time unit, and a *render* function to display *States* to the users. All *States* and *Inputs* objects must be immutable, and *nextState* must be a pure function. User inputs must be transmitted to an *Engine* via the function returned by *futureAct*, and *triggerRendering* should be called whenever the hardware is able to display the current *State*, at most every 1/60th of seconds. Finally, an *Engine* must be given a *connection* to communicate in broadcast with all the concerned peers.
+An application is entirely defined by its *initialState*, a *nextState* function that given a *State* and some *Inputs* emitted during a time unit computer the *State* at the next time unit, and a *render* function to display *States* to the users. All *States* and *Inputs* objects must be immutable, and *nextState* must be a pure function. User inputs are transmitted to an *Engine* via the function returned by *futureAct*, and *triggerRendering* should be called whenever the hardware is able to display the current *State*, at most every 1/60th of seconds. Finally, an *Engine* excepts a *connection* to communicate in broadcast with all the concerned peers.
 
 ### Architecture and Implementation
 
-\lagcompEngine{wow}
+We now give a quick overview of the architecture and implementation of the scala-lag-comp framework. The *Engine* interface presented in #a-functional-framework is composed of two stateful components: *ClockSync* and *StateLoop*. *ClockSync* is responsible for the initial attribution of peer *identity*, and the agreement on a *globalTime*, synchronized among all peers. *StateLoop* stores all the peer inputs and is able to predict the application state at a certain time with the current inputs. #lagcompEngine shows the interconnection between the components of an *Engine*. The *triggerRendering* function of *Engine* gets the current *globalTime* from the *ClockSync*, ask the *StateLoop* to predict the *State* at that time, and passes the output for actual rendering to the *render* function. Wherever an *Input* is sent to the *Engine* via *futureAct*, this *Input* is combined with the *globalTime* and peer identity to form an *Event*. This *Event* is then directly transmitted to the local *StateLoop*, and via the broadcast connection to all the remote *StateLoops*.
 
-- Goal: Cross platform JS/JVM realtime lag compensation framework
+\lagcompEngine{Overview the architecture of the latency compensation framework.}
 
-###### clock sync
-- Where do we cheat: clock sync
+It should be noted that the scala-lag-comp framework is written in pure Scala, and that thus be cross compile to both Java bytecode and JavaScript.
 
-###### back in time
+###### ClockSync
+The first action undertaken by *ClockSync* is to send *Greeting* message in broadcast, and listen for other *Greetings* during a small time window. Peer membership and identity are determined from these messages. Each of contains a large randomly generated number which is used to sort peers globally to attribute them a consistent identity.
+
+Once all peers are aware of each other, they need to agree of a *globalTime*. Ultimately, each peer holds a difference of time between it's internal clock and the globally consented clock. The global clock is defined to be the arithmetic average between all the peer's clock. In order to determine the proper time difference, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, the current value of the remote clock can be estimated by adding half of the request round trip time to *t*. To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only uses the requests with the shortest round trip times.
+
+###### StateLoop
 - Scala List and Ref quality and fixed size buffer solution
 
 ### Putting It All Together: A Real-Time Multiplayer Game

@@ -36,11 +36,7 @@
 
 \chapter{Transport}\label{transport}
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  This section, scala-js-transport library, main contribution
-\end{itemize}
+\TODO{This section, scala-js-transport library, main contribution}
 
 \section{A Uniform Interface}\label{a-uniform-interface}
 
@@ -155,7 +151,7 @@ connection, WebRTC requires a \emph{signaling channel} in order to open
 the peer to peer connection. The \emph{signaling channel} is not tight
 to a particular technology, its only requirement is to allow a back an
 forth communication between peers. This is commonly achieved by
-connecting both peers via WebSocket to a server, which then serves as a
+connecting both peers via WebSocket to a server, which then acts as a
 relay for the WebRTC connection establishment.
 
 To simplify the process of relaying messages from one peer to another,
@@ -165,6 +161,12 @@ is sent by \emph{B} over an already established connection with
 \emph{C}, the \emph{ConnectionHandle} received by \emph{C} will act as a
 connection between \emph{A} and \emph{C}, hiding the fact that \emph{B}
 relays messages between the two nodes.
+
+The scala-js-transport library provides two WebRTC \emph{Transports},
+\emph{WebRTCClient} and \emph{WebRTCClientFallback}. The later
+implements some additional logic to detect WebRTC support, and
+automatically fall back to using the signaling channel as substitute for
+WebRTC if either peer does not support it.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and
 Opera, and lakes support in Safari and Internet Explorer. The only non
@@ -273,11 +275,7 @@ different browsers to test their compatibility.
 
 \chapter{Dealing with latency}\label{dealing-with-latency}
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  This section, the framework, the game
-\end{itemize}
+\TODO{This section, the framework, the game}
 
 \section{Latency Compensation}\label{latency-compensation}
 
@@ -356,15 +354,17 @@ sophistication.
 
 \section{A Functional Framework}\label{a-functional-framework}
 
-We now present a Scala framework for latency compensation. By imposing a
-purely functional design to its users, the framework is focused on
-correctness and leaves very little room for runtime errors. It
-implements predictive latency compensation in a fully distributed
+We now present scala-lag-comp, a Scala framework for predictive latency
+compensation.
+
+By imposing a purely functional design to its users, the framework
+focuses on correctness and leaves very little room for runtime errors.
+It implements predictive latency compensation in a fully distributed
 fashion. As opposed to the traditional architectures implementing
-prediction techniques, such as the one described in
-\cite{source-engine}, our framework does uses any authoritative node to
-hold the global state of the application, and can therefore functions in
-a purely peer to peer fashion.
+prediction techniques, such as the one described
+in~\cite{source-engine}, our framework does uses any authoritative node
+to hold the global state of the application, and can therefore functions
+in a purely peer to peer fashion.
 
 To do so, each peer runs a local simulation of the application up to the
 current time, using all the information available locally. Whenever an
@@ -395,17 +395,17 @@ By nature, this design requires a careful management of the application
 state and it evolutions over time. Indeed, even a small variation
 between two remote simulations can cause a divergence, and result in
 out-of-sync application states. \cite{aoe}~reports out-of-sync issues as
-having been one of the main difficulty during the development of
+having been one of their main difficulty during the development of
 multiplayer features. In our case, the \emph{roll back in time}
 procedure introduces another source of potential mistake. Any mutation
 in a branch of the simulation that would not properly be canceled when
 rolling back to a previous state could induce serious bugs, of the hard
 to find and hard to reproduce kind.
 
-To cope with these issues, our framework takes entirely care of state
-management and imposes a functional programming style to its users.
-\autoref{engineInterface} defines the unique interface exposed by the
-framework: \emph{Engine}.
+To cope with these issues, the scala-lag-comp framework takes entirely
+care of state management and imposes a functional programming style to
+its users. \autoref{engineInterface} defines the unique interface
+exposed by the framework: \emph{Engine}.
 
 \engineInterface{Interface of the latency compensation framework.}
 
@@ -415,33 +415,64 @@ An application is entirely defined by its \emph{initialState}, a
 the next time unit, and a \emph{render} function to display
 \emph{States} to the users. All \emph{States} and \emph{Inputs} objects
 must be immutable, and \emph{nextState} must be a pure function. User
-inputs must be transmitted to an \emph{Engine} via the function returned
-by \emph{futureAct}, and \emph{triggerRendering} should be called
-whenever the hardware is able to display the current \emph{State}, at
-most every 1/60th of seconds. Finally, an \emph{Engine} must be given a
-\emph{connection} to communicate in broadcast with all the concerned
-peers.
+inputs are transmitted to an \emph{Engine} via the function returned by
+\emph{futureAct}, and \emph{triggerRendering} should be called whenever
+the hardware is able to display the current \emph{State}, at most every
+1/60th of seconds. Finally, an \emph{Engine} excepts a \emph{connection}
+to communicate in broadcast with all the concerned peers.
 
 \section{Architecture and
 Implementation}\label{architecture-and-implementation}
 
-\lagcompEngine{wow}
+We now give a quick overview of the architecture and implementation of
+the scala-lag-comp framework. The \emph{Engine} interface presented in
+\autoref{a-functional-framework} is composed of two stateful components:
+\emph{ClockSync} and \emph{StateLoop}. \emph{ClockSync} is responsible
+for the initial attribution of peer \emph{identity}, and the agreement
+on a \emph{globalTime}, synchronized among all peers. \emph{StateLoop}
+stores all the peer inputs and is able to predict the application state
+at a certain time with the current inputs. \autoref{lagcompEngine} shows
+the interconnection between the components of an \emph{Engine}. The
+\emph{triggerRendering} function of \emph{Engine} gets the current
+\emph{globalTime} from the \emph{ClockSync}, ask the \emph{StateLoop} to
+predict the \emph{State} at that time, and passes the output for actual
+rendering to the \emph{render} function. Wherever an \emph{Input} is
+sent to the \emph{Engine} via \emph{futureAct}, this \emph{Input} is
+combined with the \emph{globalTime} and peer identity to form an
+\emph{Event}. This \emph{Event} is then directly transmitted to the
+local \emph{StateLoop}, and via the broadcast connection to all the
+remote \emph{StateLoops}.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Goal: Cross platform JS/JVM realtime lag compensation framework
-\end{itemize}
+\lagcompEngine{Overview the architecture of the latency compensation framework.}
 
-\subsection{clock sync}\label{clock-sync}
+It should be noted that the scala-lag-comp framework is written in pure
+Scala, and that thus be cross compile to both Java bytecode and
+JavaScript.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Where do we cheat: clock sync
-\end{itemize}
+\subsection{ClockSync}\label{clocksync}
 
-\subsection{back in time}\label{back-in-time}
+The first action undertaken by \emph{ClockSync} is to send
+\emph{Greeting} message in broadcast, and listen for other
+\emph{Greetings} during a small time window. Peer membership and
+identity are determined from these messages. Each of contains a large
+randomly generated number which is used to sort peers globally to
+attribute them a consistent identity.
+
+Once all peers are aware of each other, they need to agree of a
+\emph{globalTime}. Ultimately, each peer holds a difference of time
+between it's internal clock and the globally consented clock. The global
+clock is defined to be the arithmetic average between all the peer's
+clock. In order to determine the proper time difference, each pair of
+peers needs exchange their clock values. This is accomplished in a way
+similar to Cristian's algorithm \cite{cristian89}. Firstly, peers send
+request for the clock values of other peers. Upon receiving a response
+containing a time \emph{t}, the current value of the remote clock can be
+estimated by adding half of the request round trip time to \emph{t}. To
+minimize the impact of network variations, several requests are emitted
+between each pair of peers, and the algorithms only uses the requests
+with the shortest round trip times.
+
+\subsection{StateLoop}\label{stateloop}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
