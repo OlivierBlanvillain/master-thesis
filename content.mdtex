@@ -430,10 +430,10 @@ the scala-lag-comp framework. The \emph{Engine} interface presented in
 \emph{ClockSync} and \emph{StateLoop}. \emph{ClockSync} is responsible
 for the initial attribution of peer \emph{identity}, and the agreement
 on a \emph{globalTime}, synchronized among all peers. \emph{StateLoop}
-stores all the peer inputs and is able to predict the application state
-at a certain time with the current inputs. \autoref{lagcompEngine} shows
-the interconnection between the components of an \emph{Engine}. The
-\emph{triggerRendering} function of \emph{Engine} gets the current
+stores all the peer \emph{Inputs} and is able to predict the application
+state at a certain time with the current inputs. \autoref{lagcompEngine}
+shows the interconnection between the components of an \emph{Engine}.
+The \emph{triggerRendering} function of \emph{Engine} gets the current
 \emph{globalTime} from the \emph{ClockSync}, ask the \emph{StateLoop} to
 predict the \emph{State} at that time, and passes the output for actual
 rendering to the \emph{render} function. Wherever an \emph{Input} is
@@ -474,10 +474,39 @@ with the shortest round trip times.
 
 \subsection{StateLoop}\label{stateloop}
 
+The \emph{StateLoop} component is responsible for the maintenance of
+\emph{Events} received by the framework, and for making predictions of
+the application \emph{State} for the \emph{Events} received so far.
+
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Scala List and Ref quality and fixed size buffer solution
+  sorted, immutable list of \emph{Events} (event = input, time, peer).
+\item
+  The \emph{stateAt} uses a recursive \emph{computeState} function to
+  computes the current state by applying the \emph{nextState} function
+  with the appropriate \emph{Events} for each time unit, starting from
+  the \emph{initialState}. In essence, \emph{StateLoop} does not need to
+  store anything beside a list \emph{Events}, from which the the current
+  state can be derived.
+\item
+  expensive
+\item
+  Uses a cache to memorization on the \emph{computeState} function. The
+  \emph{computeState} takes are argument a \emph{time} and an immutable
+  list of \emph{Events} (sorted, and appending before \emph{time}), and
+  returns a state. The memorization is implemented using a bounded
+  cache, retrains the association between a pair of time, list of
+  \emph{Events}, and a \emph{State}. In the most common case when
+  \emph{stateAt} and not new inputs have been received since the last
+  call, the cache will hit right away, after a single recursive call.
+  Whenever a remote input is received and inserted into the list of
+  inputs, the recursion will take place up to the time at which this
+  newly received input was issued.
+\item
+  Timing assumptions allows to use implement the cache using fixed size
+  array. Indeed Because of the implementation of immutable linked lists
+  in Scala, the checking that a
 \end{itemize}
 
 \section{Putting It All Together: A Real-Time Multiplayer
@@ -495,8 +524,6 @@ Game}\label{putting-it-all-together-a-real-time-multiplayer-game}
   Functional design of gun fire (-\textgreater{} function of time!)
 \item
   WebRTC with SockJS fallback
-\item
-  Live reload heaven
 \item
   Results: 60FPS on both platforms, lag free gameplay
 \item

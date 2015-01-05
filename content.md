@@ -139,7 +139,7 @@ An application is entirely defined by its *initialState*, a *nextState* function
 
 ### Architecture and Implementation
 
-We now give a quick overview of the architecture and implementation of the scala-lag-comp framework. The *Engine* interface presented in #a-functional-framework is composed of two stateful components: *ClockSync* and *StateLoop*. *ClockSync* is responsible for the initial attribution of peer *identity*, and the agreement on a *globalTime*, synchronized among all peers. *StateLoop* stores all the peer inputs and is able to predict the application state at a certain time with the current inputs. #lagcompEngine shows the interconnection between the components of an *Engine*. The *triggerRendering* function of *Engine* gets the current *globalTime* from the *ClockSync*, ask the *StateLoop* to predict the *State* at that time, and passes the output for actual rendering to the *render* function. Wherever an *Input* is sent to the *Engine* via *futureAct*, this *Input* is combined with the *globalTime* and peer identity to form an *Event*. This *Event* is then directly transmitted to the local *StateLoop*, and via the broadcast connection to all the remote *StateLoops*.
+We now give a quick overview of the architecture and implementation of the scala-lag-comp framework. The *Engine* interface presented in #a-functional-framework is composed of two stateful components: *ClockSync* and *StateLoop*. *ClockSync* is responsible for the initial attribution of peer *identity*, and the agreement on a *globalTime*, synchronized among all peers. *StateLoop* stores all the peer *Inputs* and is able to predict the application state at a certain time with the current inputs. #lagcompEngine shows the interconnection between the components of an *Engine*. The *triggerRendering* function of *Engine* gets the current *globalTime* from the *ClockSync*, ask the *StateLoop* to predict the *State* at that time, and passes the output for actual rendering to the *render* function. Wherever an *Input* is sent to the *Engine* via *futureAct*, this *Input* is combined with the *globalTime* and peer identity to form an *Event*. This *Event* is then directly transmitted to the local *StateLoop*, and via the broadcast connection to all the remote *StateLoops*.
 
 \lagcompEngine{Overview the architecture of the latency compensation framework.}
 
@@ -151,7 +151,15 @@ The first action undertaken by *ClockSync* is to send *Greeting* message in broa
 Once all peers are aware of each other, they need to agree of a *globalTime*. Ultimately, each peer holds a difference of time between it's internal clock and the globally consented clock. The global clock is defined to be the arithmetic average between all the peer's clock. In order to determine the proper time difference, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, the current value of the remote clock can be estimated by adding half of the request round trip time to *t*. To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only uses the requests with the shortest round trip times.
 
 ###### StateLoop
-- Scala List and Ref quality and fixed size buffer solution
+The *StateLoop* component is responsible for the maintenance of *Events* received by the framework, and for making predictions of the application *State* for the *Events* received so far.
+
+- sorted, immutable list of *Events* (event = input, time, peer).
+- The *stateAt* uses a recursive *computeState* function to computes the current state by applying the *nextState* function with the appropriate *Events* for each time unit, starting from the *initialState*. In essence, *StateLoop* does not need to store anything beside a list *Events*, from which the the current state can be derived.
+- expensive
+- Uses a cache to memorization on the *computeState* function. The *computeState* takes are argument a *time* and an immutable list of *Events* (sorted, and appending before *time*), and returns a state. The memorization is implemented using a bounded cache, retrains the association between a pair of time, list of *Events*, and a *State*.
+In the most common case when *stateAt* and not new inputs have been received since the last call, the cache will hit right away, after a single recursive call. Whenever a remote input is received and inserted into the list of inputs, the recursion will take place up to the time at which this newly received input was issued.
+- Timing assumptions allows to use implement the cache using fixed size array. Indeed
+Because of the implementation of immutable linked lists in Scala, the checking that a 
 
 ### Putting It All Together: A Real-Time Multiplayer Game
 
@@ -160,7 +168,6 @@ Once all peers are aware of each other, they need to agree of a *globalTime*. Ul
 - Everything but input handler shared (but UI shouldn't...)
 - Functional design of gun fire (-> function of time!)
 - WebRTC with SockJS fallback
-- Live reload heaven
 - Results: 60FPS on both platforms, lag free gameplay
 - Results: Lag Compensation in action (Screenshots)
 

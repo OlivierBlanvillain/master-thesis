@@ -26,7 +26,8 @@
 - [x] Use WebRTC in game
 - [-] Live reload
 - [x] Delete objects on collision
-- [~] Setup online server
+- [x] Setup online server
+
 
 # Pre Presentation
 
@@ -47,7 +48,6 @@
 - [] Message to the survivor author
 - [] Message to Odersky
 - [] Update CV
-- [] WebWorkers
-- [] Reactive-streams
-- [] Custom WebRTC/SockJS settings
 - [] Firefox
+- [] WebWorkers/Reactive-streams?
+- [] Custom WebRTC/SockJS settings?
