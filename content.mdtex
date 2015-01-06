@@ -474,40 +474,43 @@ with the shortest round trip times.
 
 \subsection{StateLoop}\label{stateloop}
 
-The \emph{StateLoop} component is responsible for the maintenance of
-\emph{Events} received by the framework, and for making predictions of
-the application \emph{State} for the \emph{Events} received so far.
+The \emph{StateLoop} component provides the heart of the prediction
+algorithm: a \emph{stateAt} function which given a \emph{time}, computes
+a prediction of the application \emph{State}. To do so, \emph{StateLoop}
+maintains a set of user \emph{Inputs} received so far, which is used to
+simulate the execution of the application. \emph{Inputs} are stored an
+immutable list of \emph{Events} (triplets of \emph{Input}, time and
+source), sorted by time.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  sorted, immutable list of \emph{Events} (event = input, time, peer).
-\item
-  The \emph{stateAt} uses a recursive \emph{computeState} function to
-  computes the current state by applying the \emph{nextState} function
-  with the appropriate \emph{Events} for each time unit, starting from
-  the \emph{initialState}. In essence, \emph{StateLoop} does not need to
-  store anything beside a list \emph{Events}, from which the the current
-  state can be derived.
-\item
-  expensive
-\item
-  Uses a cache to memorization on the \emph{computeState} function. The
-  \emph{computeState} takes are argument a \emph{time} and an immutable
-  list of \emph{Events} (sorted, and appending before \emph{time}), and
-  returns a state. The memorization is implemented using a bounded
-  cache, retrains the association between a pair of time, list of
-  \emph{Events}, and a \emph{State}. In the most common case when
-  \emph{stateAt} and not new inputs have been received since the last
-  call, the cache will hit right away, after a single recursive call.
-  Whenever a remote input is received and inserted into the list of
-  inputs, the recursion will take place up to the time at which this
-  newly received input was issued.
-\item
-  Timing assumptions allows to use implement the cache using fixed size
-  array. Indeed Because of the implementation of immutable linked lists
-  in Scala, the checking that a
-\end{itemize}
+Semantically, every call to the the \emph{stateAt} function implies a
+recursive computation of the current state. This recursion starts from
+the \emph{initialState}, and successively applies the \emph{nextState}
+function with the appropriate \emph{Events} for each time unit until it
+reaches the current time.
+
+Obviously, doing the complete recursion on every frame would be too
+expansive. However, since this recursive process uses a pure function
+(returning a \emph{State} given a time and list of \emph{Events}
+happening before that time), it can easily be made efficient using
+memoization. Indeed, In the most common case when \emph{stateAt} is
+called and no new inputs have been received since the last call, the
+cache will hit right away, after a single recursion step. Whenever a
+remote input is received and inserted into the list of inputs, the
+recursion will take place up to the time at which this newly received
+input was issued. The cache will hit at that point, from which
+\emph{nextState} is successively applies until the current time is
+reached. This is how the \emph{rolls back} process illustrated in
+\autoref{stateGraph} is implemented in a time efficient manner.
+
+Regarding memory management, timing assumptions on the network allow the
+use of a bounded cache. Indeed, if we define a peer to be disconnected
+if a message takes more than one second to transit over the network, it
+is sufficient to retain history of the application \emph{State} for a
+period of one second. Thus, the memorization is implemented using a
+fixed size array, which retrains the association between a time, a list
+of \emph{Events}, and a \emph{State}. Thanks to the use of immutable
+lists to store the \emph{Events}, querying the cache is done using
+reference equality for maximum efficiency.
 
 \section{Putting It All Together: A Real-Time Multiplayer
 Game}\label{putting-it-all-together-a-real-time-multiplayer-game}
