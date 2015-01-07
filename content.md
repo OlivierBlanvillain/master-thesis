@@ -17,19 +17,25 @@ Introduction
 Transport
 =========
 
-\TODO{This section, scala-js-transport library, main contribution}
+\TODO{This section, scala-js-transport library, main contribution}  
 
 ### A Uniform Interface
 
-We begin our discussion by the definition of an interface for asynchronous transports, presented in #transportInterface. This interface aims at *transparently* modeling the different underlying technologies, meaning that is simply delegates tasks to the actual implementation, without adding new functionalities.
+We begin our discussion by the definition of an interface for asynchronous transports, presented in #transportInterface. This interface aims at *transparently* modeling the different underlying technologies, meaning that is simply delegates tasks to the actual implementation, without adding new functionalities. Thanks to support of *futures* and *promises* in Scala.js, these interfaces cross compile to both Java bytecode and JavaScript.
 
 \transportInterface{Definition of the core networking interfaces.}
 
-A *Transport* can both *listen* for incoming connections and *connect* to remote *Transports*. Platforms limited to act either as client or server will return a failed future for either of these methods. In order to listen for incoming connections, the user of a *Transport* has to complete the promise returned by the listen method with a *ConnectionListener*. To keep the definition generic, *Address* is an abstract type. As we will see later, it varies greatly from one technology to another.
+A *Transport* can both *listen* for incoming connections and *connect* to remote *Transports*. Platforms limited to act either as client or server will return a failed *future* for either of these methods. In order to listen for incoming connections, the user of a *Transport* has to complete the promise returned by the *listen* method with a *ConnectionListener*. To keep the definition generic, *Address* is an abstract type. As we will see later, it varies greatly from one technology to another.
 
 *ConnectionHandle* represents an opened connection. Thereby, it supports four type of interactions: writing a message, listening for incoming messages, closing the connection and listening for connection closure. Similarly to *Transport*, listening for incoming messages is achieved by completing a promise of *MessageListener*.
 
-The presented *Transport* and *ConnectionHandle* interfaces have several advantages compared to their  alternative in other languages, such the WebSocket interface in JavaScript. For example, errors are not transmitted by throwing exceptions, but simply returned as a failed future. Also, some incorrect behaviors such as writing to a no yet opened connection, or receiving duplicate notifications for a closed connection, are made impossible by construction. Thanks to support of futures and promises in Scala.js, these interfaces cross compile to both Java bytecode and JavaScript.
+An example of direct usage of the *Transport* interface is presented in #rawclient. This example implements a simple WebSocket client that sends a "Hello World!" message to a WebSocket echo server. After instantiating the *Transport* and declaring the *Address* of the server, *transport.connect* initiate the WebSocket connection and returns a *future* of *ConnectionHandle*. This is *future* will be successfully completed upon connection establishment, or result in a failure if an error occurred during the process. In the successful case, the callback is given a *ConnectionHandle* object, which is used to *write* the "Hello World!" message, handle incoming messages and *close* the connection.
+
+\rawclient{Example of WebSocket client implementation.}
+
+The WebSocket echo server used in #rawclient has a very simple behavior: received messages are immediately sent back to their author. #rawserver shows a possible implementation of an echo server with the *Transport* interface. The body of this example is wrapped in a *try-finally* block to ensure the proper shutdown of the server once the program terminate. In order to listen for incoming connections, one must use *transport.listen()* which returns a *future* connection listener *promise*. If the underlying implementation is able *listen* for new WebSocket connections on the given address and port, the *future* will be successful, and the *promise* can then be completed with a connection listener.
+
+\rawserver{Implementation of a WebSocket echo server.}
 
 ### Implementations
 
@@ -39,10 +45,10 @@ Table: Summary of the available Transports.\label{impl-summary}
 
 Platform        WebSocket   SockJS   WebRTC
 -------------- ----------- -------- --------
-JavaScript       client     client   client    
-Play Framework   server     server     -     
-Netty            both          -       -      
-Tyrus            client        -       -      
+JavaScript       client     client   client 
+Play Framework   server     server     -
+Netty            both          -       -
+Tyrus            client        -       -
 
 ###### WebSocket
 WebSocket provides full-duplex communication over a single TCP connection. Connection establishment begin with an HTTP request from client to server. After the handshake is completed, the TCP connection used for the initial HTTP request is *upgraded* to change protocol, and kept open to become the actual WebSocket connection. This mechanism allows WebSocket to be wildly supported over different network configurations.
@@ -65,6 +71,10 @@ The scala-js-transport library provides two WebRTC *Transports*, *WebRTCClient* 
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
 
+\TODO{Add a sequence diagram and explain connection establishment.}  
+<http://www.w3.org/TR/webrtc/#call-flow-browser-to-browser>  
+<http://www.webrtc.org/native-code/native-apis>  
+
 ### Wrappers
 
 By using *Transport* interface, it is possible write programs with an abstract communication medium. We present two *Transport* wrappers, for Akka @akka and Autowire\ @autowire, which allow to work with different model of concurrency. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.
@@ -78,7 +88,7 @@ The two methods *acceptWithActor* and *connectWithActor* use the underlying *lis
 
 \yellingActor{Example of a connection handling actor.}
 
-Thanks to the picking mechanism developed in @scala-js-actors, it is possible to sent messages of any type thought a connection, given that implicit picklers are available for these types of messages. Out of the box, picklers for case classes and case objects can be macros-generated by the pickling library. In addition, an *ActorRef* pickler allows the transmission of *ActorRefs* thought a connection, making them transparently usable from the side of the connection as if they were references to local actors.
+Thanks to the picking mechanism developed in @scala-js-actors, it is possible to sent messages of any type thought a connection, given that implicit picklers for these types of messages have been registered. Out of the box, picklers for case classes and case objects can be macros-generated by the pickling library. In addition, an *ActorRef* pickler allows the transmission of *ActorRefs* thought a connection, making them transparently usable from the side of the connection as if they were references to local actors.
 
 ###### Autowire
 Remote procedure call allow remote systems to communicate through an interface similar to method calls. The Autowire library allows to perform type-safe, reflection-free remote procedure calls between Scala system. It uses macros and is agnostic of both the transport-mechanism and the serialization library.
@@ -113,7 +123,7 @@ While little information is available about the most recent games and collaborat
 
 *Delayed input techniques* defer the execution of all actions to allow simultaneous execution by all peers. This solution is typically used in application where the state, (or the variations of state) is too large to be frequently sent over the network. In this case, peers would directly exchange the user inputs and simultaneously simulate application with a fixed delay. Having a centralized server is not mandatory, and peer to peer configurations might be favored because of the reduce communication latency. Very often, the perceived latency can be diminished by instantly emitting a purely visual or sonorous feedback as soon as the an input is entered, but delaying the actual effects of the action to have it executed simultaneously on all peers. The classical *Age of Empires* series uses this techniques with a fixed delay of 500 ms, and supports up to 8 players and 1600 independently controllable entities @aoe.
 
-*Time-offsettings techniques* add a delay in the application of remote inputs. Different peers will then see different versions of the application state over time. Local perception filters @local-perception-filter1998 are an example of such techniques where the amount of delayed applied to world entities is proportional to their distance to the peer avatar. As a result, a user can interact in real time with entities spatially close to him, and see the interaction at a distance *as if* they where appending in real time. The most important limitation of local perception filters is that peers avatar have to be kept at a minimum distance from each other, and can only interact by exchanging passive entities, such as bullets or arrows @smed06. Indeed, passed a certain proximity threshold, the time distortion becomes smaller than the network latency which invalidates the model.
+*Time-offsettings techniques* add a delay in the application of remote inputs. Different peers will then see different versions of the application state over time. Local perception filters @local-perception-filter1998 are an example of such techniques where the amount of delayed applied to world entities is proportional to their distance to the peer avatar. As a result, a user can interact in real time with entities spatially close to him, and see the interaction at a distance *as if* they where appending in real time. The most important limitation of local perception filters is that peers avatar have to be kept at a minimum distance from each other, and can only interact by exchanging passive entities, such as bullets or arrows @smed2006. Indeed, passed a certain proximity threshold, the time distortion becomes smaller than the network latency which invalidates the model.
 
 Each technique comes with its own advantages and disadvantages, and are essentially making different tradeoffs between consistency and responsiveness. Without going into further details on the different latency compensation techniques, this introduction should give the reader an idea of the variety of possible solutions and their respective sophistication.
 
@@ -146,7 +156,24 @@ We now give a quick overview of the architecture and implementation of the scala
 ###### ClockSync
 The first action undertaken by the *ClockSync* component is to send a *Greeting* message in broadcast, and listen for other *Greetings* message during a small time window. Peer membership and identity are determined from these messages. Each *Greeting* message contains a randomly generated number which is used to order peers globally, and attribute them a consistent identity.
 
-Once peers are all aware of each other, they need to agree on a *globalTime*. Ultimately, each peer holds a difference of time \dt between it's internal clock and the  globally consented clock. The global clock is defined to be the arithmetic average of all the peer's clock. In order to compute their \dt, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, one can estimate the value of the remote clock by adding half of the request round trip time to *t*. One all peers have estimations of the various clocks, they are able to locally compute the average, and use it as the estimated *globalTime*., To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only retains the requests with the shortest round trip times.
+Once peers are all aware of each other, they need to agree on a *globalTime*. Ultimately, each peer holds a difference of time \dt between it's internal clock and the  globally consented clock. The global clock is defined to be the arithmetic average of all the peer's clock. In order to compute their \dt, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm\ @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, one can estimate the value of the remote clock by adding half of the request round trip time to *t*. One all peers have estimations of the various clocks, they are able to locally compute the average, and use it as the estimated *globalTime*. To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only retains the requests with the shortest round trip times.
+
+Certainly, this approach will result in slightly shifted views of the *globalTime*.
+
+- more elaborated protocols using authoritative server
+- NTP
+- Low level, designed to work on top of UDP
+- Average precision varies between 20 ms and 100 ms, depending on the connection quality @mills2010
+
+- question: what are the implications of out of sync clocks?
+- correctness is not affected, eventually every user sees every inputs, and once all the simulations have reached the globalTime at which the last input was issued, all simulations will be coherent.
+
+- not noticeable around 100ms
+
+
+To prevent malicious manupulations of the clock (a form of cheating in games), one could improve the framework by adding a mechanism to verify that the issue times of inputs respects some causal consistency. Follows an example of such mechanism.
+
+Suppose that every message $m_i$ sent contains a random number $r_i$. Then, newly emitted inputs could include the latest random number generated locally, and the latest random number received from other peers. Adding this information would allow the detection of malicious peers. Indeed, if a malicious peer *P1* pretends that his message $m_1$ is issued one second later that it is in reality, and *P2* sends a message $m_2$ that can by estimated to arrive before $m_1$ was issues, then *P2* can detect that *P1* is malicious by checking that $m_1$ does not contain $r_2$.Similarly, pretending that a message is issued in the past would break the sequence of "latest random number generated locally", and thus be detectable.
 
 ###### StateLoop
 The *StateLoop* component implements the heart of the prediction algorithm: a *stateAt* function which given a *time*, computes a prediction of the application *State*. To do so, *StateLoop* maintains a set of user *Actions* received so far, which is used to simulate the execution of the application. *Actions* are stored in an immutable list of *Events* (pair of *Input* and time), sorted by time.
@@ -161,6 +188,7 @@ Regarding memory management, timing assumptions on the network allow the use of 
 
 - History: Scala.js port of a JS port of a Commodore 64 game
 - Functional GUI with React (Hack for the JVM version)
+- React
 - Everything but input handler shared (but UI shouldn't...)
 - Functional design of gun fire (-> function of time!)
 - WebRTC with SockJS fallback
@@ -183,23 +211,3 @@ Conclusion and Future Work
 - Web workers
 - scalaz-stream/akka-stream wrappers
 - More utilities on top of Transport
-
-
-\appendix\clearpage\addappheadtotoc
-
-Scala Futures and Promises
-==========================
-
-\TODO{Futures} provide a nice way to reason about performing many operations in parallel– in an efficient and non-blocking way. The idea is simple, a Future is a sort of a placeholder object that you can create for a result that does not yet exist. Generally, the result of the Future is computed concurrently and can be later collected. Composing concurrent tasks in this way tends to result in faster, asynchronous, non-blocking parallel code.
-
-By default, futures and promises are non-blocking, making use of callbacks instead of typical blocking operations. To simplify the use of callbacks both syntactically and conceptually, Scala provides combinators such as flatMap, foreach, and filter used to compose futures in a non-blocking way. Blocking is still possible - for cases where it is absolutely necessary, futures can be blocked on (although this is discouraged).
-
-
-React
-=====
-
-\TODO{React} @react is a JavaScript library for building user interfaces.
-
-- Just the UI: Lots of people use React as the V in MVC. Since React makes no assumptions about the rest of your technology stack, it's easy to try it out on a small feature in an existing project.
-- Virtual DOM: React uses a virtual DOM diff implementation for ultra-high performance. It can also render on the server using Node.js, no heavy browser DOM required.
-- Data flow: React implements one-way reactive data flow which reduces boilerplate and is easier to reason about than traditional data binding.
