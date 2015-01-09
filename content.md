@@ -158,20 +158,9 @@ The first action undertaken by the *ClockSync* component is to send a *Greeting*
 
 Once peers are all aware of each other, they need to agree on a *globalTime*. Ultimately, each peer holds a difference of time \dt between it's internal clock and the  globally consented clock. The global clock is defined to be the arithmetic average of all the peer's clock. In order to compute their \dt, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm\ @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, one can estimate the value of the remote clock by adding half of the request round trip time to *t*. One all peers have estimations of the various clocks, they are able to locally compute the average, and use it as the estimated *globalTime*. To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only retains the requests with the shortest round trip times.
 
-Certainly, this approach will result in slightly shifted views of the *globalTime*.
+Certainly, this approach will result in slightly shifted views of the *globalTime*. Even with more solutions elaborated, such as the Network Time Protocol, the average precision varies between 20 ms and 100 ms depending on the quality of the connection @mills2010. In the case of the scala-lag-comp framework, out-of-sync clocks can decrease the quality of the user experience but do not effect correctness. Indeed, once every user has seen every input, and once all the simulations have reached the *globalTime* at which the latest input was issued, all the simulations generate *States* for the same *globalTime*. If one user is significantly ahead of the others, this will have the effect of preventing him to react quickly to other peers actions. Suppose a peers $P_a$ think the *globalTime* is $t_a$ seconds ahead of what other peers believe. Whenever he receives an input issued at time $t_1$, $P_a$ will have already simulated and displayed the application up to time $t_1 + t_a + networkdelay$, and his reaction to this input will be issued with a lag of $t_a + networkdelay$. Furthermore, being ahead of the actual *globalTime* implies that the *rolls back* mechanism will be used for significant portions of time, introducing potential visual glitches such as avatars teleporting from one point to another.
 
-- more elaborated protocols using authoritative server
-- NTP
-- Low level, designed to work on top of UDP
-- Average precision varies between 20 ms and 100 ms, depending on the connection quality @mills2010
-
-- question: what are the implications of out of sync clocks?
-- correctness is not affected, eventually every user sees every inputs, and once all the simulations have reached the globalTime at which the last input was issued, all simulations will be coherent.
-
-- not noticeable around 100ms
-
-
-To prevent malicious manupulations of the clock (a form of cheating in games), one could improve the framework by adding a mechanism to verify that the issue times of inputs respects some causal consistency. Follows an example of such mechanism.
+To prevent malicious manipulations of the clock (a form of cheating in games), one could improve the framework by adding a mechanism to verify that the issue times of inputs respects some causal consistency. Follows an example of such mechanism.
 
 Suppose that every message $m_i$ sent contains a random number $r_i$. Then, newly emitted inputs could include the latest random number generated locally, and the latest random number received from other peers. Adding this information would allow the detection of malicious peers. Indeed, if a malicious peer *P1* pretends that his message $m_1$ is issued one second later that it is in reality, and *P2* sends a message $m_2$ that can by estimated to arrive before $m_1$ was issues, then *P2* can detect that *P1* is malicious by checking that $m_1$ does not contain $r_2$.Similarly, pretending that a message is issued in the past would break the sequence of "latest random number generated locally", and thus be detectable.
 
@@ -184,17 +173,39 @@ Obviously, doing the complete recursion on every frame would be too expansive. H
 
 Regarding memory management, timing assumptions on the network allow the use of a bounded cache. Indeed, if we consider a peer to be disconnected when one of his messages takes more than one second to transit over the network, it is sufficient to retain history of *States* for a period of one second. Thus, the memorization can be implemented using a fixed size array, retraining the association between a time, a list of *Events*, and a *State*. Thanks to a careful use of immutable lists to store *Events*, querying the cache can be done using reference equality for maximum efficiency.
 
-### Putting It All Together: A Real-Time Multiplayer Game
 
-- History: Scala.js port of a JS port of a Commodore 64 game
-- Functional GUI with React (Hack for the JVM version)
-- React
-- Everything but input handler shared (but UI shouldn't...)
+A Real-Time Multiplayer Game
+============================
+
+\TODO{This section...}
+
+### Scala Remake of a Commodore 64 Game
+
+There seems to be a tradition of using Scala.js to build games. Indeed, at the time of writing, half of the projects listed on the official web site of the project are video games. What could be better than a multiplayer game to showcase the scala-js-transport library? To cope with time constraints and stay focused on the project topic, the decision was made to start working from an existing game. Out of the list of open source games published on GitHub @githubgames, Survivor @survivor2012 appears to be the most suitable for the addition of real-time multiplayer features.
+
+The original version of the game was written in 1982 for the Atari 2600. One year later, a remake with better graphics is released for the Commodore 64. Recently, S. Schiller developed an open source remake of the game using HTML/CSS/JavaScript @survivor2012. This latest open source remake served as a basis for the version of the game presented in this chapter. The code was rewritten from scratch in Scala to follow the functional programming style required by the scala-lag-comp framework, but still shares the visual assets created by S. Schiller.
+
+### Architecture
+
+The Scala remake of Survivor puts together the scala-js-transport library and the scala-lag-comp framework into a cross platform, real time multiplayer game. On the networking side, it uses WebRTC if available, and fallbacks to WebSocket otherwise.
+
+Every aspect of the game logic is written in pure Scala, and is cross compiled to run on both Java Virtual Machines and JavaScript engines. Some IO related code had to be written specifically for each platform, such as the handling of keyboard events and of rendering requests. The JavaScript implementation is using the DOM APIs, and the JVM implementation is built on top of the JavaFX/ScalaFX platform. On the JavaScript side rendering requests are issued with *requestAnimationFrame*, which saves CPU usage by only requesting rendering when the page is visible to the user.
+
+In order to reuse the visual assets from @survivor2012, the JVM version embeds a full WebKit browser in order to run the same implementation of the user interface than the JavaScript version. The rendering on the JVM goes as follows. It begins with *render* method being called with a *State* to display. This *State* is serialized using the uPickle serialization library @upickle, and passed to the embedded web browser as the argument of a *renderString* function. This function, defined in the Scala.js with a *@JSExport* annotation to be visible to the outside word, deserializes it's argument back into a *State*, but this time on the JavaScript engine. With this trick, a *State* can be transfered from a JVM to a JavaScript engine, allowing the implementation of the user interface to be shared between two platforms. While sufficient for a proof of concept, this approach reduces the performances of the JVM version of the game, which could be avoided with an actual rewrite of the user interface on top of JavaFX/ScalaFX.
+
+### Functional Graphical User Interface With React
+
+- How React
 - Functional design of gun fire (-> function of time!)
-- WebRTC with SockJS fallback
-- Results: 60FPS on both platforms, lag free gameplay
-- Results: Lag Compensation in action (Screenshots)
+- Reflect on the original implementation with crazy DOM/CSS mutations everywhere
 
+### Result
+
+- Server hosted on Amazon EC2 (via Heroku), on cross Atlantic server to test with bad network conditions.
+- 60FPS on both platforms, lag free gameplay
+- JVM version feels slower, probably due the WebKit embedding into JavaFx.
+- Can feel some JVM "warm up" effect
+- Lag Compensation in action (Screenshots)
 
 Related Work
 ============

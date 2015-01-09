@@ -504,29 +504,28 @@ pair of peers, and the algorithms only retains the requests with the
 shortest round trip times.
 
 Certainly, this approach will result in slightly shifted views of the
-\emph{globalTime}.
+\emph{globalTime}. Even with more solutions elaborated, such as the
+Network Time Protocol, the average precision varies between 20 ms and
+100 ms depending on the quality of the connection \cite{mills2010}. In
+the case of the scala-lag-comp framework, out-of-sync clocks can
+decrease the quality of the user experience but do not effect
+correctness. Indeed, once every user has seen every input, and once all
+the simulations have reached the \emph{globalTime} at which the latest
+input was issued, all the simulations generate \emph{States} for the
+same \emph{globalTime}. If one user is significantly ahead of the
+others, this will have the effect of preventing him to react quickly to
+other peers actions. Suppose a peers \(P_a\) think the \emph{globalTime}
+is \(t_a\) seconds ahead of what other peers believe. Whenever he
+receives an input issued at time \(t_1\), \(P_a\) will have already
+simulated and displayed the application up to time
+\(t_1 + t_a + networkdelay\), and his reaction to this input will be
+issued with a lag of \(t_a + networkdelay\). Furthermore, being ahead of
+the actual \emph{globalTime} implies that the \emph{rolls back}
+mechanism will be used for significant portions of time, introducing
+potential visual glitches such as avatars teleporting from one point to
+another.
 
-\begin{itemize}
-\item
-  more elaborated protocols using authoritative server
-\item
-  NTP
-\item
-  Low level, designed to work on top of UDP
-\item
-  Average precision varies between 20 ms and 100 ms, depending on the
-  connection quality \cite{mills2010}
-\item
-  question: what are the implications of out of sync clocks?
-\item
-  correctness is not affected, eventually every user sees every inputs,
-  and once all the simulations have reached the globalTime at which the
-  last input was issued, all simulations will be coherent.
-\item
-  not noticeable around 100ms
-\end{itemize}
-
-To prevent malicious manupulations of the clock (a form of cheating in
+To prevent malicious manipulations of the clock (a form of cheating in
 games), one could improve the framework by adding a mechanism to verify
 that the issue times of inputs respects some causal consistency. Follows
 an example of such mechanism.
@@ -584,27 +583,97 @@ fixed size array, retraining the association between a time, a list of
 lists to store \emph{Events}, querying the cache can be done using
 reference equality for maximum efficiency.
 
-\section{Putting It All Together: A Real-Time Multiplayer
-Game}\label{putting-it-all-together-a-real-time-multiplayer-game}
+\chapter{A Real-Time Multiplayer
+Game}\label{a-real-time-multiplayer-game}
+
+\TODO{This section...}
+
+\section{Scala Remake of a Commodore 64
+Game}\label{scala-remake-of-a-commodore-64-game}
+
+There seems to be a tradition of using Scala.js to build games. Indeed,
+at the time of writing, half of the projects listed on the official web
+site of the project are video games. What could be better than a
+multiplayer game to showcase the scala-js-transport library? To cope
+with time constraints and stay focused on the project topic, the
+decision was made to start working from an existing game. Out of the
+list of open source games published on GitHub \cite{githubgames},
+Survivor \cite{survivor2012} appears to be the most suitable for the
+addition of real-time multiplayer features.
+
+The original version of the game was written in 1982 for the Atari 2600.
+One year later, a remake with better graphics is released for the
+Commodore 64. Recently, S. Schiller developed an open source remake of
+the game using HTML/CSS/JavaScript \cite{survivor2012}. This latest open
+source remake served as a basis for the version of the game presented in
+this chapter. The code was rewritten from scratch in Scala to follow the
+functional programming style required by the scala-lag-comp framework,
+but still shares the visual assets created by S. Schiller.
+
+\section{Architecture}\label{architecture}
+
+The Scala remake of Survivor puts together the scala-js-transport
+library and the scala-lag-comp framework into a cross platform, real
+time multiplayer game. On the networking side, it uses WebRTC if
+available, and fallbacks to WebSocket otherwise.
+
+Every aspect of the game logic is written in pure Scala, and is cross
+compiled to run on both Java Virtual Machines and JavaScript engines.
+Some IO related code had to be written specifically for each platform,
+such as the handling of keyboard events and of rendering requests. The
+JavaScript implementation is using the DOM APIs, and the JVM
+implementation is built on top of the JavaFX/ScalaFX platform. On the
+JavaScript side rendering requests are issued with
+\emph{requestAnimationFrame}, which saves CPU usage by only requesting
+rendering when the page is visible to the user.
+
+In order to reuse the visual assets from \cite{survivor2012}, the JVM
+version embeds a full WebKit browser in order to run the same
+implementation of the user interface than the JavaScript version. The
+rendering on the JVM goes as follows. It begins with \emph{render}
+method being called with a \emph{State} to display. This \emph{State} is
+serialized using the uPickle serialization library \cite{upickle}, and
+passed to the embedded web browser as the argument of a
+\emph{renderString} function. This function, defined in the Scala.js
+with a \emph{\cite{JSExport}} annotation to be visible to the outside
+word, deserializes it's argument back into a \emph{State}, but this time
+on the JavaScript engine. With this trick, a \emph{State} can be
+transfered from a JVM to a JavaScript engine, allowing the
+implementation of the user interface to be shared between two platforms.
+While sufficient for a proof of concept, this approach reduces the
+performances of the JVM version of the game, which could be avoided with
+an actual rewrite of the user interface on top of JavaFX/ScalaFX.
+
+\section{Functional Graphical User Interface With
+React}\label{functional-graphical-user-interface-with-react}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  History: Scala.js port of a JS port of a Commodore 64 game
-\item
-  Functional GUI with React (Hack for the JVM version)
-\item
-  React
-\item
-  Everything but input handler shared (but UI shouldn't...)
+  How React
 \item
   Functional design of gun fire (-\textgreater{} function of time!)
 \item
-  WebRTC with SockJS fallback
+  Reflect on the original implementation with crazy DOM/CSS mutations
+  everywhere
+\end{itemize}
+
+\section{Result}\label{result}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Results: 60FPS on both platforms, lag free gameplay
+  Server hosted on Amazon EC2 (via Heroku), on cross Atlantic server to
+  test with bad network conditions.
 \item
-  Results: Lag Compensation in action (Screenshots)
+  60FPS on both platforms, lag free gameplay
+\item
+  JVM version feels slower, probably due the WebKit embedding into
+  JavaFx.
+\item
+  Can feel some JVM "warm up" effect
+\item
+  Lag Compensation in action (Screenshots)
 \end{itemize}
 
 \chapter{Related Work}\label{related-work}
