@@ -72,7 +72,6 @@
 \usepackage{changepage}
 \usepackage{titling}
 \usepackage{tocloft}
-\usepackage{appendix}
 
 % Figures
 \usepackage{graphicx}
@@ -80,10 +79,13 @@
 \usepackage{floatrow}
 \floatsetup[table]{capposition=bottom}
 
+% References
+\bibliographystyle{plain}
+
+% Custom commands
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
 \usepackage{color}
 \newcommand\TODO[1]{\emph{\color{red} TODO: #1}}
-
 \usepackage{xspace}
 \newcommand\dt[0]{$\Delta t$\xspace}

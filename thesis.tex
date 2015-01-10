@@ -1,4 +1,4 @@
-\documentclass[12pt, letterpaper, oneside]{report}
+\documentclass[12pt, oneside]{report}
 
 \input{headers.tex}
 \input{figures.tex}
@@ -8,17 +8,12 @@
 \date{January 16, 2015}
 
 \begin{document}
+  \renewcommand{\sectionautorefname}{Section}
+  \renewcommand\bibname{References}
 
   \input{titlepage.tex}
-  
   \input{abstract.tex}
-  
   \tableofcontents
-
   \input{content.mdtex}
-    
-  \renewcommand\bibname{References}
-  \bibliographystyle{abbrv}
   \bibliography{references}
-
 \end{document}

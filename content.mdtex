@@ -94,13 +94,22 @@ the \emph{promise} can then be completed with a connection listener.
 
 \rawserver{Implementation of a WebSocket echo server.}
 
+In addition to the example of usage presented in
+\autoref{transportInterface} and \autoref{rawclient}, the
+scala-js-transport library provides two additional abstractions to
+express communication over the network. \autoref{wrappers} contains
+examples of implementations using remote procedure calls and the actor
+model, which are available as wrappers around the \emph{Transport} to
+prover higher level of abstraction.
+
 \section{Implementations}\label{implementations}
 
 The scala-js-transport library contains several implementations of
-\emph{Transports} for WebSocket, SockJS and WebRTC. This subsection
-briefly presents the different technologies and their respective
-advantages. \autoref{impl-summary} summarizes the available
-\emph{Transports} for each platform and technology.
+\emph{Transports} for WebSocket, SockJS \cite{sockjs} and WebRTC
+\cite{webrtc2014}. This subsection briefly presents the different
+technologies and their respective advantages. \autoref{impl-summary}
+summarizes the available \emph{Transports} for each platform and
+technology.
 
 \begin{longtable}[c]{@{}lccc@{}}
 \caption{Summary of the available
@@ -143,16 +152,17 @@ which is lightweight compared to the Netty framework.
 
 \subsection{SockJS}\label{sockjs}
 
-SockJS is a WebSocket emulation protocol which fallbacks to different
-protocols when WebSocket is not supported. Is supports a large number of
-techniques to emulate the sending of messages from server to client,
-such as AJAX long polling, AJAX streaming, EventSource and streaming
-content by slowly loading an HTML file in an iframe. These techniques
-are based on the following idea: by issuing a regular HTTP request from
-client to server, and voluntarily delaying the response from the server,
-the server side can decide when to release information. This allows to
-emulate the sending of messages from server to client which not
-supported in the traditional request-response communication model.
+SockJS \cite{sockjs} is a WebSocket emulation protocol which fallbacks
+to different protocols when WebSocket is not supported. Is supports a
+large number of techniques to emulate the sending of messages from
+server to client, such as AJAX long polling, AJAX streaming, EventSource
+and streaming content by slowly loading an HTML file in an iframe. These
+techniques are based on the following idea: by issuing a regular HTTP
+request from client to server, and voluntarily delaying the response
+from the server, the server side can decide when to release information.
+This allows to emulate the sending of messages from server to client
+which not supported in the traditional request-response communication
+model.
 
 The scala-js-transport library provides a \emph{Transport} build on the
 official SockJS JavaScript client, and a server on the Play Framework
@@ -161,11 +171,11 @@ scheduled SockJS support for the next major release.
 
 \subsection{WebRTC}\label{webrtc}
 
-WebRTC is an experimental API for peer to peer communication between web
-browsers. Initially targeted at audio and video communication, WebRTC
-also provides \emph{Data Channels} to communicate arbitrary data.
-Contrary to WebSocket only supports TCP, WebRTC can be configures to use
-either TCP, UDP or SCTP.
+WebRTC \cite{webrtc2014} is an experimental API for peer to peer
+communication between web browsers. Initially targeted at audio and
+video communication, WebRTC also provides \emph{Data Channels} to
+communicate arbitrary data. Contrary to WebSocket only supports TCP,
+WebRTC can be configures to use either TCP, UDP or SCTP.
 
 As opposed to WebSocket and SockJS which only need a URL to establish a
 connection, WebRTC requires a \emph{signaling channel} in order to open
@@ -199,11 +209,11 @@ browser implementations are available on the node.js platform.
 
 By using \emph{Transport} interface, it is possible write programs with
 an abstract communication medium. We present two \emph{Transport}
-wrappers, for Akka \cite{akka} and Autowire~\cite{autowire}, which allow
-to work with different model of concurrency. Because Autowire and Akka
-(via \cite{scala-js-actors}) can both be used on the JVM and on
-JavaScript, these wrappers can be used to build cross compiling programs
-compatible with all the \emph{Transport} implementations presented in
+wrappers, for Akka and Autowire~\cite{autowire}, which allow to work
+with different model of concurrency. Because Autowire and Akka (via
+\cite{scala-js-actors}) can both be used on the JVM and on JavaScript,
+these wrappers can be used to build cross compiling programs compatible
+with all the \emph{Transport} implementations presented in
 \autoref{implementations}.
 
 \subsection{Akka}\label{akka}
@@ -635,33 +645,72 @@ method being called with a \emph{State} to display. This \emph{State} is
 serialized using the uPickle serialization library \cite{upickle}, and
 passed to the embedded web browser as the argument of a
 \emph{renderString} function. This function, defined in the Scala.js
-with a \emph{\cite{JSExport}} annotation to be visible to the outside
-word, deserializes it's argument back into a \emph{State}, but this time
-on the JavaScript engine. With this trick, a \emph{State} can be
-transfered from a JVM to a JavaScript engine, allowing the
-implementation of the user interface to be shared between two platforms.
-While sufficient for a proof of concept, this approach reduces the
-performances of the JVM version of the game, which could be avoided with
-an actual rewrite of the user interface on top of JavaFX/ScalaFX.
+with a \emph{@JSExport} annotation to be visible to the outside word,
+deserializes it's argument back into a \emph{State}, but this time on
+the JavaScript engine. With this trick, a \emph{State} can be transfered
+from a JVM to a JavaScript engine, allowing the implementation of the
+user interface to be shared between two platforms. While sufficient for
+a proof of concept, this approach reduces the performances of the JVM
+version of the game, which could be avoided with an actual rewrite of
+the user interface on top of JavaFX/ScalaFX.
 
 \section{Functional Graphical User Interface With
 React}\label{functional-graphical-user-interface-with-react}
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  How React
-\item
-  Functional design of gun fire (-\textgreater{} function of time!)
-\item
-  Reflect on the original implementation with crazy DOM/CSS mutations
-  everywhere
-\end{itemize}
+In this section we discuss the implementation of the graphics user
+interface of our game using the React library \cite{react}. In
+functional programing, the \emph{de facto} standard to building graphics
+user interface seems to be functional reactive programing. React enables
+a different approach\footnote{React supports a variety of architectures
+  to build user interfaces, and is not limited the approach described in
+  this section. For example, it is possible to store mutable state into
+  \emph{Components}. React also supports server side rendering; by
+  sharing the definition of \emph{Components} between client and server
+  side, rendering can take place on the server, thus limiting the client
+  work to reception and application of diffs.}, which suits perfectly
+the architecture of the scala-lag-comp framework.
 
-\section{Result}\label{result}
+The interface is a single \emph{render} function, which takes as
+argument the entire state of the application, and returns a complete
+HTML representation of the state as a result.
+
+The key performance aspect of React is that the library does directly
+uses the DOM returned by the \emph{render} function. Instead of
+replacing the content of the page whenever a new DOM is computed, React
+computes a diff between this new DOM and the currently rendered DOM.
+This diff is then used to do the send the minimal set of mutations to
+the browser, thereby minimizing rendering time.
+
+In order to lighten the diff computation, React uses \emph{Components},
+small building block to define the \emph{render} function. A
+\emph{Component} is essentially a fraction of the \emph{render}
+function, given a subset of the application state it returns an HTML
+representation for this subset of the application. \emph{Components} can
+be composed into a tree that takes the complete application state at
+it's root, and propagates the necessary elements of state thought the
+tree, thus forming a complete rendering function of the application.
+Thanks to this subdivision into small \emph{Components}, React is able
+to optimize the diff operation by skipping branches of the HTML DOM
+corresponding to \emph{Components} that depend on subsets of the state
+which is unchanged since the last rendering.
+
+There is a special optimization possible when working with immutable
+data structure, as it is the case with the scala-lag-comp framework.
+This optimization consists in overriding React's method for dirty
+checking \emph{Components}. Instead of using deep equality on subsets of
+states to determine if a \emph{Component} needs to be re-rendered, one
+can use reference equality, which is a sufficient condition for equality
+when working with immutable data structure.
+
+\section{Experimental Result}\label{experimental-result}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Reader are invited to try out the game! . To start a game, open the
+  page trice and start moving around with arrow keys, and fire with
+  space bar.
+\item
+  Screenshot
 \item
   Server hosted on Amazon EC2 (via Heroku), on cross Atlantic server to
   test with bad network conditions.
@@ -673,23 +722,70 @@ React}\label{functional-graphical-user-interface-with-react}
 \item
   Can feel some JVM "warm up" effect
 \item
-  Lag Compensation in action (Screenshots)
+  Lag Compensation in action (frame by frame Screenshots)
 \end{itemize}
 
 \chapter{Related Work}\label{related-work}
 
+\TODO{This Section...}
+
+\section{Network libraries}\label{network-libraries}
+
+The Node.js platform gained a lot of popularity in the recent year. By
+enabling server-side of applications to be written in JavaScript, it
+allows data structure and API can be shared between client and server.
+In the case of network capabilities, many JavaScript libraries imitate
+the WebSocket API and rely on \emph{duck typing} to share code between
+client and server. For example, the ws library \cite{nodejsws} is an
+implantation of WebSocket client and server for Node.js which provide
+\emph{ws} objects behaving exactly like \emph{WebSocket} objects do on
+the browser side. Similarly, SockJS clients (discussed in
+\autoref{sockjs}) provide \emph{SockJS} objects that are almost drop in
+replacement for \emph{WebSocket} objects. Finally, we could also mention
+official WebRTC API \cite{webrtc2014}, which was designed such that its
+"API for sending and receiving data models the behavior of WebSockets".
+
+ClojureScript, the official Clojure to JavaScript compiler, has a large
+ecosystem of libraries for both client and server, out of which Sente
+\cite{sente} seems to be the most popular library for network
+communication. It goals are similar to those of scala-js-transport,
+offer a uniform client/server API which supports several transport
+mechanism. Instead of using an existing WebSocket emulation library,
+Sente implements its own solution to fallback on Ajax/long-polling when
+WebSocket is not available.
+
+With the large number of languages that compile to JavaScript
+\cite{compiletojs}, an exhaustive coverage of the network libraries
+would be beyond the scope of this report. To the best of our knowledge,
+scala-js-transport is the first library offering this variety of
+supported protocols and platform (summarized in \autoref{impl-summary}).
+
+\section{Game Engines}\label{game-engines}
+
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Js/NodeJs, relies on duck typing
+  AoE/Sc2
 \item
-  Closure
-\item
-  Steam Engine/AoE/Sc2
+  \cite{maphacks2011}
 \item
   \cite{timelines2013}
 \item
-  Cheating concerns
+  \cite{elmlang}
+\end{itemize}
+
+\section{Functional Programming In
+Games}\label{functional-programming-in-games}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Pong Async
+  \url{http://ragnard.github.io/2013/10/01/clojurecup-pong-async.html}
+\item
+  \cite{retrogames2008}
+\item
+  \cite{lazysimulation2014}
 \end{itemize}
 
 \chapter{Conclusion and Future Work}\label{conclusion-and-future-work}

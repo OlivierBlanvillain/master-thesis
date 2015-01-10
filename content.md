@@ -17,7 +17,7 @@ Introduction
 Transport
 =========
 
-\TODO{This section, scala-js-transport library, main contribution}  
+\TODO{This section, scala-js-transport library, main contribution}
 
 ### A Uniform Interface
 
@@ -37,9 +37,11 @@ The WebSocket echo server used in #rawclient has a very simple behavior: receive
 
 \rawserver{Implementation of a WebSocket echo server.}
 
+In addition to the example of usage presented in #transportInterface and #rawclient, the scala-js-transport library provides two additional abstractions to express communication over the network. #wrappers contains examples of implementations using remote procedure calls and the actor model, which are available as wrappers around the *Transport* to prover higher level of abstraction.
+
 ### Implementations
 
-The scala-js-transport library contains several implementations of *Transports* for WebSocket, SockJS and WebRTC. This subsection briefly presents the different technologies and their respective advantages. #impl-summary summarizes the available *Transports* for each platform and technology.
+The scala-js-transport library contains several implementations of *Transports* for WebSocket, SockJS @sockjs and WebRTC @webrtc2014. This subsection briefly presents the different technologies and their respective advantages. #impl-summary summarizes the available *Transports* for each platform and technology.
 
 Table: Summary of the available Transports.\label{impl-summary}
 
@@ -56,12 +58,12 @@ WebSocket provides full-duplex communication over a single TCP connection. Conne
 WebSocket is also well supported across different platforms. Our library provides four WebSocket *Transports*, a native JavaScript client, a Play Framework server, a Netty client/server and a Tyrus client. While having all three Play, Netty and Tyrus might seem redundant, each of them comes with its own advantages. Play is a complete web framework, suitable to build every component of a web application. Play is based on Netty, which means that for a standalone WebSocket server, using Netty directly leads to better performances and less dependencies. Regarding client side, the Tyrus library offers a standalone WebSocket client which is lightweight compared to the Netty framework.
 
 ###### SockJS
-SockJS is a WebSocket emulation protocol which fallbacks to different protocols when WebSocket is not supported. Is supports a large number of techniques to emulate the sending of messages from server to client, such as AJAX long polling, AJAX streaming, EventSource and streaming content by slowly loading an HTML file in an iframe. These techniques are based on the following idea: by issuing a regular HTTP request from client to server, and voluntarily delaying the response from the server, the server side can decide when to release information. This allows to emulate the sending of messages from server to client which not supported in the traditional request-response communication model.
+SockJS @sockjs is a WebSocket emulation protocol which fallbacks to different protocols when WebSocket is not supported. Is supports a large number of techniques to emulate the sending of messages from server to client, such as AJAX long polling, AJAX streaming, EventSource and streaming content by slowly loading an HTML file in an iframe. These techniques are based on the following idea: by issuing a regular HTTP request from client to server, and voluntarily delaying the response from the server, the server side can decide when to release information. This allows to emulate the sending of messages from server to client which not supported in the traditional request-response communication model.
 
 The scala-js-transport library provides a *Transport* build on the official SockJS JavaScript client, and a server on the Play Framework via a community plugin @play2-sockjs. Netty developers have scheduled SockJS support for the next major release.
 
 ###### WebRTC
-WebRTC is an experimental API for peer to peer communication between web browsers. Initially targeted at audio and video communication, WebRTC also provides *Data Channels* to communicate arbitrary data. Contrary to WebSocket only supports TCP, WebRTC can be configures to use either TCP, UDP or SCTP.
+WebRTC @webrtc2014 is an experimental API for peer to peer communication between web browsers. Initially targeted at audio and video communication, WebRTC also provides *Data Channels* to communicate arbitrary data. Contrary to WebSocket only supports TCP, WebRTC can be configures to use either TCP, UDP or SCTP.
 
 As opposed to WebSocket and SockJS which only need a URL to establish a connection, WebRTC requires a *signaling channel* in order to open the peer to peer connection. The *signaling channel* is not tight to a particular technology, its only requirement is to allow a back an forth communication between peers. This is commonly achieved by connecting both peers via WebSocket to a server, which then acts as a relay for the WebRTC connection establishment.
 
@@ -77,7 +79,7 @@ At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and 
 
 ### Wrappers
 
-By using *Transport* interface, it is possible write programs with an abstract communication medium. We present two *Transport* wrappers, for Akka @akka and Autowire\ @autowire, which allow to work with different model of concurrency. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.
+By using *Transport* interface, it is possible write programs with an abstract communication medium. We present two *Transport* wrappers, for Akka and Autowire\ @autowire, which allow to work with different model of concurrency. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.
 
 ###### Akka
 The actor model is based on asynchronous message passing between primitive entities called actors. Featuring both location transparency and fault tolerance via supervision, the actor model is particularly adapted to distributed environment. Akka, a toolkit build around the actor model for the JVM, was partly ported to Scala.js by S. Doeraene in @scala-js-actors. The communication interface implemented in @scala-js-actors was revisited into the *Transport* wrapper presented in #actorWrapper.
@@ -156,7 +158,7 @@ We now give a quick overview of the architecture and implementation of the scala
 ###### ClockSync
 The first action undertaken by the *ClockSync* component is to send a *Greeting* message in broadcast, and listen for other *Greetings* message during a small time window. Peer membership and identity are determined from these messages. Each *Greeting* message contains a randomly generated number which is used to order peers globally, and attribute them a consistent identity.
 
-Once peers are all aware of each other, they need to agree on a *globalTime*. Ultimately, each peer holds a difference of time \dt between it's internal clock and the  globally consented clock. The global clock is defined to be the arithmetic average of all the peer's clock. In order to compute their \dt, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm\ @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, one can estimate the value of the remote clock by adding half of the request round trip time to *t*. One all peers have estimations of the various clocks, they are able to locally compute the average, and use it as the estimated *globalTime*. To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only retains the requests with the shortest round trip times.
+Once peers are all aware of each other, they need to agree on a *globalTime*. Ultimately, each peer holds a difference of time \dt between it's internal clock and the globally consented clock. The global clock is defined to be the arithmetic average of all the peer's clock. In order to compute their \dt, each pair of peers needs exchange their clock values. This is accomplished in a way similar to Cristian's algorithm\ @cristian89. Firstly, peers send request for the clock values of other peers. Upon receiving a response containing a time *t*, one can estimate the value of the remote clock by adding half of the request round trip time to *t*. One all peers have estimations of the various clocks, they are able to locally compute the average, and use it as the estimated *globalTime*. To minimize the impact of network variations, several requests are emitted between each pair of peers, and the algorithms only retains the requests with the shortest round trip times.
 
 Certainly, this approach will result in slightly shifted views of the *globalTime*. Even with more solutions elaborated, such as the Network Time Protocol, the average precision varies between 20 ms and 100 ms depending on the quality of the connection @mills2010. In the case of the scala-lag-comp framework, out-of-sync clocks can decrease the quality of the user experience but do not effect correctness. Indeed, once every user has seen every input, and once all the simulations have reached the *globalTime* at which the latest input was issued, all the simulations generate *States* for the same *globalTime*. If one user is significantly ahead of the others, this will have the effect of preventing him to react quickly to other peers actions. Suppose a peers $P_a$ think the *globalTime* is $t_a$ seconds ahead of what other peers believe. Whenever he receives an input issued at time $t_1$, $P_a$ will have already simulated and displayed the application up to time $t_1 + t_a + networkdelay$, and his reaction to this input will be issued with a lag of $t_a + networkdelay$. Furthermore, being ahead of the actual *globalTime* implies that the *rolls back* mechanism will be used for significant portions of time, introducing potential visual glitches such as avatars teleporting from one point to another.
 
@@ -191,30 +193,64 @@ The Scala remake of Survivor puts together the scala-js-transport library and th
 
 Every aspect of the game logic is written in pure Scala, and is cross compiled to run on both Java Virtual Machines and JavaScript engines. Some IO related code had to be written specifically for each platform, such as the handling of keyboard events and of rendering requests. The JavaScript implementation is using the DOM APIs, and the JVM implementation is built on top of the JavaFX/ScalaFX platform. On the JavaScript side rendering requests are issued with *requestAnimationFrame*, which saves CPU usage by only requesting rendering when the page is visible to the user.
 
-In order to reuse the visual assets from @survivor2012, the JVM version embeds a full WebKit browser in order to run the same implementation of the user interface than the JavaScript version. The rendering on the JVM goes as follows. It begins with *render* method being called with a *State* to display. This *State* is serialized using the uPickle serialization library @upickle, and passed to the embedded web browser as the argument of a *renderString* function. This function, defined in the Scala.js with a *@JSExport* annotation to be visible to the outside word, deserializes it's argument back into a *State*, but this time on the JavaScript engine. With this trick, a *State* can be transfered from a JVM to a JavaScript engine, allowing the implementation of the user interface to be shared between two platforms. While sufficient for a proof of concept, this approach reduces the performances of the JVM version of the game, which could be avoided with an actual rewrite of the user interface on top of JavaFX/ScalaFX.
+In order to reuse the visual assets from @survivor2012, the JVM version embeds a full WebKit browser in order to run the same implementation of the user interface than the JavaScript version. The rendering on the JVM goes as follows. It begins with *render* method being called with a *State* to display. This *State* is serialized using the uPickle serialization library @upickle, and passed to the embedded web browser as the argument of a *renderString* function. This function, defined in the Scala.js with a *@@JSExport* annotation to be visible to the outside word, deserializes it's argument back into a *State*, but this time on the JavaScript engine. With this trick, a *State* can be transfered from a JVM to a JavaScript engine, allowing the implementation of the user interface to be shared between two platforms. While sufficient for a proof of concept, this approach reduces the performances of the JVM version of the game, which could be avoided with an actual rewrite of the user interface on top of JavaFX/ScalaFX.
 
 ### Functional Graphical User Interface With React
 
-- How React
-- Functional design of gun fire (-> function of time!)
-- Reflect on the original implementation with crazy DOM/CSS mutations everywhere
+In this section we discuss the implementation of the graphics user interface of our game using the React library @react. In functional programing, the *de facto* standard to building graphics user interface seems to be functional reactive programing. React enables a different approach^[
+React supports a variety of architectures to build user interfaces, and is not limited the approach described in this section. For example, it is possible to store mutable state into *Components*. React also supports server side rendering; by sharing the definition of *Components* between client and server side, rendering can take place on the server, thus limiting the client work to reception and application of diffs.
+],
+which suits perfectly the architecture of the scala-lag-comp framework.
 
-### Result
+The interface is a single *render* function, which takes as argument the entire state of the application, and returns a complete HTML representation of the state as a result.
+
+The key performance aspect of React is that the library does directly uses the DOM returned by the *render* function. Instead of replacing the content of the page whenever a new DOM is computed, React computes a diff between this new DOM and the currently rendered DOM. This diff is then used to do the send the minimal set of mutations to the browser, thereby minimizing rendering time.
+
+In order to lighten the diff computation, React uses *Components*, small building block to define the *render* function. A *Component* is essentially a fraction of the *render* function, given a subset of the application state it returns an HTML representation for this subset of the application. *Components* can be composed into a tree that takes the complete application state at it's root, and propagates the necessary elements of state thought the tree, thus forming a complete rendering function of the application. Thanks to this subdivision into small *Components*, React is able to optimize the diff operation by skipping branches of the HTML DOM corresponding to *Components* that depend on subsets of the state which is unchanged since the last rendering.
+
+There is a special optimization possible when working with immutable data structure, as it is the case with the scala-lag-comp framework. This optimization consists in overriding React's method for dirty checking *Components*. Instead of using deep equality on subsets of states to determine if a *Component* needs to be re-rendered, one can use reference equality, which is a sufficient condition for equality when working with immutable data structure.
+
+### Experimental Result
+
+- Reader are invited to try out the game! <url>. To start a game, open the page trice and start moving around with arrow keys, and fire with space bar.
+
+- Screenshot
 
 - Server hosted on Amazon EC2 (via Heroku), on cross Atlantic server to test with bad network conditions.
+
 - 60FPS on both platforms, lag free gameplay
+
 - JVM version feels slower, probably due the WebKit embedding into JavaFx.
+
 - Can feel some JVM "warm up" effect
-- Lag Compensation in action (Screenshots)
+
+- Lag Compensation in action (frame by frame Screenshots)
 
 Related Work
 ============
 
-- Js/NodeJs, relies on duck typing
-- Closure
-- Steam Engine/AoE/Sc2
+\TODO{This Section...}
+
+### Network libraries
+
+The Node.js platform gained a lot of popularity in the recent year. By enabling server-side of applications to be written in JavaScript, it allows data structure and API can be shared between client and server. In the case of network capabilities, many JavaScript libraries imitate the WebSocket API and rely on *duck typing* to share code between client and server. For example, the ws library @nodejsws is an implantation of WebSocket client and server for Node.js which provide *ws* objects behaving exactly like *WebSocket* objects do on the browser side. Similarly, SockJS clients (discussed in #sockjs) provide *SockJS* objects that are almost drop in replacement for *WebSocket* objects. Finally, we could also mention official WebRTC API @webrtc2014, which was designed such that its "API for sending and receiving data models the behavior of WebSockets".
+
+ClojureScript, the official Clojure to JavaScript compiler, has a large ecosystem of libraries for both client and server, out of which Sente @sente seems to be the most popular library for network communication. It goals are similar to those of scala-js-transport, offer a uniform client/server API which supports several transport mechanism. Instead of using an existing WebSocket emulation library, Sente implements its own solution to fallback on Ajax/long-polling when WebSocket is not available.
+
+With the large number of languages that compile to JavaScript @compiletojs, an exhaustive coverage of the network libraries would be beyond the scope of this report. To the best of our knowledge, scala-js-transport is the first library offering this variety of supported protocols and platform (summarized in #impl-summary).
+
+### Game Engines
+
+- AoE/Sc2
+- @maphacks2011
 - @timelines2013
-- Cheating concerns
+- @elmlang
+
+### Functional Programming In Games
+
+- Pong Async <http://ragnard.github.io/2013/10/01/clojurecup-pong-async.html>
+- @retrogames2008
+- @lazysimulation2014
 
 Conclusion and Future Work
 ==========================
