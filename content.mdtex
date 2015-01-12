@@ -193,8 +193,8 @@ is sent by \emph{B} over an already established connection with
 connection between \emph{A} and \emph{C}, hiding the fact that \emph{B}
 relays messages between the two nodes.
 
-The scala-js-transport library provides two WebRTC \emph{Transports},
-\emph{WebRTCClient} and \emph{WebRTCClientFallback}. The later
+The scala-js-transport library provides two \emph{Transports} for
+WebRTC, \emph{WebRTCClient} and \emph{WebRTCClientFallback}. The later
 implements some additional logic to detect WebRTC support, and
 automatically fall back to using the signaling channel as substitute for
 WebRTC if either peer does not support it.
@@ -203,7 +203,7 @@ At the time of writing, WebRTC is implemented is Chrome, Firefox and
 Opera, and lakes support in Safari and Internet Explorer. The only non
 browser implementations are available on the node.js platform.
 
-\TODO{Add a sequence diagram and explain connection establishment.}\\\url{http://www.w3.org/TR/webrtc//autoref\{call-flow-browser-to-browser\}}\\\url{http://www.webrtc.org/native-code/native-apis}
+\TODO{Add a sequence diagram and explain connection establishment.}\\
 
 \section{Wrappers}\label{wrappers}
 

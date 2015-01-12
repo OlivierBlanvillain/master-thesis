@@ -1,13 +1,8 @@
 % Fonts
-\usepackage[english]{babel}
 \usepackage[log-declarations=false]{xparse}
-\usepackage{luainputenc}
 \usepackage{fontspec}
-\pdfprotrudechars=2
-\directlua{fonts.protrusions.setups.default.factor=.5}
-\pdfadjustspacing=2
-\newfontfeature{Microtype}{protrusion=default;expansion=default;}
-\setmainfont[Microtype, Ligatures=TeX]{Adobe Caslon Pro}
+\usepackage[protrusion=true, final]{microtype}
+\setmainfont{Adobe Caslon Pro}
 \setmonofont{Bitstream Vera Sans Mono}
 
 % Scala format
@@ -78,6 +73,7 @@
 \graphicspath{{figures/}}
 \usepackage{floatrow}
 \floatsetup[table]{capposition=bottom}
+\usepackage{pstricks}
 
 % References
 \bibliographystyle{plain}

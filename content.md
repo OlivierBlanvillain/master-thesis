@@ -69,14 +69,14 @@ As opposed to WebSocket and SockJS which only need a URL to establish a connecti
 
 To simplify the process of relaying messages from one peer to another, our library uses picklers for *ConnectionHandle*. Concretely, when a *ConnectionHandle* object connecting node *A* and *B* is sent by *B* over an already established connection with *C*, the *ConnectionHandle* received by *C* will act as a connection between *A* and *C*, hiding the fact that *B* relays messages between the two nodes.
 
-The scala-js-transport library provides two WebRTC *Transports*, *WebRTCClient* and *WebRTCClientFallback*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
+The scala-js-transport library provides two *Transports* for WebRTC, *WebRTCClient* and *WebRTCClientFallback*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
 
 \TODO{Add a sequence diagram and explain connection establishment.}  
-<http://www.w3.org/TR/webrtc/#call-flow-browser-to-browser>  
-<http://www.webrtc.org/native-code/native-apis>  
-
+<!-- <http://www.w3.org/TR/webrtc/#call-flow-browser-to-browser>  
+<http://www.webrtc.org/native-code/native-apis> -->
+ 
 ### Wrappers
 
 By using *Transport* interface, it is possible write programs with an abstract communication medium. We present two *Transport* wrappers, for Akka and Autowire\ @autowire, which allow to work with different model of concurrency. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.

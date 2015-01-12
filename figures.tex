@@ -1,5 +1,5 @@
-\newcommand\toplisting[0]{\hrule\vspace{5px}}
-\newcommand\bottomlisting[0]{\vspace{4px}\hrule}
+\newcommand\toplisting[0]{\hrule\vspace{5pt}}
+\newcommand\bottomlisting[0]{\vspace{4pt}\hrule}
 
 \newcommand\customlisting[4]{
   \begin{figure}[ht]
@@ -42,9 +42,9 @@
     \begin{minipage}{0.74\linewidth}
       \toplisting
       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleApi.listings}
-      \vspace{12px}
+      \vspace{12pt}
       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleServer.listings}
-      \vspace{12px}
+      \vspace{12pt}
       \lstset{caption=#1,label=rpcExample}
       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleClient.listings}
       \bottomlisting
@@ -58,9 +58,14 @@
 }
 
 \newcommand\stateGraph[1]{
+  
   \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{state-graph}
+    \begin{pspicture}(4,5)
+    \psframe(0.7,2)(3.3,3)
+    \rput(2,2.5){First Example}
+    \end{pspicture}
+    % \includegraphics[width=0.8\textwidth]{state-graph}
     \caption{#1}
     \label{stateGraph}
   \end{figure}
