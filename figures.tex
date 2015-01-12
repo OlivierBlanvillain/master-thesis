@@ -58,13 +58,17 @@
 }
 
 \newcommand\stateGraph[1]{
-  
   \begin{figure}[ht]
     \centering
-    \begin{pspicture}(4,5)
-    \psframe(0.7,2)(3.3,3)
-    \rput(2,2.5){First Example}
-    \end{pspicture}
+    \input{figures/gud.tex}
+  \end{figure}
+  \begin{figure}[ht]
+    \centering
+    \input{figures/test.pstricks}
+    % \begin{pspicture}(4,5)
+    % \psframe(0.7,2)(3.3,3)
+    % \rput(2,2.5){First Example}
+    % \end{pspicture}
     % \includegraphics[width=0.8\textwidth]{state-graph}
     \caption{#1}
     \label{stateGraph}
