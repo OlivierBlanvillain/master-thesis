@@ -4,6 +4,7 @@
 \usepackage[protrusion=true, final]{microtype}
 \setmainfont{Adobe Caslon Pro}
 \setmonofont{Bitstream Vera Sans Mono}
+\usepackage{bm}
 
 % Scala format
 \usepackage{listings}
@@ -85,3 +86,6 @@
 \newcommand\TODO[1]{\emph{\color{red} TODO: #1}}
 \usepackage{xspace}
 \newcommand\dt[0]{$\Delta t$\xspace}
+
+\newcommand\state[1]{S\textsubscript{#1}}
+\newcommand\stateprime[1]{S'\hspace{-1.5pt}\textsubscript{#1}}

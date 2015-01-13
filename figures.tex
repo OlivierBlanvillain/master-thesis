@@ -31,6 +31,16 @@
     {transport/examples/report-listings/jvm/src/main/scala/examples/ActorWrapper.listings}
 }
 
+\newcommand\rawclient[1]{
+  \customlisting{ht}{rawclient}{0.71}{#1}
+    {transport/examples/report-listings/jvm/src/main/scala/examples/RawClient.listings}
+}
+
+\newcommand\rawserver[1]{
+  \customlisting{ht}{rawserver}{0.78}{#1}
+    {transport/examples/report-listings/jvm/src/main/scala/examples/RawServer.listings}
+}
+
 \newcommand\yellingActor[1]{
   \customlisting{ht}{yellingActor}{0.68}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/YellingActor.listings}
@@ -41,22 +51,6 @@
     {transport/examples/report-listings/jvm/src/main/scala/examples/RpcExample.listings}
 }
 
-
-%   \begin{figure}[ht]
-%     \centering
-%     \begin{minipage}{0.74\linewidth}
-%       \toplisting
-%       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleApi.listings}
-%       \vspace{12pt}
-%       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleServer.listings}
-%       \vspace{12pt}
-%       \lstset{caption=#1,label=rpcExample}
-%       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleClient.listings}
-%       \bottomlisting
-%     \end{minipage}
-%   \end{figure}
-% }
-
 \newcommand\engineInterface[1]{
   \customlisting{ht}{engineInterface}{0.75}{#1}
     {survivor/lag-comp/src/main/scala/AbstractEngine.listings}
@@ -66,10 +60,9 @@
   \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{state-graph}
-
-      \input{figures/state-graph.tex}
-      \caption{#1}
-      \label{stateGraph}
+    \input{figures/state-graph.tex}
+    \caption{#1}
+    \label{stateGraph}
   \end{figure}
 }
 
@@ -80,14 +73,4 @@
     \caption{#1}
     \label{lagcompEngine}
   \end{figure}
-}
-
-\newcommand\rawclient[1]{
-  \customlisting{ht}{rawclient}{0.71}{#1}
-    {transport/examples/report-listings/jvm/src/main/scala/examples/RawClient.listings}
-}
-
-\newcommand\rawserver[1]{
-  \customlisting{ht}{rawserver}{0.78}{#1}
-    {transport/examples/report-listings/jvm/src/main/scala/examples/RawServer.listings}
 }

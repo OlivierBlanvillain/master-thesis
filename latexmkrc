@@ -17,7 +17,7 @@ sub md2tex {
       s/#([A-Za-z0-9-]+)/\\\\autoref{\\1}/g
       s/@@ /@/g
       s/## /#/g
-    ' | pandoc --chapters --listings --no-tex-ligatures -f markdown -t latex -o $_[0].mdtex");
+    ' | pandoc --chapters --listings --no-tex-ligatures -f markdown+subscript -t latex -o $_[0].mdtex");
 };
 
 add_cus_dep('scala', 'listings', 0, 'scalalistings');

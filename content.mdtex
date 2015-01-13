@@ -413,14 +413,17 @@ order to incorporate this out of date input into the local simulation,
 the framework \emph{rolls back} the state of the simulation as it was
 just before the time of emission of this remote input, and then replays
 the simulation up to the current time. \autoref{stateGraph} shows this
-process in action from the point of view of peer \emph{P1}. In this
-example, \emph{P1} emits an input at time \emph{t2}. Then, at time
-\emph{t3}, \emph{P1} receives an input from \emph{P2} which was emitted
-at time \emph{t1}. At this point, the framework invalidates a branch of
-the state tree, \emph{S2-S3}, and computes \emph{S2'-S3'-S4'} to take
-into account both inputs.
+process in action from the point of view of peer
+\emph{P\textsubscript{1}}. In this example, \emph{P\textsubscript{1}}
+emits an input at time \emph{t\textsubscript{2}}. Then, at time
+\emph{t\textsubscript{3}}, \emph{P\textsubscript{1}} receives an input
+from \emph{P\textsubscript{2}} which was emitted at time
+\emph{t\textsubscript{1}}. At this point, the framework invalidates a
+branch of the state tree, \emph{\state{2}-\state{2}}, and computes
+\emph{\stateprime{2}-\stateprime{3}-\stateprime{4}} to take into account
+both inputs.
 
-\stateGraph{Growth of the state graph over time, from the point of view of \emph{P1}.}
+\stateGraph{Growth of the state graph over time, from the point of view of \emph{P\textsubscript{1}}.}
 
 By instantaneously applying local input, the application reactiveness is
 not affected by the quality of the connection; a user interacts with the
@@ -521,12 +524,14 @@ the simulations have reached the \emph{globalTime} at which the latest
 input was issued, all the simulations generate \emph{States} for the
 same \emph{globalTime}. If one user is significantly ahead of the
 others, this will have the effect of preventing him to react quickly to
-other peers actions. Suppose a peers \(P_a\) think the \emph{globalTime}
-is \(t_a\) seconds ahead of what other peers believe. Whenever he
-receives an input issued at time \(t_1\), \(P_a\) will have already
+other peers actions. Suppose a peers \emph{P\textsubscript{a}} think the
+\emph{globalTime} is \emph{t\textsubscript{a}} seconds ahead of what
+other peers believe. Whenever he receives an input issued at time
+\emph{t\textsubscript{1}}, \emph{P\textsubscript{a}} will have already
 simulated and displayed the application up to time
-\(t_1 + t_a + networkdelay\), and his reaction to this input will be
-issued with a lag of \(t_a + networkdelay\). Furthermore, being ahead of
+\emph{t\textsubscript{1} + t\textsubscript{a} + networkdelay}, and his
+reaction to this input will be issued with a lag of
+\emph{t\textsubscript{a} + networkdelay}. Furthermore, being ahead of
 the actual \emph{globalTime} implies that the \emph{rolls back}
 mechanism will be used for significant portions of time, introducing
 potential visual glitches such as avatars teleporting from one point to
@@ -537,17 +542,21 @@ games), one could improve the framework by adding a mechanism to verify
 that the issue times of inputs respects some causal consistency. Follows
 an example of such mechanism.
 
-Suppose that every message \(m_i\) sent contains a random number
-\(r_i\). Then, newly emitted inputs could include the latest random
-number generated locally, and the latest random number received from
-other peers. Adding this information would allow the detection of
-malicious peers. Indeed, if a malicious peer \emph{P1} pretends that his
-message \(m_1\) is issued one second later that it is in reality, and
-\emph{P2} sends a message \(m_2\) that can by estimated to arrive before
-\(m_1\) was issues, then \emph{P2} can detect that \emph{P1} is
-malicious by checking that \(m_1\) does not contain \(r_2\).Similarly,
-pretending that a message is issued in the past would break the sequence
-of "latest random number generated locally", and thus be detectable.
+Suppose that every message \emph{m\textsubscript{i}} sent contains a
+random number \emph{r\textsubscript{i}}. Then, newly emitted inputs
+could include the latest random number generated locally, and the latest
+random number received from other peers. Adding this information would
+allow the detection of malicious peers. Indeed, if a malicious peer
+\emph{P\textsubscript{1}} pretends that his message
+\emph{m\textsubscript{1}} is issued one second later that it is in
+reality, and \emph{P\textsubscript{2}} sends a message
+\emph{m\textsubscript{2}} that can by estimated to arrive before
+\emph{m\textsubscript{1}} was issues, then \emph{P\textsubscript{2}} can
+detect that \emph{P\textsubscript{1}} is malicious by checking that
+\emph{m\textsubscript{1}} does not contain
+\emph{r\textsubscript{2}}.Similarly, pretending that a message is issued
+in the past would break the sequence of "latest random number generated
+locally", and thus be detectable.
 
 \subsection{StateLoop}\label{stateloop}
 
@@ -819,10 +828,8 @@ the framework to avoid direct managment of state.
 Games}\label{functional-programming-in-games}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Pong Async
-  \url{http://ragnard.github.io/2013/10/01/clojurecup-pong-async.html}
+  Pong Async \cite{pongasync}
 \item
   \cite{retrogames2008}
 \item
