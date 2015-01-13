@@ -75,7 +75,7 @@ At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and 
 
 \TODO{Add a sequence diagram and explain connection establishment.}  
 <!-- <http://www.w3.org/TR/webrtc/#call-flow-browser-to-browser>  
-<http://www.webrtc.org/native-code/native-apis> -->
+<http://www.webrtc.org/native-code/native-apis>-->
  
 ### Wrappers
 
@@ -239,11 +239,17 @@ ClojureScript, the official Clojure to JavaScript compiler, has a large ecosyste
 
 With the large number of languages that compile to JavaScript @compiletojs, an exhaustive coverage of the network libraries would be beyond the scope of this report. To the best of our knowledge, scala-js-transport is the first library offering this variety of supported protocols and platform (summarized in #impl-summary).
 
-### Game Engines
+### Latency Compensation Engines
 
-- AoE/Sc2
-- @maphacks2011
+- Current video games, RTS, send inputs instead of state and do simultaneous simulation simulations. AoE/Sc2. Variable delay to give the best experience on fast connections but still be compatible with the slow ones.
+
+- Peer to peer model raises several challenges in therms of security and cheating prevention. In addition to the potential for malicious manipulation of clocks, discussed in #clocksync, the absence of authoritative server makes it non trivial hide information between players. Many strategy games implement a mechanism of a *fog of war*,which hides the areas of the map which are out of sight of a players units. Because every player performs a full simulation of the world, cheaters can modify their game clients with a *map hack* to display the totality of the map. The work of @maphacks2011 includes a generic and semi automatic tool to build *map hacks*, which was proven to be effective for several of the most recent strategy games. In addition to their tool, @maphacks2011 propose a new approach to implement hidden information in peer to peer configuration. In their solution peers share the minimum amount of information about the game in order to prevent any forms of *map hack*. There exist cryptographic protocols, called oblivious intersection protocols, that allow peers to "negotiate" what information should me shared without relying on a third party entity.
+
 - @timelines2013
+- programming model to facilitate the explicit treatment of time
+- formulated several latency compensation algorithm with the timeline model.
+- implentations as part of a toolkit, allowing quick experimentation with the various solution
+
 - @elmlang
 
 ### Functional Programming In Games
