@@ -1,13 +1,13 @@
 \newcommand\toplisting[0]{\hrule\vspace{5pt}}
 \newcommand\bottomlisting[0]{\vspace{4pt}\hrule}
 
-\newcommand\customlisting[4]{
-  \begin{figure}[ht]
+\newcommand\customlisting[5]{
+  \begin{figure}[#1]
     \centering
-    \begin{minipage}{#2\linewidth}
+    \begin{minipage}{#3\linewidth}
       \toplisting
-      \lstset{caption=#3,label=#1}
-      \input{#4}
+      \lstset{caption=#4,label=#2}
+      \input{#5}
       \bottomlisting
     \end{minipage}
   \end{figure}
@@ -27,33 +27,38 @@
 }
 
 \newcommand\actorWrapper[1]{
-  \customlisting{actorWrapper}{0.92}{#1}
+  \customlisting{ht}{actorWrapper}{0.92}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/ActorWrapper.listings}
 }
 
 \newcommand\yellingActor[1]{
-  \customlisting{yellingActor}{0.68}{#1}
+  \customlisting{ht}{yellingActor}{0.68}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/YellingActor.listings}
 }
 
 \newcommand\rpcExample[1]{
-  \begin{figure}[ht]
-    \centering
-    \begin{minipage}{0.74\linewidth}
-      \toplisting
-      \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleApi.listings}
-      \vspace{12pt}
-      \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleServer.listings}
-      \vspace{12pt}
-      \lstset{caption=#1,label=rpcExample}
-      \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleClient.listings}
-      \bottomlisting
-    \end{minipage}
-  \end{figure}
+  \customlisting{p}{rpcExample}{0.99}{#1}
+    {transport/examples/report-listings/jvm/src/main/scala/examples/RpcExample.listings}
 }
 
+
+%   \begin{figure}[ht]
+%     \centering
+%     \begin{minipage}{0.74\linewidth}
+%       \toplisting
+%       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleApi.listings}
+%       \vspace{12pt}
+%       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleServer.listings}
+%       \vspace{12pt}
+%       \lstset{caption=#1,label=rpcExample}
+%       \input{transport/examples/report-listings/jvm/src/main/scala/examples/RpcExampleClient.listings}
+%       \bottomlisting
+%     \end{minipage}
+%   \end{figure}
+% }
+
 \newcommand\engineInterface[1]{
-  \customlisting{engineInterface}{0.75}{#1}
+  \customlisting{ht}{engineInterface}{0.75}{#1}
     {survivor/lag-comp/src/main/scala/AbstractEngine.listings}
 }
 
@@ -78,11 +83,11 @@
 }
 
 \newcommand\rawclient[1]{
-  \customlisting{rawclient}{0.71}{#1}
+  \customlisting{ht}{rawclient}{0.71}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/RawClient.listings}
 }
 
 \newcommand\rawserver[1]{
-  \customlisting{rawserver}{0.78}{#1}
+  \customlisting{ht}{rawserver}{0.78}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/RawServer.listings}
 }

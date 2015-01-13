@@ -95,7 +95,7 @@ Thanks to the picking mechanism developed in @scala-js-actors, it is possible to
 ###### Autowire
 Remote procedure call allow remote systems to communicate through an interface similar to method calls. The Autowire library allows to perform type-safe, reflection-free remote procedure calls between Scala system. It uses macros and is agnostic of both the transport-mechanism and the serialization library.
 
-The scala-js-transport library offers a *RpcWrapper*, which makes internal use of Autowire to provide remote provide call on top of any of the available *Transports*. Because the *Transport* interface communicates with *Strings*, the *RpcWrapper* is able to set all the type parameters of Autowire, as well embedding the uPickle serialization library @upickle, thus trading flexibility to reduce boilerplate. #rpcExample shows a complete remote procedure call implementation on top of WebSocket.
+The scala-js-transport library offers a *RpcWrapper*, which makes internal use of Autowire to provide remote provide call on top of any of the available *Transports*. #rpcExample shows a complete remote procedure call implementation on top of WebSocket, using the uPickle serialization library @upickle.
 
 \rpcExample{Example of remote procedure call implementation.}
 

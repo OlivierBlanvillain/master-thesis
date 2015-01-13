@@ -265,12 +265,9 @@ and the serialization library.
 
 The scala-js-transport library offers a \emph{RpcWrapper}, which makes
 internal use of Autowire to provide remote provide call on top of any of
-the available \emph{Transports}. Because the \emph{Transport} interface
-communicates with \emph{Strings}, the \emph{RpcWrapper} is able to set
-all the type parameters of Autowire, as well embedding the uPickle
-serialization library \cite{upickle}, thus trading flexibility to reduce
-boilerplate. \autoref{rpcExample} shows a complete remote procedure call
-implementation on top of WebSocket.
+the available \emph{Transports}. \autoref{rpcExample} shows a complete
+remote procedure call implementation on top of WebSocket, using the
+uPickle serialization library \cite{upickle}.
 
 \rpcExample{Example of remote procedure call implementation.}
 
