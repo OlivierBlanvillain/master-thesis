@@ -1,25 +1,47 @@
 Introduction
 ============
 
-Scala.js is a Scala to JavaScript compiler. As such, it allows web applications to be written entirely in Scala. Using a single language on both the server and the client side of the application can help reduce the \TODO{impedance mismatch} between the two programming environments which can transparent share data structure and algorithms.
+Scala.js is a Scala to JavaScript compiler. As such, it allows web applications to be written entirely in Scala. Using a single language on both the server and the client side of simplifies the interactions between the two programming environments, and allows data structure and algorithms to be shared transparently.
 
-However, a key \TODO{aspect} of web application is not directly addressed by Scala.js: the communication between client and server. Scala.js offers very good interoperability with JavaScript, meaning that existing JavaScript solutions can be used *as is*. One could very well use the techniques used today to communication between a Java back-end and a JavaScript front-end with Scala/Scala.js, but doing so would reduce the benefits of sharing native Scala data structure. It would essentially and result in having two completely disjoint implementations of the communication infrastructures.
+However, a significant obstacle encountered in the implement of web applications is not directly addressed by Scala.js: the communication between client and server. Scala.js offers very good interoperability with JavaScript, meaning that existing JavaScript solutions can be used *as is* in Scala.js.
 
-\TODO{transition} web browser expose of a multitude of network protocols and techniques, Ajax, Server-Sent Events, WebSocket, and most recently WebRTC for peer to peer communication. Picking the right technology is essentially a trade off between performances, compatibility and easy of use. In addition, the inherent API differences makes it non trivial the switch from one technology to another.
+One could very well do with Scala/Scala.js what is commonly done today for client/server communication, use a JSON serialization library on the non-JavaScript side to make the data understandable by JavaScript, but doing so would reduce the benefits of sharing native Scala data structure. It would result in a lot of boilerplate code and two completely disjoint implementations of the communication infrastructures.
 
-Another obstacle in the 
-    
-- Motivation: Many network programing models
-    - Akka
-    - RPC (type safe)
-    - Steams (scalaz, reactive-stream)
-    
-- Plan/Contributions
-Our contributions are in particular:
+Modern web browsers expose of a multitude of network protocols and techniques such as Ajax, Server-Sent Events, WebSocket, and most recently WebRTC for peer to peer communication. Choosing the right technology is essentially a trade off between performances, compatibility and easy of use. However, the inherent API differences makes it non trivial the switch from one technology to another, thus preventing quick experiments with the different technologies. 
+
+Another obstacle to the development of communication interfaces between clients and servers comes from the disparities of network programing model. Given an operational client/server communication medium, one might be willing to use an abstraction build on top of the connection, such as remote procedure calls, the actor model or communication via streams of data. Previous work in this direction used macros to provide cross platform remote procedure calls @autowire, or implemented an actor system in Scala.js able to transparent collaborate with an Akka-based backend @scala-js-actors. Because both of these efforts are agnostic of the transport mechanism, developers are left with the responsibility of doing the integration with a particular technology.
+
+### Contributions and Overview
+
+This report introduces scala-js-transport, a networking library simplifying the communication between Scala systems running on Java virtual machines and on JavaScript engines. This library fills the gap between the various network protocols supported by web browsers and high level, idiomatic interfaces that Scala users are familiar with. The remainder of the project is dedicated to the elaboration of a cross platform, multiplayer game with real-time interactions, demonstrating the potential of Scala.js and of our networking library to build latency sensitive applications.
+
+Our contributions can be summarized as follows:
+
 - We present
+
+Transport
+2.1 A Uniform Interface
+2.2 Implementations . .
+2.2.1 WebSocket . .
+2.2.2 SockJS . . . .
+2.2.3 WebRTC . .
+2.3 Wrappers . . . . . .
+2.3.1 Akka . . . . .
+2.3.2 Autowire . . .
+
 - We show
+
+Dealing with latency 
+3.1 Latency Compensation . . . . . . 
+3.2 A Functional Framework . . . . . 
+3.3 Architecture and Implementation 
+
 - We present
-- We show
+
+A Real-Time Multiplayer Game 
+4.1 Scala Remake of a Commodore 64 Game . . . . 
+4.2 Architecture . . . . . . . . . . . . . . . . . . . . 
+4.3 Functional Graphical User Interface With React 
 
 Transport
 =========
@@ -268,5 +290,5 @@ Conclusion and Future Work
 ==========================
 
 - Web workers
-- scalaz-stream/reactive-stream wrappers
+- scalaz-stream/reactive-stream wrappers @reactivestreams
 - More utilities on top of Transport
