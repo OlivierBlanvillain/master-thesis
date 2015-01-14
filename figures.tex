@@ -59,8 +59,16 @@
 \newcommand\stateGraph[1]{
   \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{state-graph}
-    \input{figures/state-graph.tex}
+    \begin{tabular}{@{}lccc@{}}
+      \toprule
+      Received & Time & State Graph & Rendered \\
+      \midrule
+      \hspace{22.5pt}\raisebox{20pt}{-}  & \raisebox{20pt}{\emph{t\textsubscript{1}}} & \input{figures/state-graph1.tex} & \raisebox{20pt}{\emph{\state{1}}} \\
+      \input{figures/state-graph-p1.tex} & \raisebox{21pt}{\emph{t\textsubscript{2}}} & \input{figures/state-graph2.tex} & \raisebox{21pt}{\emph{\state{2}}} \\
+      \hspace{22.5pt}\raisebox{20pt}{-}  & \raisebox{20pt}{\emph{t\textsubscript{3}}} & \input{figures/state-graph3.tex} & \raisebox{20pt}{\emph{\state{3}}} \\
+      \input{figures/state-graph-p2.tex} & \raisebox{59pt}{\emph{t\textsubscript{4}}} & \input{figures/state-graph4.tex} & \raisebox{59pt}{\emph{\stateprime{4}}} \\
+      \bottomrule
+    \end{tabular}
     \caption{#1}
     \label{stateGraph}
   \end{figure}
