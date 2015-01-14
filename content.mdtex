@@ -42,50 +42,49 @@ responsibility of doing the integration with a particular technology.
 
 \section{Contributions and Overview}\label{contributions-and-overview}
 
-This report introduces scala-js-transport, a networking library
-simplifying the communication between Scala systems running on Java
-virtual machines and on JavaScript engines. This library fills the gap
-between the various network protocols supported by web browsers and high
-level, idiomatic interfaces that Scala users are familiar with. The
-remainder of the project is dedicated to the elaboration of a cross
-platform, multiplayer game with real-time interactions, demonstrating
-the potential of Scala.js and of our networking library to build latency
-sensitive applications.
-
-Our contributions can be summarized as follows:
+Introducing scala-js-transport: a networking library for simple
+communication between Scala systems running on Java virtual machines and
+on JavaScript engines. This library fills the gap between the various
+network protocols supported by modern web browsers, and the high level,
+idiomatic interfaces that are convenient to build distributed
+applications. The remainder of the project is dedicated to an example of
+usage of scala-js-transport; a remake of a Commodore 64 game, augmented
+with online multiplayer features.
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  We present
+  We introduce the scala-js-transport library and the various
+  technologies and network programing models it supports. The library is
+  build around the \emph{Transport} interface, a trait unifying the
+  communication capabilities of clients and servers. We discuss the
+  different available implementations of the interface, targeting both
+  the Java virtual machine and JavaScript, and two \emph{Transport}
+  rappers featuring remote procedure calls and the actor model on top
+  the of various implementations.
+\item
+  We present the scala-lag-comp framework, a general purpose, cross
+  platform framework for latency compensation applications. Designed for
+  peer to peer environments, the framework implement a predictive
+  latency compensation algorithm to offer a maximum responsiveness with
+  a guaranty of eventual consistency. Thanks to a clever use of
+  immutable data structures and an optimal caching policy, the
+  implementation is both computation and space efficient.
+\item
+  We show how we implemented Survivor, a cross platform, multiplayer
+  game featuring real-time interactions with latency compensation. The
+  game runs at about 60 frames per seconds on a modern laptop, and
+  thanks to the design of the scala-lag-comp framework provides an
+  online experience comparable to the one offered by modern multiplayer
+  games. This example demonstrates the potential of Scala.js and of the
+  scala-js-transport library to be used to build latency sensitive
+  applications.
 \end{itemize}
 
-Transport 2.1 A Uniform Interface 2.2 Implementations . . 2.2.1
-WebSocket . . 2.2.2 SockJS . . . . 2.2.3 WebRTC . . 2.3 Wrappers . . . .
-. . 2.3.1 Akka . . . . . 2.3.2 Autowire . . .
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  We show
-\end{itemize}
-
-Dealing with latency 3.1 Latency Compensation . . . . . . 3.2 A
-Functional Framework . . . . . 3.3 Architecture and Implementation
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  We present
-\end{itemize}
-
-A Real-Time Multiplayer Game 4.1 Scala Remake of a Commodore 64 Game . .
-. . 4.2 Architecture . . . . . . . . . . . . . . . . . . . . 4.3
-Functional Graphical User Interface With React
+The source code of the software developed for this project is available
+online in open source (MIT) on the project
+repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transport/}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
 
 \chapter{Transport}\label{transport}
-
-\TODO{This section, scala-js-transport library, main contribution}
 
 \section{A Uniform Interface}\label{a-uniform-interface}
 
@@ -353,8 +352,6 @@ for WebRTC use two browsers, wich can be configured to be run with two
 different browsers to test their compatibility.
 
 \chapter{Dealing with latency}\label{dealing-with-latency}
-
-\TODO{This section, the framework, the game}
 
 \section{Latency Compensation}\label{latency-compensation}
 
@@ -651,8 +648,6 @@ reference equality for maximum efficiency.
 \chapter{A Real-Time Multiplayer
 Game}\label{a-real-time-multiplayer-game}
 
-\TODO{This section...}
-
 \section{Scala Remake of a Commodore 64
 Game}\label{scala-remake-of-a-commodore-64-game}
 
@@ -781,8 +776,6 @@ when working with immutable data structure.
 \end{itemize}
 
 \chapter{Related Work}\label{related-work}
-
-\TODO{This Section...}
 
 \section{Network libraries}\label{network-libraries}
 

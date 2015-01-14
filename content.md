@@ -13,40 +13,18 @@ Another obstacle to the development of communication interfaces between clients 
 
 ### Contributions and Overview
 
-This report introduces scala-js-transport, a networking library simplifying the communication between Scala systems running on Java virtual machines and on JavaScript engines. This library fills the gap between the various network protocols supported by web browsers and high level, idiomatic interfaces that Scala users are familiar with. The remainder of the project is dedicated to the elaboration of a cross platform, multiplayer game with real-time interactions, demonstrating the potential of Scala.js and of our networking library to build latency sensitive applications.
+Introducing scala-js-transport: a networking library for simple communication between Scala systems running on Java virtual machines and on JavaScript engines. This library fills the gap between the various network protocols supported by modern web browsers, and the high level, idiomatic interfaces that are convenient to build distributed applications. The remainder of the project is dedicated to an example of usage of scala-js-transport; a remake of a Commodore 64 game, augmented with online multiplayer features.
 
-Our contributions can be summarized as follows:
+- We introduce the scala-js-transport library and the various technologies and network programing models it supports. The library is build around the *Transport* interface, a trait unifying the communication capabilities of clients and servers. We discuss the different available implementations of the interface, targeting both the Java virtual machine and JavaScript, and two *Transport* rappers featuring remote procedure calls and the actor model on top the of various implementations.
 
-- We present
+- We present the scala-lag-comp framework, a general purpose, cross platform framework for latency compensation applications. Designed for peer to peer environments, the framework implement a predictive latency compensation algorithm to offer a maximum responsiveness with a guaranty of eventual consistency. Thanks to a clever use of immutable data structures and an optimal caching policy, the implementation is both computation and space efficient.
 
-Transport
-2.1 A Uniform Interface
-2.2 Implementations . .
-2.2.1 WebSocket . .
-2.2.2 SockJS . . . .
-2.2.3 WebRTC . .
-2.3 Wrappers . . . . . .
-2.3.1 Akka . . . . .
-2.3.2 Autowire . . .
+- We show how we implemented Survivor, a cross platform, multiplayer game featuring real-time interactions with latency compensation. The game runs at about 60 frames per seconds on a modern laptop, and thanks to the design of the scala-lag-comp framework provides an online experience comparable to the one offered by modern multiplayer games. This example demonstrates the potential of Scala.js and of the scala-js-transport library to be used to build latency sensitive applications.
 
-- We show
-
-Dealing with latency 
-3.1 Latency Compensation . . . . . . 
-3.2 A Functional Framework . . . . . 
-3.3 Architecture and Implementation 
-
-- We present
-
-A Real-Time Multiplayer Game 
-4.1 Scala Remake of a Commodore 64 Game . . . . 
-4.2 Architecture . . . . . . . . . . . . . . . . . . . . 
-4.3 Functional Graphical User Interface With React 
+The source code of the software developed for this project is available online in open source (MIT) on the project repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transport/}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
 
 Transport
 =========
-
-\TODO{This section, scala-js-transport library, main contribution}
 
 ### A Uniform Interface
 
@@ -140,8 +118,6 @@ All the implementations and wrappers are accompanied by integration tests. These
 Dealing with latency
 ====================
 
-\TODO{This section, the framework, the game}
-
 ### Latency Compensation
 
 Working with distributed systems introduces numerous challenges compared the development of single machine applications. Much of the complexity comes from the communication links; limited throughput, risk of failure, and latency all have to be taken into consideration when information is transfered from one machine to another. Our discussion will be focused on issues related to latency.
@@ -208,8 +184,6 @@ Regarding memory management, timing assumptions on the network allow the use of 
 A Real-Time Multiplayer Game
 ============================
 
-\TODO{This section...}
-
 ### Scala Remake of a Commodore 64 Game
 
 There seems to be a tradition of using Scala.js to build games. Indeed, at the time of writing, half of the projects listed on the official web site of the project are video games. What could be better than a multiplayer game to showcase the scala-js-transport library? To cope with time constraints and stay focused on the project topic, the decision was made to start working from an existing game. Out of the list of open source games published on GitHub @githubgames, Survivor @survivor2012 appears to be the most suitable for the addition of real-time multiplayer features.
@@ -257,8 +231,6 @@ There is a special optimization possible when working with immutable data struct
 
 Related Work
 ============
-
-\TODO{This Section...}
 
 ### Network libraries
 
