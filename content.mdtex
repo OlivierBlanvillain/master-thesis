@@ -1,47 +1,32 @@
 \chapter{Introduction}\label{introduction}
 
+Scala.js is a Scala to JavaScript compiler. As such, it allows web
+applications to be written entirely in Scala. Using a single language on
+both the server and the client side of the application can help reduce
+the \TODO{impedance mismatch} between the two programming environments
+which can transparent share data structure and algorithms.
+
+However, a key \TODO{aspect} of web application is not directly
+addressed by Scala.js: the communication between client and server.
+Scala.js offers very good interoperability with JavaScript, meaning that
+existing JavaScript solutions can be used \emph{as is}. One could very
+well use the techniques used today to communication between a Java
+back-end and a JavaScript front-end with Scala/Scala.js, but doing so
+would reduce the benefits of sharing native Scala data structure. It
+would essentially and result in having two completely disjoint
+implementations of the communication infrastructures.
+
+\TODO{transition} web browser expose of a multitude of network protocols
+and techniques, Ajax, Server-Sent Events, WebSocket, and most recently
+WebRTC for peer to peer communication. Picking the right technology is
+essentially a trade off between performances, compatibility and easy of
+use. In addition, the inherent API differences makes it non trivial the
+switch from one technology to another.
+
+Another obstacle in the
+
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
-\item
-  Context: What is Scala.js
-
-  \begin{itemize}
-  \itemsep1pt\parskip0pt\parsep0pt
-  \item
-    Scala to JavaScript compiler
-  \item
-    Very good interoperability with JavaScript code. For example, use
-    jQuery and HTML5 from your Scala.js code, either in a typed or
-    untyped way. Or create Scala.js objects and call their methods from
-    JavaScript.
-  \end{itemize}
-\item
-  Relevance: importance of networking for Scala.js
-
-  \begin{itemize}
-  \itemsep1pt\parskip0pt\parsep0pt
-  \item
-    By nature, many web application need a server side
-  \item
-    Thanks to Scala.js, code can be shared between client and server
-    side, but what about communication?
-  \item
-    Due to great interoperability with JavaScript, existing JavaScript
-    technologies can be used \emph{as is} in Scala.js, but the native
-    JavaScript are awkward clunky to use in Scala.
-  \end{itemize}
-\item
-  Motivation: Many JS APIs
-
-  \begin{itemize}
-  \itemsep1pt\parskip0pt\parsep0pt
-  \item
-    Ajax \& various hack for server to client notifications
-  \item
-    WebSocket allows for low overhead
-  \item
-    most recently, WebRTC part of HTML 5
-  \end{itemize}
 \item
   Motivation: Many network programing models
 
@@ -52,10 +37,18 @@
   \item
     RPC (type safe)
   \item
-    Steams (scalaz, akka-stream)
+    Steams (scalaz, reactive-stream)
   \end{itemize}
 \item
-  Plan/Contributions
+  Plan/Contributions Our contributions are in particular:
+\item
+  We present
+\item
+  We show
+\item
+  We present
+\item
+  We show
 \end{itemize}
 
 \chapter{Transport}\label{transport}
@@ -894,7 +887,7 @@ how it evolved over time, of share their findings with friends.
 \item
   Web workers
 \item
-  scalaz-stream/akka-stream wrappers
+  scalaz-stream/reactive-stream wrappers
 \item
   More utilities on top of Transport
 \end{itemize}

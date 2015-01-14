@@ -1,27 +1,25 @@
 Introduction
 ============
 
-- Context: What is Scala.js
-    - Scala to JavaScript compiler
-    - Very good interoperability with JavaScript code. For example, use jQuery and HTML5 from your Scala.js code, either in a typed or untyped way. Or create Scala.js objects and call their methods from JavaScript.
+Scala.js is a Scala to JavaScript compiler. As such, it allows web applications to be written entirely in Scala. Using a single language on both the server and the client side of the application can help reduce the \TODO{impedance mismatch} between the two programming environments which can transparent share data structure and algorithms.
 
-- Relevance: importance of networking for Scala.js
-    - By nature, many web application need a server side
-    - Thanks to Scala.js, code can be shared between client and server side, but what about communication?
-    - Due to great interoperability with JavaScript, existing JavaScript technologies can be used *as is* in Scala.js, but the native JavaScript are awkward clunky to use in Scala.
-    
-- Motivation: Many JS APIs
-    - Ajax & various hack for server to client notifications
-    - WebSocket allows for low overhead
-    - most recently, WebRTC part of HTML 5
+However, a key \TODO{aspect} of web application is not directly addressed by Scala.js: the communication between client and server. Scala.js offers very good interoperability with JavaScript, meaning that existing JavaScript solutions can be used *as is*. One could very well use the techniques used today to communication between a Java back-end and a JavaScript front-end with Scala/Scala.js, but doing so would reduce the benefits of sharing native Scala data structure. It would essentially and result in having two completely disjoint implementations of the communication infrastructures.
+
+\TODO{transition} web browser expose of a multitude of network protocols and techniques, Ajax, Server-Sent Events, WebSocket, and most recently WebRTC for peer to peer communication. Picking the right technology is essentially a trade off between performances, compatibility and easy of use. In addition, the inherent API differences makes it non trivial the switch from one technology to another.
+
+Another obstacle in the 
     
 - Motivation: Many network programing models
     - Akka
     - RPC (type safe)
-    - Steams (scalaz, akka-stream)
+    - Steams (scalaz, reactive-stream)
     
 - Plan/Contributions
-
+Our contributions are in particular:
+- We present
+- We show
+- We present
+- We show
 
 Transport
 =========
@@ -270,5 +268,5 @@ Conclusion and Future Work
 ==========================
 
 - Web workers
-- scalaz-stream/akka-stream wrappers
+- scalaz-stream/reactive-stream wrappers
 - More utilities on top of Transport
