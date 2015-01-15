@@ -1,33 +1,33 @@
 \begin{pspicture}(0,-8.2)(12.0,8.2)
 \definecolor{colour0}{rgb}{0.5372549,0.49411765,0.49411765}
-\rput[bl](1.8,7.68){WebRTCClient}
-\rput[bl](5.4,7.68){PeerConnection}
-\rput[bl](8.9,7.6){SignalingChannel}
+\rput[bl](1.95,7.68){\emph{WebRTCClient}}
+\rput[bl](5.55,7.68){\emph{PeerConnection}}
+\rput[bl](8.9,7.57){\emph{SignalingChannel}}
 \psframe[linecolor=colour0, linewidth=0.03, dimen=outer](4.9,8.2)(1.5,7.4)
 \psframe[linecolor=colour0, linewidth=0.03, dimen=outer](8.5,8.2)(5.1,7.4)
 \psframe[linecolor=colour0, linewidth=0.03, dimen=outer](12.1,8.2)(8.7,7.4)
 \psline[linecolor=colour0, linewidth=0.04](3.2,7.4)(3.2,-8.2)
 \psline[linecolor=colour0, linewidth=0.04](6.8,7.4)(6.8,-8.2)
-\rput[bl](0.4,6.6){connect()}
-\rput[bl](0.4,5.88){connectionPromise.future}
+\rput[bl](0.4,6.6){\emph{connect()}}
+\rput[bl](0.4,5.77){\emph{connectionPromise.future}}
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(0.0,6.6)(3.2,6.6)
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2,5.8)(0.0,5.8)
 \rput[bl](4.4,5.08){Send random number}
 \rput[bl](4.4,4.28){Receive random number}
 \rput[bl](4.0,3.48){I am the caller!}
-\rput[bl](3.6,2.68){Create PeerConnection}
-\rput[bl](3.6,1.88){IceCandidate}
-\rput[bl](4.4,1.08){Send IceCandidate}
-\rput[bl](4.4,0.28){Receive IceCandidate}
-\rput[bl](3.6,-0.6){addIceCandidate()}
-\rput[bl](3.6,-1.4){createOffer()}
-\rput[bl](3.6,-2.22){SessionDescription}
-\rput[bl](3.6,-3.02){setLocalDescription()}
-\rput[bl](4.4,-3.82){Send SessionDescription}
-\rput[bl](4.4,-4.62){Receive SessionDescription}
-\rput[bl](3.6,-5.42){setRemoteDescription()}
+\rput[bl](3.6,2.68){Create \emph{PeerConnection}}
+\rput[bl](3.6,1.88){\emph{IceCandidate}}
+\rput[bl](4.4,1.08){Send \emph{IceCandidate}}
+\rput[bl](4.4,0.28){Receive \emph{IceCandidate}}
+\rput[bl](3.6,-0.6){\emph{addIceCandidate()}}
+\rput[bl](3.6,-1.4){\emph{createOffer()}}
+\rput[bl](3.6,-2.22){\emph{SessionDescription}}
+\rput[bl](3.6,-3.02){\emph{setLocalDescription()}}
+\rput[bl](4.4,-3.82){Send \emph{SessionDescription}}
+\rput[bl](4.4,-4.62){Receive \emph{SessionDescription}}
+\rput[bl](3.6,-5.42){\emph{setRemoteDescription()}}
 \rput[bl](3.6,-6.22){Connection opened}
-\rput[bl](4.4,-7.02){Close SignalingChannel}
+\rput[bl](4.4,-7.02){Close \emph{SignalingChannel}}
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2,5.0)(10.4,5.0)
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(10.4,4.2)(3.2,4.2)
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2,2.6)(6.8,2.6)
@@ -43,7 +43,7 @@
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(6.8,-6.2)(3.2,-6.2)
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2,-7.0)(10.4,-7.0)
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2,-7.8)(0.0,-7.8)
-\rput[bl](0.4,-7.8){connectionPromise.success()}
+\rput[bl](0.4,-7.8){\emph{connectionPromise.success()}}
 \psline[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2,1.0)(10.4,1.0)
 \psbezier[linecolor=black, linewidth=0.03, arrowsize=0.05291666666666667cm 2.5,arrowlength=1.4,arrowinset=0.1]{->}(3.2490234,3.7625415)(3.4490235,3.7625415)(3.6490235,3.6625416)(3.6490235,3.5625417)(3.6490235,3.4625416)(3.6490235,3.3625417)(3.2490234,3.3625417)
 \psline[linecolor=colour0, linewidth=0.036](10.4,7.4)(10.4,-7.0)(10.4,-7.0)

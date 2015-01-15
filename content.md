@@ -63,22 +63,26 @@ SockJS @sockjs is a WebSocket emulation protocol which fallbacks to different pr
 The scala-js-transport library provides a *Transport* build on the official SockJS JavaScript client, and a server on the Play Framework via a community plugin @play2-sockjs. Netty developers have scheduled SockJS support for the next major release.
 
 ###### WebRTC
-WebRTC @webrtc2014 is an experimental API for peer to peer communication between web browsers. Initially targeted at audio and video communication, WebRTC also provides *Data Channels* to communicate arbitrary data. Contrary to WebSocket only supports TCP, WebRTC can be configures to use either TCP, UDP or SCTP.
+WebRTC @webrtc2014 is an experimental API for peer to peer communication between web browsers. Initially targeted at audio and video communication, WebRTC also provides *Data Channels* to communicate arbitrary data. Contrary to WebSocket which only supports TCP, WebRTC can be configures to use either TCP, UDP or SCTP.
 
-As opposed to WebSocket and SockJS which only need a URL to establish a connection, WebRTC requires a *signaling channel* in order to open the peer to peer connection. The *signaling channel* is not tight to a particular technology, its only requirement is to allow a back an forth communication between peers. This is commonly achieved by connecting both peers via WebSocket to a server, which then acts as a relay for the WebRTC connection establishment.
+To connection via WebRTC, two peers must have a way to communicate connection establishment information. This initial communicate medium, called a *SignalingChannel*, is not tight to a particular technology, its only requirement is to allow a back an forth communication between peers. This is commonly achieved by connecting both peers via WebSocket to a server, which then acts as a relay for the WebRTC connection establishment.
 
-To simplify the process of relaying messages from one peer to another, our library uses picklers for *ConnectionHandle*. Concretely, when a *ConnectionHandle* object connecting node *A* and *B* is sent by *B* over an already established connection with *C*, the *ConnectionHandle* received by *C* will act as a connection between *A* and *C*, hiding the fact that *B* relays messages between the two nodes.
+In term of the scala-js-transport library, this translates into having the *Address* of a *WebRTCClient* being the *SignalingChannel*, that is, a *ConnectionHandle* linking the two peers. #webRTCExample shows an example of WebRTC connection establishment using a WebSocket relay server.
 
-The scala-js-transport library supports two *Transports* for WebRTC, *WebRTCClient* and *WebRTCClientFallback*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
+\webRTCExample{Example of WebRTC connection establishment using a relay.}
 
-At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
+In some cases, one might want to use the client-server connections for something other than the WebRTC connection establishment. The example of #webRTCExample would not sufficient, as it assumes that the client-server connections are entirely dedicated to the relay of message to act as a *SignalingChannel*. To support these scenarios, where the client-server connections have other usages, the scala-js-transport library contains picklers for *ConnectionHandle* objects and a *newConnectionsPair()* function. This function returns or pair *ConnectionHandle* objects that are linked one to the other, messages written in one connection will be received by the other connection, and *vice versa*. By sending one the *ConnectionHandle* object returned by *newConnectionsPair()* to two different clients, a server can reuse it existing connections to these two clients to establish a third, virtual connection, which acts as a direct connections linking the two clients.
 
 \calleeSequence{Callee sequence diagram.}
 \callerSequence{Caller sequence diagram.}
 
-\TODO{Add a sequence diagram and explain connection establishment.}  
-<!-- <http://www.w3.org/TR/webrtc/#call-flow-browser-to-browser>  
-<http://www.webrtc.org/native-code/native-apis>-->
+We will now quickly discuss the internal implementation of WebRTC connection establishment. As opposed the WebSocket and SockJS *Transports*, which have a straightforward implementation because of the similarity between the JavaScript APIs and the *Transport* interface, adapting the JavaScript WebRTC API into a the *Transport* interface showed in #webRTCExample require some work. The sequence diagrams in #calleeSequence and #callerSequence summarize the interactions between two *WebRTCClients*, the underlying *PeerConnections* (the main interface of the WebRTC API), and the *SignalingChannel* providing the initial relayed connection between to two peers.
+
+The WebRTC protocol makes a distinction between the caller and callee. Because this distinction is of no interest in the scala-js-transport library, it's hidden thanks to an additional step in the connection establishment. The first step of the establishment thus consists in an exchange of random numbers, the peer who generates smallest number becomes the caller (this step is repeated in case of equality). From here, peers needs to negotiate a way to achieve Network Address Translator (NAT) traversal. This is negotiate is done through the Interactive Connectivity Establishment (ICE) protocol, which requires an exchange of *IceCandidate* messages thought the *SignalingChannel*. Follows an exchange of offer and answer of *SessionDescription*, which is used to negotiate what media go thought the connection (this step is superfluous in our case, but still required by the WebRTC protocol). Finally, the peer to peer connection will become operational, the *WebRTCClient* can then close the *SignalingChannel* connection and notify its user by successfully completing the *connectionPromise* with the WebRTC connection.
+
+In addition to the *WebRTCClient* *Transport*, the scala-js-transport library contains a *WebRTCClientFallback* *Transport*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
+
+At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
  
 ### Wrappers
 
