@@ -1,19 +1,21 @@
 \chapter{Introduction}\label{introduction}
 
+lol
+
 Scala.js is a Scala to JavaScript compiler. As such, it allows web
 applications to be written entirely in Scala. Using a single language on
-both the server and the client side of simplifies the interactions
-between the two programming environments, and allows data structure and
+both the server and the client side simplifies the interactions between
+the two programming environments, and allows data structure and
 algorithms to be shared transparently.
 
-However, a significant obstacle encountered in the implement of web
-applications is not directly addressed by Scala.js: the communication
+However, a significant obstacle encountered in the implementation of web
+applications not directly addressed by Scala.js, is the communication
 between client and server. Scala.js offers very good interoperability
 with JavaScript, meaning that existing JavaScript solutions can be used
 \emph{as is} in Scala.js.
 
 One could very well do with Scala/Scala.js what is commonly done today
-for client/server communication, use a JSON serialization library on the
+for client/server communication, use a serialization library on the
 non-JavaScript side to make the data understandable by JavaScript, but
 doing so would reduce the benefits of sharing native Scala data
 structure. It would result in a lot of boilerplate code and two
@@ -25,20 +27,20 @@ techniques such as Ajax, Server-Sent Events, WebSocket, and most
 recently WebRTC for peer to peer communication. Choosing the right
 technology is essentially a trade off between performances,
 compatibility and easy of use. However, the inherent API differences
-makes it non trivial the switch from one technology to another, thus
+makes non trivial the switch from one technology to another, thus
 preventing quick experiments with the different technologies.
 
-Another obstacle to the development of communication interfaces between
-clients and servers comes from the disparities of network programing
-model. Given an operational client/server communication medium, one
-might be willing to use an abstraction build on top of the connection,
-such as remote procedure calls, the actor model or communication via
-streams of data. Previous work in this direction used macros to provide
-cross platform remote procedure calls \cite{autowire}, or implemented an
-actor system in Scala.js able to transparent collaborate with an
-Akka-based backend \cite{scala-js-actors}. Because both of these efforts
-are agnostic of the transport mechanism, developers are left with the
-responsibility of doing the integration with a particular technology.
+Another obstacle to the development of client-server communication
+interfaces comes from the disparities of network programing model. Given
+an operational client/server communication medium, one might be willing
+to use an abstraction built on top of the connection, such as remote
+procedure calls, the actor model or communication via streams of data.
+Previous work in this direction used macros to provide cross platform
+remote procedure calls \cite{autowire}, or implemented an actor system
+in Scala.js able to transparently collaborate with an Akka-based backend
+\cite{scala-js-actors}. Because both of these efforts are agnostic of
+the transport mechanism, developers are left with the responsibility of
+doing the integration with a particular technology.
 
 \section{Contributions and Overview}\label{contributions-and-overview}
 
@@ -55,12 +57,12 @@ with online multiplayer features.
 \item
   We introduce the scala-js-transport library and the various
   technologies and network programing models it supports. The library is
-  build around the \emph{Transport} interface, a trait unifying the
+  built around the \emph{Transport} interface, a trait unifying the
   communication capabilities of clients and servers. We discuss the
   different available implementations of the interface, targeting both
   the Java virtual machine and JavaScript, and two \emph{Transport}
-  rappers featuring remote procedure calls and the actor model on top
-  the of various implementations.
+  rappers featuring remote procedure calls and the actor model on top of
+  the various implementations.
 \item
   We present the scala-lag-comp framework, a general purpose, cross
   platform framework for latency compensation applications. Designed for
@@ -85,6 +87,8 @@ online in open source (MIT) on the project
 repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transport/}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
 
 \chapter{Transport}\label{transport}
+
+lol
 
 \section{A Uniform Interface}\label{a-uniform-interface}
 
@@ -246,11 +250,11 @@ as a direct connections linking the two clients.
 
 We will now quickly discuss the internal implementation of WebRTC
 connection establishment. As opposed the WebSocket and SockJS
-\emph{Transports}, which have a straightforward implementation because
-of the similarity between the JavaScript APIs and the \emph{Transport}
-interface, adapting the JavaScript WebRTC API into a the
-\emph{Transport} interface showed in \autoref{webRTCExample} require
-some work. The sequence diagrams in \autoref{calleeSequence} and
+\emph{Transports}, which have straightforward implementations because of
+the similarity between the \emph{Transport} interface and the JavaScript
+API, adapting the JavaScript WebRTC API into a the \emph{Transport}
+interface showed in \autoref{webRTCExample} require some work. The
+sequence diagrams in \autoref{calleeSequence} and
 \autoref{callerSequence} summarize the interactions between two
 \emph{WebRTCClients}, the underlying \emph{PeerConnections} (the main
 interface of the WebRTC API), and the \emph{SignalingChannel} providing
@@ -258,14 +262,14 @@ the initial relayed connection between to two peers.
 
 The WebRTC protocol makes a distinction between the caller and callee.
 Because this distinction is of no interest in the scala-js-transport
-library, it's hidden thanks to an additional step in the connection
+library, it is hidden thanks to an additional step in the connection
 establishment. The first step of the establishment thus consists in an
 exchange of random numbers, the peer who generates smallest number
 becomes the caller (this step is repeated in case of equality). From
 here, peers needs to negotiate a way to achieve Network Address
 Translator (NAT) traversal. This is negotiate is done through the
-Interactive Connectivity Establishment (ICE) protocol, which requires an
-exchange of \emph{IceCandidate} messages thought the
+Interactive Connectivity Establishment (ICE) protocol , which requires
+an exchange of \emph{IceCandidate} messages thought the
 \emph{SignalingChannel}. Follows an exchange of offer and answer of
 \emph{SessionDescription}, which is used to negotiate what media go
 thought the connection (this step is superfluous in our case, but still
@@ -363,7 +367,7 @@ recovery mechanism on top of remote procedure calls, one would have to
 work at a lower lever than the one offered by the model itself, that is
 with the \emph{Transport} interface in our case.
 
-\section{Going further}\label{going-further}
+\section{Going Further}\label{going-further}
 
 The different \emph{Transport} implementations and wrappers presented is
 this section allows for several interesting combinations. Because the
@@ -383,22 +387,22 @@ different browsers to test their compatibility.
 
 \chapter{Dealing with latency}\label{dealing-with-latency}
 
-\section{Latency Compensation}\label{latency-compensation}
-
 Working with distributed systems introduces numerous challenges compared
-the development of single machine applications. Much of the complexity
-comes from the communication links; limited throughput, risk of failure,
-and latency all have to be taken into consideration when information is
-transfered from one machine to another. Our discussion will be focused
-on issues related to latency.
+to the development of single machine applications. Much of the
+complexity comes from the communication links; limited throughput, risk
+of failure, and latency all have to be taken into consideration when
+information is transfered from one machine to another. Our discussion
+will be focused on issues related to latency.
+
+\section{Latency Compensation}\label{latency-compensation}
 
 When talking about latency sensitive application, the first examples
 coming to mind might be multiplayer video games. In order to provide a
 fun and immersive experience, real-time games have to \emph{feel}
-responsive, the must offer sensations and interactions similar to the
-one experienced by a tennis player when he caches the ball, or of a
-Formula One driver when he drives his car at full speed. . Techniques to
-compensate network latency also have uses in online
+responsive, they must offer sensations and interactions similar to the
+one experienced by a tennis player when he caches the ball, or by a
+Formula One driver when he drives his car at full speed. Techniques to
+compensate network latency are also used in online
 communication/collaboration tools such as \emph{Google Docs}, where
 remote users can work on the same document as if they where sitting next
 to each other. Essentially, any application where a shared state can be
@@ -416,16 +420,16 @@ techniques and time-offsettings techniques.
 state using information available locally. These techniques are
 traditionally implemented using a central authoritative server which
 gathers inputs from all clients, computes the value of global state, and
-broadcasts this state back to all clients. It then possible to do
+broadcasts this state back to all clients. It is then possible to make a
 prediction on the client side by computing a "throwaway" state using the
 latest local inputs, which is later replaced by the state provided by
 the server as soon as it is received. Predictions techniques with a
 centralized server managing the application state are used in most
-\emph{First person shooter} games, including recent titles built with
+\emph{First Person Shooter} games, including recent titles built with
 the Source Engine \cite{source-engine}. Predictions are sometimes
 limited to certain type of objects and interactions, such as in the
 \emph{dead reckoning} \cite{ieee-dead-reckoning1995} technique that
-estimate the current positions of moving objects based on their earlier
+estimates the current positions of moving objects based on their earlier
 position, velocity and acceleration information.
 
 \emph{Delayed input techniques} defer the execution of all actions to
@@ -437,11 +441,9 @@ application with a fixed delay. Having a centralized server is not
 mandatory, and peer to peer configurations might be favored because of
 the reduce communication latency. Very often, the perceived latency can
 be diminished by instantly emitting a purely visual or sonorous feedback
-as soon as the an input is entered, but delaying the actual effects of
-the action to have it executed simultaneously on all peers. The
-classical \emph{Age of Empires} series uses this techniques with a fixed
-delay of 500 ms, and supports up to 8 players and 1600 independently
-controllable entities \cite{aoe}.
+as soon as an input is entered. The classical \emph{Age of Empires}
+series uses this techniques with a fixed delay of 500 ms, and supports
+up to 8 players and 1600 independently controllable entities \cite{aoe}.
 
 \emph{Time-offsettings techniques} add a delay in the application of
 remote inputs. Different peers will then see different versions of the
@@ -477,8 +479,8 @@ focuses on correctness and leaves very little room for runtime errors.
 It implements predictive latency compensation in a fully distributed
 fashion. As opposed to the traditional architectures for prediction
 techniques, such as the one described in~\cite{source-engine}, our
-framework does uses any authoritative node to hold the global state of
-the application, and can therefore functions in peer to peer, without
+framework does not use any authoritative node to hold the global state
+of the application, and can therefore function in peer to peer, without
 single points of failure.
 
 To do so, each peer runs a local simulation of the application up to the
@@ -495,7 +497,7 @@ emits an input at time \emph{t\textsubscript{2}}. Then, at time
 \emph{t\textsubscript{3}}, \emph{P\textsubscript{1}} receives an input
 from \emph{P\textsubscript{2}} which was emitted at time
 \emph{t\textsubscript{1}}. At this point, the framework invalidates a
-branch of the state tree, \emph{\state{2}-\state{2}}, and computes
+branch of the state tree, \emph{\state{2}-\state{3}}, and computes
 \emph{\stateprime{2}-\stateprime{3}-\stateprime{4}} to take into account
 both inputs.
 
@@ -511,14 +513,14 @@ unity.
 
 By nature, this design requires a careful management of the application
 state and it evolutions over time. Indeed, even a small variation
-between two remote simulations can cause a divergence, and result in
-out-of-sync application states. \cite{aoe}~reports out-of-sync issues as
-one of the main difficulty they encountered during the development of
-multiplayer features. In our case, the \emph{roll back in time}
-procedure introduces another source of potential mistake. Any mutation
-in a branch of the simulation that would not properly be canceled when
-rolling back to a previous state would induce serious bugs, of the hard
-to isolate and hard to reproduce kind.
+between two remote simulations can cause a divergence, and would result
+in an out-of-sync application states. \cite{aoe}~reports out-of-sync
+issues as one of the main difficulty they encountered during the
+development of multiplayer features. In our case, the \emph{roll back in
+time} procedure introduces another source of potential mistake. Any
+mutation in a branch of the simulation that would not properly be
+canceled when rolling back to a previous state would induce serious
+bugs, which would be hard to reproduce and isolate.
 
 To cope with these issues, the scala-lag-comp framework takes entirely
 care of state management and imposes a functional programming style to
@@ -527,9 +529,9 @@ exposed by the framework: \emph{Engine}.
 
 \engineInterface{Interface of the latency compensation framework.}
 
-An application is entirely defined by its \emph{initialState}, a
+An application is entirely defined by its \emph{initState}, a
 \emph{nextState} function that given a \emph{State} and some
-\emph{Actions} emitted during a time unit computer the \emph{State} at
+\emph{Actions} emitted during a time unit, computes the \emph{State} at
 the next time unit, and a \emph{render} function to display
 \emph{States} to the users. \emph{State} objects must be immutable, and
 \emph{nextState} has to be a pure function. User \emph{Inputs} are
@@ -551,18 +553,18 @@ establishment of a \emph{globalTime}, synchronized among all peers.
 \emph{StateLoop} stores all the peer \emph{Inputs} and is able to
 predict the application for the \emph{Inputs} received so far.
 \autoref{lagcompEngine} shows the interconnection between the components
-of an \emph{Engine}. The \emph{triggerRendering} function of
+of an \emph{Engine}. The \emph{triggerRendering} function of the
 \emph{Engine} gets the current \emph{globalTime} from the
-\emph{ClockSync}, ask the \emph{StateLoop} to predict the \emph{State}
+\emph{ClockSync}, asks the \emph{StateLoop} to predict the \emph{State}
 at that time, and passes the output to the user via the \emph{render}
-function. Wherever an \emph{Input} is sent to the \emph{Engine} via
+function. Whenever an \emph{Input} is sent to the \emph{Engine} via
 \emph{futureAct}, this \emph{Input} is combined with the peer
 \emph{identity} to form an \emph{Action}, then couples with the
 \emph{globalTime} to form an \emph{Event}. This \emph{Event} is directly
 transmitted to the local \emph{StateLoop}, and sent via the connection
 to the remote \emph{StateLoops}.
 
-\lagcompEngine{Overview the architecture of the latency compensation framework.}
+\lagcompEngine{Architecture of the latency compensation framework.}
 
 \subsection{ClockSync}\label{clocksync}
 
@@ -575,18 +577,18 @@ peers globally, and attribute them a consistent identity.
 
 Once peers are all aware of each other, they need to agree on a
 \emph{globalTime}. Ultimately, each peer holds a difference of time
-\dt between it's internal clock and the globally consented clock. The
+\dt between its internal clock and the globally consented clock. The
 global clock is defined to be the arithmetic average of all the peer's
-clock. In order to compute their \dt, each pair of peers needs exchange
-their clock values. This is accomplished in a way similar to Cristian's
-algorithm~\cite{cristian89}. Firstly, peers send request for the clock
-values of other peers. Upon receiving a response containing a time
-\emph{t}, one can estimate the value of the remote clock by adding half
-of the request round trip time to \emph{t}. One all peers have
+clock. In order to compute their \dt, each pair of peers needs to
+exchange their clock values. This is accomplished in a way similar to
+Cristian's algorithm~\cite{cristian89}. Firstly, peers send request for
+the clock values of other peers. Upon receiving a response containing a
+time \emph{t}, one can estimate the value of the remote clock by adding
+half of the request round trip time to \emph{t}. Once all peers have
 estimations of the various clocks, they are able to locally compute the
 average, and use it as the estimated \emph{globalTime}. To minimize the
 impact of network variations, several requests are emitted between each
-pair of peers, and the algorithms only retains the requests with the
+pair of peers, and the algorithms only retain the requests with the
 shortest round trip times.
 
 Certainly, this approach will result in slightly shifted views of the
@@ -600,10 +602,10 @@ the simulations have reached the \emph{globalTime} at which the latest
 input was issued, all the simulations generate \emph{States} for the
 same \emph{globalTime}. If one user is significantly ahead of the
 others, this will have the effect of preventing him to react quickly to
-other peers actions. Suppose a peers \emph{P\textsubscript{a}} think the
+other peers actions. Suppose a peer \emph{P\textsubscript{a}} thinks the
 \emph{globalTime} is \emph{t\textsubscript{a}} seconds ahead of what
 other peers believe. Whenever he receives an input issued at time
-\emph{t\textsubscript{1}}, \emph{P\textsubscript{a}} will have already
+\emph{t\textsubscript{1}}, \emph{P\textsubscript{a}} will already have
 simulated and displayed the application up to time
 \emph{t\textsubscript{1} + t\textsubscript{a} + networkdelay}, and his
 reaction to this input will be issued with a lag of
@@ -618,9 +620,9 @@ games), one could improve the framework by adding a mechanism to verify
 that the issue times of inputs respects some causal consistency. Follows
 an example of such mechanism.
 
-Suppose that every message \emph{m\textsubscript{i}} sent contains a
-random number \emph{r\textsubscript{i}}. Then, newly emitted inputs
-could include the latest random number generated locally, and the latest
+Suppose that every message \emph{m\textsubscript{i}} includes a random
+number \emph{r\textsubscript{i}}. Then, newly emitted inputs could
+include the latest random number generated locally, and the latest
 random number received from other peers. Adding this information would
 allow the detection of malicious peers. Indeed, if a malicious peer
 \emph{P\textsubscript{1}} pretends that his message
@@ -629,63 +631,64 @@ reality, and \emph{P\textsubscript{2}} sends a message
 \emph{m\textsubscript{2}} that can by estimated to arrive before
 \emph{m\textsubscript{1}} was issues, then \emph{P\textsubscript{2}} can
 detect that \emph{P\textsubscript{1}} is malicious by checking that
-\emph{m\textsubscript{1}} does not contain
-\emph{r\textsubscript{2}}.Similarly, pretending that a message is issued
-in the past would break the sequence of "latest random number generated
-locally", and thus be detectable.
+\emph{m\textsubscript{1}} does not contain \emph{r\textsubscript{2}}.
+Similarly, pretending that a message is issued in the past would break
+the sequence of "latest random number generated locally", and thus be
+detectable.
 
 \subsection{StateLoop}\label{stateloop}
 
 The \emph{StateLoop} component implements the heart of the prediction
-algorithm: a \emph{stateAt} function which given a \emph{time}, computes
-a prediction of the application \emph{State}. To do so, \emph{StateLoop}
-maintains a set of user \emph{Actions} received so far, which is used to
-simulate the execution of the application. \emph{Actions} are stored in
-an immutable list of \emph{Events} (pair of \emph{Input} and time),
-sorted by time.
+algorithm: a \emph{stateAt} function which, given a \emph{time},
+computes a prediction of the application \emph{State}. To do so,
+\emph{StateLoop} maintains a set of user \emph{Actions} received so far,
+which is used to simulate the execution of the application.
+\emph{Actions} are stored in an immutable list of \emph{Events} (pair of
+\emph{Action} and \emph{time}), sorted by \emph{time}.
 
-Semantically, every call to the the \emph{stateAt} function implies a
+Semantically, every call to the \emph{stateAt} function implies a
 recursive computation of the current state. This recursion starts from
-the \emph{initialState}, and successively applies the \emph{nextState}
+the \emph{initState}, and successively applies the \emph{nextState}
 function with the appropriate \emph{Events} for each time unit until the
 process reaches the current time.
 
-Doing the complete recursion on every frame would be too expansive.
+Doing the complete recursion on every frame would be too expensive.
 However, since this process uses a pure function, called
 \emph{computeState} and returning a \emph{State} given a time and list
 of \emph{Events} happening before that time, it can be made efficient
-using memoization. Indeed, In the most common case when \emph{stateAt}
-is called and no new \emph{Events} have been received since the last
+using memoization. Indeed, in the most common case when \emph{stateAt}
+is called and no new \emph{Events} has been received since the last
 call, the cache hits right away, after a single recursion step. Whenever
 a remote input is received and inserted into the sorted list of
 \emph{Events}, the recursion takes place up to the time at which this
 newly received \emph{Event} was issued. The cache will then hit at that
-point, from where \emph{nextState} is successively applies to obtain the
-\emph{State} for the current time. This is how the \emph{rolls back}
-mechanism illustrated in \autoref{stateGraph} is implemented in a time
-efficient manner.
+point, from where \emph{nextState} can be successively applied to obtain
+the \emph{State} for the current time. This is how the \emph{rolls back}
+mechanism illustrated in \autoref{stateGraph} is implemented in a
+computationally efficient manner.
 
-Regarding memory management, timing assumptions on the network allow the
-use of a bounded cache. Indeed, if we consider a peer to be disconnected
-when one of his messages takes more than one second to transit over the
-network, it is sufficient to retain history of \emph{States} for a
-period of one second. Thus, the memorization can be implemented using a
-fixed size array, retraining the association between a time, a list of
-\emph{Events}, and a \emph{State}. Thanks to a careful use of immutable
-lists to store \emph{Events}, querying the cache can be done using
-reference equality for maximum efficiency.
+Regarding memory management, timing assumptions on the network allows
+the use of a bounded cache. Indeed, if we consider a peer to be
+disconnected when one of his messages takes more than one second to
+transit over the network, it is sufficient to retain history of
+\emph{States} for a period of one second. Thus, the memorization can be
+implemented using a fixed size array, retaining the association between
+a time, a list of \emph{Events}, and a \emph{State}. Thanks to a careful
+use of immutable lists to store \emph{Events}, querying the cache can be
+done using reference equality for maximum efficiency.
 
 \chapter{A Real-Time Multiplayer
 Game}\label{a-real-time-multiplayer-game}
 
-\section{Scala Remake of a Commodore 64
-Game}\label{scala-remake-of-a-commodore-64-game}
-
 There seems to be a tradition of using Scala.js to build games. Indeed,
 at the time of writing, half of the projects listed on the official web
 site of the project are video games. What could be better than a
-multiplayer game to showcase the scala-js-transport library? To cope
-with time constraints and stay focused on the project topic, the
+multiplayer game to showcase the scala-js-transport library?
+
+\section{Scala Remake of a Commodore 64
+Game}\label{scala-remake-of-a-commodore-64-game}
+
+To cope with time constraints and stay focused on the project topic, the
 decision was made to start working from an existing game. Out of the
 list of open source games published on GitHub \cite{githubgames},
 Survivor \cite{survivor2012} appears to be the most suitable for the
@@ -696,9 +699,9 @@ One year later, a remake with better graphics is released for the
 Commodore 64. Recently, S. Schiller developed an open source remake of
 the game using HTML/CSS/JavaScript \cite{survivor2012}. This latest open
 source remake served as a basis for the version of the game presented in
-this chapter. The code was rewritten from scratch in Scala to follow the
+this chapter. We rewrote the code from scratch in Scala to follow the
 functional programming style required by the scala-lag-comp framework,
-but still shares the visual assets created by S. Schiller.
+but still share the visual assets created by S. Schiller.
 
 \section{Architecture}\label{architecture}
 
@@ -726,8 +729,8 @@ serialized using the uPickle serialization library \cite{upickle}, and
 passed to the embedded web browser as the argument of a
 \emph{renderString} function. This function, defined in the Scala.js
 with a \emph{@JSExport} annotation to be visible to the outside word,
-deserializes it's argument back into a \emph{State}, but this time on
-the JavaScript engine. With this trick, a \emph{State} can be transfered
+deserializes its argument back into a \emph{State}, but this time on the
+JavaScript engine. With this trick, a \emph{State} can be transfered
 from a JVM to a JavaScript engine, allowing the implementation of the
 user interface to be shared between two platforms. While sufficient for
 a proof of concept, this approach reduces the performances of the JVM
@@ -739,7 +742,7 @@ React}\label{functional-graphical-user-interface-with-react}
 
 In this section we discuss the implementation of the graphics user
 interface of our game using the React library \cite{react}. In
-functional programing, the \emph{de facto} standard to building graphics
+functional programing, the \emph{de facto} standard building graphics
 user interface seems to be functional reactive programing. React enables
 a different approach\footnote{React supports a variety of architectures
   to build user interfaces, and is not limited the approach described in
@@ -758,21 +761,21 @@ The key performance aspect of React is that the library does directly
 uses the DOM returned by the \emph{render} function. Instead of
 replacing the content of the page whenever a new DOM is computed, React
 computes a diff between this new DOM and the currently rendered DOM.
-This diff is then used to do the send the minimal set of mutations to
-the browser, thereby minimizing rendering time.
+This diff is then used to send the minimal set of mutations to the
+browser, thereby minimizing rendering time.
 
 In order to lighten the diff computation, React uses \emph{Components},
 small building block to define the \emph{render} function. A
 \emph{Component} is essentially a fraction of the \emph{render}
 function, given a subset of the application state it returns an HTML
 representation for this subset of the application. \emph{Components} can
-be composed into a tree that takes the complete application state at
-it's root, and propagates the necessary elements of state thought the
-tree, thus forming a complete rendering function of the application.
-Thanks to this subdivision into small \emph{Components}, React is able
-to optimize the diff operation by skipping branches of the HTML DOM
-corresponding to \emph{Components} that depend on subsets of the state
-which is unchanged since the last rendering.
+be composed into a tree that takes the complete application state at its
+root, and propagates the necessary elements of states thought the tree,
+thus forming a complete rendering function of the application. Thanks to
+this subdivision into small \emph{Components}, React is able to optimize
+the diff operation by skipping branches of the HTML DOM corresponding to
+\emph{Components} that depend on subsets of the state which is unchanged
+since the last rendering.
 
 There is a special optimization possible when working with immutable
 data structure, as it is the case with the scala-lag-comp framework.
@@ -807,15 +810,17 @@ when working with immutable data structure.
 
 \chapter{Related Work}\label{related-work}
 
-\section{Network libraries}\label{network-libraries}
+lol
 
-The Node.js platform gained a lot of popularity in the recent year. By
+\subsection{Network Libraries}\label{network-libraries}
+
+The Node.js platform gained a lot of popularity in the recent years. By
 enabling server-side of applications to be written in JavaScript, it
 allows data structure and API can be shared between client and server.
 In the case of network capabilities, many JavaScript libraries imitate
 the WebSocket API and rely on \emph{duck typing} to share code between
 client and server. For example, the ws library \cite{nodejsws} is an
-implantation of WebSocket client and server for Node.js which provide
+implantation of WebSocket client and server for Node.js which provides
 \emph{ws} objects behaving exactly like \emph{WebSocket} objects do on
 the browser side. Similarly, SockJS clients (discussed in
 \autoref{sockjs}) provide \emph{SockJS} objects that are almost drop in
@@ -826,7 +831,7 @@ official WebRTC API \cite{webrtc2014}, which was designed such that its
 ClojureScript, the official Clojure to JavaScript compiler, has a large
 ecosystem of libraries for both client and server, out of which Sente
 \cite{sente} seems to be the most popular library for network
-communication. It goals are similar to those of scala-js-transport,
+communication. It goals are similar to those of scala-js-transport:
 offer a uniform client/server API which supports several transport
 mechanism. Instead of using an existing WebSocket emulation library,
 Sente implements its own solution to fallback on Ajax/long-polling when
@@ -838,7 +843,7 @@ would be beyond the scope of this report. To the best of our knowledge,
 scala-js-transport is the first library offering this variety of
 supported protocols and platform (summarized in \autoref{implSummary}).
 
-\section{Latency Compensation
+\subsection{Latency Compensation
 Engines}\label{latency-compensation-engines}
 
 Mainstream real-time strategy game commonly rely on simultaneous
@@ -847,39 +852,40 @@ no information is made public by the game publishers, experimenting with
 these games can bring a lot of information about their implementations.
 For example, in \emph{Starcraft II} every input is executed with a
 minimum delay of 200 ms, which in most cases is sufficient to transfer
-the input over the network and have it process simultaneously. However,
-because of fluctuation on the network or lack of processing power in one
-of the peers, this delay might not be sufficient. To recover the
-situation, the \emph{Starcraft} game clients first use a small pause to
-hold every simulation until the slowest client catch up, and then
-globally increases the input delay. The delay is then dynamically
-adjusted during the remaining of the game, aiming to bring it back at
-200 ms. The absence of any prediction mechanism forces this delay to
-identical for every peer, thus being as slow as the slowest player.
+the input over the network and have it processed simultaneously.
+However, because of fluctuation on the network or lack of processing
+power in one of the peers, this delay might not be sufficient. To
+recover the situation, the \emph{Starcraft} game clients first use a
+small pause to hold every simulation until the slowest client catches
+up, and then globally increases the input delay. The delay is then
+dynamically adjusted during the remaining of the game, aiming to bring
+it back at 200 ms. The absence of any prediction mechanism forces this
+delay to be identical for every peer, thus being as slow as the slowest
+player.
 
-The peer to peer model also raises several challenges in therms of
+The peer to peer model also raises several challenges in terms of
 security and cheating prevention. In addition to the potential for
 malicious manipulation of clocks, discussed in \autoref{clocksync}, the
-absence of authoritative server makes it non trivial hide information
-between peers. Many strategy games implement a mechanism of a \emph{fog
-of war}, which hides the areas of the map that are out of sight of a
-players units. Because every player performs a full simulation of the
-game, cheaters can modify their game clients to include a \emph{map
-hack} in order to reveal the totality of the map. The work of
-\cite{maphacks2011} presents a generic and semi automatic tool to build
-\emph{map hacks}, which was proven to be effective for several of the
-most recent strategy games. By repetitively taking snapshots of the
-memory allocated by a game, the tool can identify areas corresponding to
-the active units and building. Because this attack does not make any
-modification on the game, but simply passively inspects the memory, it's
-completely undetectable.
+absence of authoritative server makes it non trivial to hide information
+between peers. Many strategy games implement a mechanism of \emph{fog of
+war}, which hides the areas of the map that are out of sight of a player
+units. Because every player performs a full simulation of the game,
+cheaters can modify their game clients to include a \emph{map hack} in
+order to reveal the totality of the map. The work of \cite{maphacks2011}
+presents a generic and semi automatic tool to build \emph{map hacks},
+which was proven to be effective for several of the most recent strategy
+games. By repetitively taking snapshots of the memory allocated by a
+game, the tool can identify areas corresponding to the active units and
+building. Because this attack does not make any modification on the
+game, but simply passively inspects the memory, it is completely
+undetectable.
 
-In addition to their tool, \cite{maphacks2011} propose a new approach to
-implement hidden information in peer to peer configuration. In their
+In addition to their tool, \cite{maphacks2011} proposes a new approach
+to implement hidden information in peer to peer configuration. In their
 solution peers share the minimum amount of information about the game in
 order to prevent any forms of \emph{map hack}. They use a cryptographic
 protocol, on the category of oblivious intersection protocols, that
-allow peers to \emph{negotiate} what information should be shared
+allows peers to \emph{negotiate} what information should be shared
 without relying on a third party entity.
 
 In order to better handle the complexity of latency compensation
@@ -892,48 +898,49 @@ treatment of time. This model is used to formulate several latency
 compensation algorithms, which are implemented as part of the
 \emph{Janus} toolkit to allow game developers to quickly try out with
 the different algorithms. In a sense, the approach of
-\cite{timelines2013} in orthogonal to the one taken in scala-lag-comp,
+\cite{timelines2013} is orthogonal to the one taken in scala-lag-comp,
 where we rely on functional programming principles to allows users of
 the framework to avoid direct managment of state.
 
-\section{Functional Programming In
+\subsection{Functional Programming In
 Games}\label{functional-programming-in-games}
 
 In a blog post series entitled \emph{Purely Functional Retrogames}
 \cite{retrogames2008}, James Hague discusses a functional implementation
 of the \emph{Pac-Man} game. He explains that the amount of state to
-manage can reduced by computing some parts as function of others. For
+manage can be reduced by computing some parts as function of others. For
 instance, the blinking of pills does not need any storage as it can be
 deduced from the current time. The author advocates an architecture
 similar to the one we used in the Scala remake of Survivor: a top level
-loop executed on every frame gathers user inputs, compute the next state
-and displays this state to the user. In order the modularize the next
-state function, how one could avoid returning update versions of game
+loop executed on every frame gathers user inputs, computes the next
+state and displays this state to the user. In order to modularize the
+next state function, one could avoid returning update versions of game
 entities on every function by instead returning \emph{events}. These
 \emph{events}, which are essentially descriptions of state changes, can
 be handled in a separated step.
 
-\emph{Torus Pong} is multiplayer remake of Pong. Implemented over the
+\emph{Torus Pong} is a multiplayer remake of Pong. Implemented over the
 course of two days during the Clojure Cup, \emph{Torus Pong}
 demonstrates how functional programming can be used to build games
-\cite{pongasync}. Similarly our Scala remake of Survivor, the core of
+\cite{pongasync}. Similarly to our Scala remake of Survivor, the core of
 the game is a pure function to compute the state from the previous state
 and a set of commands. However, this function resides on the server
-which orchestrate the entirety of the game. Clients serve as simple
+which orchestrates the entirety of the game. Clients serve as simple
 terminal: they send local inputs to the server and render the game
 whenever a new state is received from the server. Every communication is
 asynchronous and transits over WebSocket connections.
 
-No Man's Sky is an upcoming science fiction game set in an infinite,
-\emph{procedurally} generated universe. In a recent video interview
-\cite{nomanssky} reveals a core mechanism of this game. As opposed to
-randomly generated environment, every planet in No Man's Sky in entirely
-generated by a pure function, taking as input the id of the planet (a
-unique 64 bit hash) and the current time. Because everything is
-generated lazily, the game is able to offer a virtually infinite world
-without storing information. However, in contrast to randomly generation
-worlds, players will be able to come back to a planet they like to see
-how it evolved over time, of share their findings with friends.
+\emph{No Man's Sky} is an upcoming science fiction game set in an
+infinite, \emph{procedurally} generated universe. A recent video
+interview \cite{nomanssky} reveals the core mechanism of this game. As
+opposed to randomly generated environment, every planet in \emph{No
+Man's Sky} in entirely generated by a pure function, taking as input the
+id of the planet (a 64 bit hash) and the current time. Because
+everything is generated lazily, the game is able to offer a virtually
+infinite world without storing information. However, in contrast to
+randomly generated worlds, players will be able to come back to a planet
+they like to see how it evolved over time, and share their findings with
+friends.
 
 \chapter{Conclusion and Future Work}\label{conclusion-and-future-work}
 
