@@ -73,6 +73,9 @@ The scala-js-transport library supports two *Transports* for WebRTC, *WebRTCClie
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
 
+\calleeSequence{Callee sequence diagram.}
+\callerSequence{Caller sequence diagram.}
+
 \TODO{Add a sequence diagram and explain connection establishment.}  
 <!-- <http://www.w3.org/TR/webrtc/#call-flow-browser-to-browser>  
 <http://www.webrtc.org/native-code/native-apis>-->

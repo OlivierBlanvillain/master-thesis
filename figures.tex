@@ -83,6 +83,24 @@
   \end{figure}
 }
 
+\newcommand\calleeSequence[1]{
+  \begin{figure}[p]
+    \centering
+    \input{figures/sequence-diagram2.tex}
+    \caption{#1}
+    \label{calleeSequence}
+  \end{figure}
+}
+
+\newcommand\callerSequence[1]{
+  \begin{figure}[p]
+    \centering
+    \input{figures/sequence-diagram1.tex}
+    \caption{#1}
+    \label{callerSequence}
+  \end{figure}
+}
+
 \newcommand\implSummary[1]{
   \begin{table}[p]
     \caption{#1}
@@ -99,4 +117,3 @@
     \end{tabular}
   \end{table}
 }
-

@@ -27,15 +27,16 @@
 - [-] Live reload
 - [x] Delete objects on collision
 - [x] Setup online server
+- [x] Related work
+- [x] Conclusion future work
+- [x] Intro
+- [x] Abstract
 
 
 # Report
 
 - The game
-- Related work
-- Conclusion future work
-- Intro
-- Abstract
+
 
 # Pre Presentation
 
@@ -50,6 +51,7 @@
 
 # Post Presentation
 
+- [] WebRTC Close SignalingChannel on establishment
 - [] Readmes
 - [] Remove all TODOCs
 - [] Message to the mailing list
@@ -57,5 +59,3 @@
 - [] Message to Odersky
 - [] Update CV
 - [] Firefox
-- [] WebWorkers/Reactive-streams?
-- [] Custom WebRTC/SockJS settings?
