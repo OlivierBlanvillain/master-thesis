@@ -155,27 +155,11 @@ prover higher level of abstraction.
 The scala-js-transport library contains several implementations of
 \emph{Transports} for WebSocket, SockJS \cite{sockjs} and WebRTC
 \cite{webrtc2014}. This subsection briefly presents the different
-technologies and their respective advantages. \autoref{impl-summary}
+technologies and their respective advantages. \autoref{implSummary}
 summarizes the available \emph{Transports} for each platform and
 technology.
 
-\begin{longtable}[c]{@{}lccc@{}}
-\caption{Summary of the available
-Transports.\label{impl-summary}}\tabularnewline
-\toprule
-Platform & WebSocket & SockJS & WebRTC\tabularnewline
-\midrule
-\endfirsthead
-\toprule
-Platform & WebSocket & SockJS & WebRTC\tabularnewline
-\midrule
-\endhead
-JavaScript & client & client & client\tabularnewline
-Play Framework & server & server & -\tabularnewline
-Netty & both & - & -\tabularnewline
-Tyrus & client & - & -\tabularnewline
-\bottomrule
-\end{longtable}
+\implSummary{Summary of the available Transports.}
 
 \subsection{WebSocket}\label{websocket}
 
@@ -266,16 +250,15 @@ with all the \emph{Transport} implementations presented in
 
 \subsection{Akka}\label{akka}
 
-The actor model is based on asynchronous message passing between
-primitive entities called actors. Featuring both location transparency
-and fault tolerance via supervision, the actor model is particularly
-adapted to distributed environment. Akka, a toolkit build around the
-actor model for the JVM, was partly ported to Scala.js by S. Doeraene in
+\actorWrapper{Transport wrappers to handle connections with actors.} The
+actor model is based on asynchronous message passing between primitive
+entities called actors. Featuring both location transparency and fault
+tolerance via supervision, the actor model is particularly adapted to
+distributed environment. Akka, a toolkit build around the actor model
+for the JVM, was partly ported to Scala.js by S. Doeraene in
 \cite{scala-js-actors}. The communication interface implemented in
 \cite{scala-js-actors} was revisited into the \emph{Transport} wrapper
 presented in \autoref{actorWrapper}.
-
-\actorWrapper{Transport wrappers to handle connections with actors.}
 
 The two methods \emph{acceptWithActor} and \emph{connectWithActor} use
 the underlying \emph{listen} and \emph{connect} methods of the wrapped
@@ -806,7 +789,7 @@ With the large number of languages that compile to JavaScript
 \cite{compiletojs}, an exhaustive coverage of the network libraries
 would be beyond the scope of this report. To the best of our knowledge,
 scala-js-transport is the first library offering this variety of
-supported protocols and platform (summarized in \autoref{impl-summary}).
+supported protocols and platform (summarized in \autoref{implSummary}).
 
 \section{Latency Compensation
 Engines}\label{latency-compensation-engines}
@@ -908,11 +891,36 @@ how it evolved over time, of share their findings with friends.
 \chapter{Conclusion and Future Work}\label{conclusion-and-future-work}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Web workers
+  In this report, we presented the scala-js-transport library which
+  simplifies Scala.js networking,
 \item
-  scalaz-stream/reactive-stream wrappers \cite{reactivestreams}
+  switching between communication technology
 \item
-  More utilities on top of Transport
+  switching between platform, ez!
+\item
+  supports network programing model
+\item
+  sets the basics for cross platform network utilities
+\item
+  As an example, cross platform mutiplayer game survivor, which relies
+  on the scala-lag-comp for lag-come.
+\item
+  The overall architecture of the games takes great advantage of the
+  functional programming capabilities of Scala and it's type checking.
+  The resulting implementation is both easy to understand and to
+  maintain,
+\item
+  would not be the came in JS
+\end{itemize}
+
+Future work could investigate
+
+\begin{itemize}
+\item
+  new transport implementations, Web workers come to mind
+\item
+  reactive-stream wrapper \cite{reactivestreams}
+\item
+  More utilities on top of Transport reconnection
 \end{itemize}

@@ -14,7 +14,7 @@
 }
 
 \newcommand\transportInterface[1]{
-  \begin{figure}[ht]
+  \begin{figure}[t]
     \centering
     \begin{minipage}{0.8\linewidth}
       \toplisting
@@ -27,22 +27,22 @@
 }
 
 \newcommand\actorWrapper[1]{
-  \customlisting{ht}{actorWrapper}{0.92}{#1}
+  \customlisting{t}{actorWrapper}{0.92}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/ActorWrapper.listings}
 }
 
 \newcommand\rawclient[1]{
-  \customlisting{ht}{rawclient}{0.71}{#1}
+  \customlisting{p}{rawclient}{0.71}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/RawClient.listings}
 }
 
 \newcommand\rawserver[1]{
-  \customlisting{ht}{rawserver}{0.78}{#1}
+  \customlisting{p}{rawserver}{0.78}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/RawServer.listings}
 }
 
 \newcommand\yellingActor[1]{
-  \customlisting{ht}{yellingActor}{0.68}{#1}
+  \customlisting{t}{yellingActor}{0.68}{#1}
     {transport/examples/report-listings/jvm/src/main/scala/examples/YellingActor.listings}
 }
 
@@ -52,12 +52,12 @@
 }
 
 \newcommand\engineInterface[1]{
-  \customlisting{ht}{engineInterface}{0.75}{#1}
+  \customlisting{t}{engineInterface}{0.75}{#1}
     {survivor/lag-comp/src/main/scala/AbstractEngine.listings}
 }
 
 \newcommand\stateGraph[1]{
-  \begin{figure}[ht]
+  \begin{figure}[t]
     \centering
     \begin{tabular}{@{}lccc@{}}
       \toprule
@@ -75,10 +75,28 @@
 }
 
 \newcommand\lagcompEngine[1]{
-  \begin{figure}[ht]
+  \begin{figure}[t]
     \centering
     \input{figures/lagcomp-engine.tex}
     \caption{#1}
     \label{lagcompEngine}
   \end{figure}
 }
+
+\newcommand\implSummary[1]{
+  \begin{table}[p]
+    \caption{#1}
+    \label{implSummary}
+    \begin{tabular}{@{}lccc@{}}
+      \toprule
+      Platform & WebSocket & SockJS & WebRTC\tabularnewline
+      \midrule
+      JavaScript & client & client & client\tabularnewline
+      Play Framework & server & server & -\tabularnewline
+      Netty & both & - & -\tabularnewline
+      Tyrus & client & - & -\tabularnewline
+      \bottomrule
+    \end{tabular}
+  \end{table}
+}
+

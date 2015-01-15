@@ -48,16 +48,9 @@ In addition to the example of usage presented in #transportInterface and #rawcli
 
 ### Implementations
 
-The scala-js-transport library contains several implementations of *Transports* for WebSocket, SockJS @sockjs and WebRTC @webrtc2014. This subsection briefly presents the different technologies and their respective advantages. #impl-summary summarizes the available *Transports* for each platform and technology.
+The scala-js-transport library contains several implementations of *Transports* for WebSocket, SockJS @sockjs and WebRTC @webrtc2014. This subsection briefly presents the different technologies and their respective advantages. #implSummary summarizes the available *Transports* for each platform and technology.
 
-Table: Summary of the available Transports.\label{impl-summary}
-
-Platform        WebSocket   SockJS   WebRTC
--------------- ----------- -------- --------
-JavaScript       client     client   client 
-Play Framework   server     server     -
-Netty            both          -       -
-Tyrus            client        -       -
+\implSummary{Summary of the available Transports.}
 
 ###### WebSocket
 WebSocket provides full-duplex communication over a single TCP connection. Connection establishment begin with an HTTP request from client to server. After the handshake is completed, the TCP connection used for the initial HTTP request is *upgraded* to change protocol, and kept open to become the actual WebSocket connection. This mechanism allows WebSocket to be wildly supported over different network configurations.
@@ -89,9 +82,9 @@ At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and 
 By using *Transport* interface, it is possible write programs with an abstract communication medium. We present two *Transport* wrappers, for Akka and Autowire\ @autowire, which allow to work with different model of concurrency. Because Autowire and Akka (via @scala-js-actors) can both be used on the JVM and on JavaScript, these wrappers can be used to build cross compiling programs compatible with all the *Transport* implementations presented in #implementations.
 
 ###### Akka
+\actorWrapper{Transport wrappers to handle connections with actors.}
 The actor model is based on asynchronous message passing between primitive entities called actors. Featuring both location transparency and fault tolerance via supervision, the actor model is particularly adapted to distributed environment. Akka, a toolkit build around the actor model for the JVM, was partly ported to Scala.js by S. Doeraene in @scala-js-actors. The communication interface implemented in @scala-js-actors was revisited into the *Transport* wrapper presented in #actorWrapper.
 
-\actorWrapper{Transport wrappers to handle connections with actors.}
 
 The two methods *acceptWithActor* and *connectWithActor* use the underlying *listen* and *connect* methods of the wrapped *Transport*, and create an *handler* actor to handle the connection. The semantic is as follows: the *handler* actor is given an *ActorRef* in it is constructor, to which sending messages results in sending outgoing messages thought the connection, and messages received by the *handler* actor are incoming messages received from the connection. Furthermore, the life span of an *handler* actor is tight to life span of its connection, meaning that the *preStart* and *postStop* hooks can be used to detect the creation and the termination of the connection, and killing the *handler* actor results in closing the connection. #yellingActor shows an example of a simple *handler* actor which than sending back whatever it receives in uppercase.
 
@@ -238,7 +231,7 @@ The Node.js platform gained a lot of popularity in the recent year. By enabling 
 
 ClojureScript, the official Clojure to JavaScript compiler, has a large ecosystem of libraries for both client and server, out of which Sente @sente seems to be the most popular library for network communication. It goals are similar to those of scala-js-transport, offer a uniform client/server API which supports several transport mechanism. Instead of using an existing WebSocket emulation library, Sente implements its own solution to fallback on Ajax/long-polling when WebSocket is not available.
 
-With the large number of languages that compile to JavaScript @compiletojs, an exhaustive coverage of the network libraries would be beyond the scope of this report. To the best of our knowledge, scala-js-transport is the first library offering this variety of supported protocols and platform (summarized in #impl-summary).
+With the large number of languages that compile to JavaScript @compiletojs, an exhaustive coverage of the network libraries would be beyond the scope of this report. To the best of our knowledge, scala-js-transport is the first library offering this variety of supported protocols and platform (summarized in #implSummary).
 
 ### Latency Compensation Engines
 
@@ -261,6 +254,30 @@ No Man's Sky is an upcoming science fiction game set in an infinite, *procedural
 Conclusion and Future Work
 ==========================
 
-- Web workers
-- scalaz-stream/reactive-stream wrappers @reactivestreams
+- In this report, we presented the scala-js-transport library which simplifies Scala.js networking,
+- switching between communication technology
+- switching between platform, ez!
+- supports network programing model
+- sets the basics for cross platform network utilities
+
+- As an example, cross platform mutiplayer game survivor, which relies on the scala-lag-comp for lag-come.
+- The overall architecture of the games takes great advantage of the functional programming capabilities of Scala and it's type checking. The resulting implementation is both easy to understand and to maintain, 
+- would not be the came in JS
+
+
+Future work could investigate
+
+- new transport implementations, Web workers come to mind
+- reactive-stream wrapper @reactivestreams
+
 - More utilities on top of Transport
+    reconnection
+
+
+
+
+
+
+
+
+
