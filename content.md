@@ -44,7 +44,7 @@ The WebSocket echo server used in #rawclient has a very simple behavior: receive
 
 \rawserver{Implementation of a WebSocket echo server.}
 
-In addition to the example of usage presented in #transportInterface and #rawclient, the scala-js-transport library provides two additional abstractions to express communication over the network. #wrappers contains examples of implementations using remote procedure calls and the actor model, which are available as wrappers around the *Transport* to prover higher level of abstraction.
+In addition to the example of usage presented in #transportInterface and #rawclient, the scala-js-transport library supports two additional abstractions to express communication over the network. #wrappers contains examples of implementations using remote procedure calls and the actor model, which are available as wrappers around the *Transport* to prover higher level of abstraction.
 
 ### Implementations
 
@@ -69,7 +69,7 @@ As opposed to WebSocket and SockJS which only need a URL to establish a connecti
 
 To simplify the process of relaying messages from one peer to another, our library uses picklers for *ConnectionHandle*. Concretely, when a *ConnectionHandle* object connecting node *A* and *B* is sent by *B* over an already established connection with *C*, the *ConnectionHandle* received by *C* will act as a connection between *A* and *C*, hiding the fact that *B* relays messages between the two nodes.
 
-The scala-js-transport library provides two *Transports* for WebRTC, *WebRTCClient* and *WebRTCClientFallback*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
+The scala-js-transport library supports two *Transports* for WebRTC, *WebRTCClient* and *WebRTCClientFallback*. The later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC if either peer does not support it.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementations are available on the node.js platform.
 
@@ -254,30 +254,8 @@ No Man's Sky is an upcoming science fiction game set in an infinite, *procedural
 Conclusion and Future Work
 ==========================
 
-- In this report, we presented the scala-js-transport library which simplifies Scala.js networking,
-- switching between communication technology
-- switching between platform, ez!
-- supports network programing model
-- sets the basics for cross platform network utilities
+In this report, we presented the scala-js-transport library which simplifies Scala.js networking. The library supports several communication technologies over different platforms, and allows its users to develop in various network programing models. In addition, it also sets the basics for the creation of cross platform networking utilities. Our work includes an example of such utility, a predictive latency compensation framework for peer to peer applications. The framework takes great advantage of the functional programming capabilities of Scala to allow the elaboration of easy to understand and easy to maintain applications. The project is concluded with the remake of a retrogame called Survivor, which puts together the scala-js-transport library and the scala-lag-comp framework to provide online, real-time mutiplayer features.
 
-- As an example, cross platform mutiplayer game survivor, which relies on the scala-lag-comp for lag-come.
-- The overall architecture of the games takes great advantage of the functional programming capabilities of Scala and it's type checking. The resulting implementation is both easy to understand and to maintain, 
-- would not be the came in JS
+Future work could investigate the support of Web Workers @webworkers2012 in the scala-js-transport library. Web Workers allow parallel computations on web browsers, and as such, are not directly related to networking. However, in the current implementations, Web Workers communicate by message passing, where messages are copied from one Worker to another using *structured cloning*, thus being similar to a communication over the network.
 
-
-Future work could investigate
-
-- new transport implementations, Web workers come to mind
-- reactive-stream wrapper @reactivestreams
-
-- More utilities on top of Transport
-    reconnection
-
-
-
-
-
-
-
-
-
+Another possible direction would be to add communication via streams of data as another network programming model. The Reactive Stream initiative @reactivestreams defines a standard for stream processing with non-blocking back pressure. Being currently targeted at Java virtual machines, the project could benefit from a implementation for JavaScript engines, which would have its place as part of the scala-js-transport library.
