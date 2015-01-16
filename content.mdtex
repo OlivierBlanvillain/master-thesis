@@ -7,38 +7,36 @@ the two programing environments, and allows data structure and
 algorithms to be shared transparently.
 
 However, a significant obstacle encountered in the implementation of web
-applications not directly addressed by Scala.js, is the communication
-between client and server. Scala.js offers very good interoperability
-with JavaScript, meaning that existing JavaScript solutions can be used
-\emph{as is} in Scala.js.
+applications is not directly addressed by Scala.js: the client-server
+communication.
 
-One could very well do with Scala/Scala.js what is commonly done today
-for client/server communication, use a serialization library on the
-non-JavaScript side to make the data understandable by JavaScript, but
-doing so would reduce the benefits of sharing native Scala data
-structure. It would result in a lot of boilerplate code and two
-completely disjoint implementations of the communication
-infrastructures.
+Scala.js offers very good interoperability with JavaScript, meaning that
+existing JavaScript solutions can be used \emph{as is} in Scala.js. One
+could very well do with Scala/Scala.js what is commonly done today for
+client-server communication, use a JSON serialization library on the
+non-JavaScript side to make the data understandable by JavaScript. Doing
+so would reduce the benefits of sharing native Scala data structure and
+would result in a lot of boilerplate code with two completely disjoint
+implementations of the communication infrastructures.
 
 Modern web browsers expose of a multitude of network protocols and
 techniques such as Ajax, Server-Sent Events, WebSocket, and most
 recently WebRTC for peer to peer communication. Choosing the right
-technology is essentially a trade off between performances,
+technology is essentially making a trade off between performances,
 compatibility and easy of use. However, the inherent API differences
-makes non trivial the switch from one technology to another, thus
-preventing quick experiments with the different technologies.
+makes non trivial the switch from one technology to another, and prevent
+quick experiments with the different technologies.
 
 Another obstacle to the development of client-server communication
-interfaces comes from the disparities of network programing model. Given
-an operational client/server communication medium, one might be willing
-to use an abstraction built on top of the connection, such as remote
-procedure calls, the actor model or communication via streams of data.
-Previous work in this direction used macros to provide cross platform
-remote procedure calls \cite{autowire}, or implemented an actor system
-in Scala.js able to transparently collaborate with an Akka-based backend
-\cite{scala-js-actors}. Because both of these efforts are agnostic of
-the transport mechanism, developers are left with the responsibility of
-doing the integration with a particular technology.
+interfaces comes from the disparities of network programing model. One
+might be willing to use an abstraction built on top of connections, such
+as remote procedure calls, the actor model or communication via streams
+of data. Previous work in this direction used macros to provide cross
+platform remote procedure calls \cite{autowire}, or implemented an actor
+system in Scala.js able to transparently collaborate with an Akka-based
+backend \cite{scala-js-actors}. Because both of these efforts are
+agnostic of the transport mechanism, developers are left with the
+responsibility of doing the integration with a particular technology.
 
 \section{Contributions and Overview}\label{contributions-and-overview}
 
@@ -49,7 +47,8 @@ network protocols supported by modern web browsers, and the high level,
 idiomatic interfaces that are convenient to build distributed
 applications. The remainder of the project is dedicated to an example of
 usage of scala-js-transport; a remake of a Commodore 64 game, augmented
-with online multiplayer features.
+with online multiplayer features. Our contributions can be summarized as
+follows:
 
 \begin{itemize}
 \item
@@ -59,25 +58,24 @@ with online multiplayer features.
   communication capabilities of clients and servers. We discuss the
   different available implementations of the interface, targeting both
   the Java virtual machine and JavaScript, and two \emph{Transport}
-  rappers featuring remote procedure calls and the actor model on top of
-  the various implementations.
+  wrappers featuring remote procedure calls and the actor model on top
+  of the various implementations.
 \item
   We present the scala-lag-comp framework, a general purpose, cross
   platform framework for latency compensation applications. Designed for
   peer to peer environments, the framework implement a predictive
-  latency compensation algorithm to offer a maximum responsiveness with
-  a guaranty of eventual consistency. Thanks to a clever use of
-  immutable data structures and an optimal caching policy, the
-  implementation is both computation and space efficient.
+  latency compensation algorithm to offer maximal responsiveness with a
+  guaranty of eventual consistency. Thanks to a clever use of immutable
+  data structures and an optimal caching policy, the implementation is
+  both computational and memory efficient.
 \item
   We show how we implemented Survivor, a cross platform, multiplayer
   game featuring real-time interactions with latency compensation. The
-  game runs at about 60 frames per seconds on a modern laptop, and
-  thanks to the design of the scala-lag-comp framework provides an
-  online experience comparable to the one offered by modern multiplayer
-  games. This example demonstrates the potential of Scala.js and of the
-  scala-js-transport library to be used to build latency sensitive
-  applications.
+  game runs at about 60 frames per seconds, and, thanks to the design of
+  the scala-lag-comp framework, provides an online experience comparable
+  to modern multiplayer games. This example demonstrates the potential
+  of Scala.js and of the scala-js-transport library to be used in
+  latency sensitive applications.
 \end{itemize}
 
 The source code of the software developed for this project is available
@@ -91,10 +89,10 @@ repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transpo
 We begin our discussion by the definition of an interface for
 asynchronous transports, presented in \autoref{transportInterface}. This
 interface aims at \emph{transparently} modeling the different underlying
-technologies, meaning that is simply delegates tasks to the actual
+technologies, meaning that it simply delegates tasks to the actual
 implementation, without adding new functionalities. Thanks to support of
-\emph{futures} and \emph{promises} in Scala.js, these interfaces cross
-compile to both Java bytecode and JavaScript.
+\emph{futures} and \emph{promises} in Scala.js, the interface cross
+compiles to both Java bytecode and JavaScript.
 
 \transportInterface{Definition of the core networking interfaces.}
 
@@ -104,27 +102,28 @@ either as client or server will return a failed \emph{future} for either
 of these methods. In order to listen for incoming connections, the user
 of a \emph{Transport} has to complete the \emph{promise} returned by the
 \emph{listen} method with a \emph{ConnectionListener}. To keep the
-definition generic, \emph{Address} is an abstract type. As we will see
-later, it varies greatly from one technology to another.
+definition generic, \emph{Addresses} are abstract. As we will see later,
+it varies greatly from one technology to another.
 
 \emph{ConnectionHandle} represents an open connection. Thereby, it
 supports four type of interactions: writing a message, listening for
 incoming messages, closing the connection and listening for connection
 closure. Similarly to \emph{Transport}, listening for incoming messages
-is achieved by completing a \emph{promise} of \emph{MessageListener}.
+in \emph{ConnectionHandle} is achieved by completing a \emph{promise} of
+\emph{MessageListener}.
 
 An example of direct usage of the \emph{Transport} interface is
 presented in \autoref{rawclient}. This example implements a simple
-WebSocket client that sends a "Hello World!" message to a WebSocket echo
-server. After instantiating the \emph{Transport} and declaring the
+WebSocket client that sends "Hello World!" to a WebSocket echo server.
+After instantiating the \emph{Transport} and declaring the
 \emph{Address} of the server, \emph{transport.connect} initiate the
 WebSocket connection and returns a \emph{future} of
 \emph{ConnectionHandle}. This \emph{future} will be successfully
 completed upon connection establishment, or result in a failure if an
-error occurred during the process. In the successful case, the callback
-is given a \emph{ConnectionHandle} object, which is used to \emph{write}
-the "Hello World!" message, handle incoming messages and \emph{close}
-the connection.
+error occurs during the process. In the successful case, the callback is
+given a \emph{ConnectionHandle} object, which is used to \emph{write}
+the "Hello World!" message, listening for incoming messages and
+\emph{close} the connection.
 
 \rawclient{Example of WebSocket client implementation.}
 
@@ -136,40 +135,36 @@ in a \emph{try-finally} block to ensure the proper shutdown of the
 server once the program terminate. In order to listen for incoming
 connections, one must use \emph{transport.listen()} which returns a
 \emph{future} connection listener \emph{promise}. If the underlying
-implementation is able to \emph{listen} for new WebSocket connections on
-the given address and port, the \emph{future} will be successful, and
-the \emph{promise} can then be completed with a connection listener.
+implementation is able to listen for new WebSocket connections on the
+given address and port, the \emph{future} will be successful, and the
+\emph{promise} can then be completed with a connection listener.
 
 \rawserver{Implementation of a WebSocket echo server.}
 
-In addition to the example of usage presented in
-\autoref{transportInterface} and \autoref{rawclient}, the
-scala-js-transport library supports two additional abstractions to
-express communication over the network. \autoref{wrappers} contains
-examples of implementations using remote procedure calls and the actor
-model, which are available as wrappers around the \emph{Transport} to
-provide a higher level of abstraction.
+In addition to the examples of usage presented in
+\autoref{transportInterface} and \autoref{rawclient}, \autoref{wrappers}
+contains examples of implementations using remote procedure calls and
+the actor model.
 
 \section{Implementations}\label{implementations}
 
 The scala-js-transport library contains several implementations of
-\emph{Transports} for WebSocket, SockJS \cite{sockjs} and WebRTC
-\cite{webrtc2014}. This subsection briefly presents the different
-technologies and their respective advantages. \autoref{implSummary}
-summarizes the available \emph{Transports} for each platform and
-technology.
+\emph{Transports} for WebSocket \cite{websocket2011}, SockJS
+\cite{sockjs} and WebRTC \cite{webrtc2014}. This subsection briefly
+presents the different technologies. \autoref{implSummary} summarizes
+the available \emph{Transports} for each platform and technology.
 
 \implSummary{Summary of the available Transports.}
 
 \subsection{WebSocket}\label{websocket}
 
-WebSocket provides full-duplex communication over a single TCP
-connection. Connection establishment begin with an HTTP request from
-client to server. After the handshake is completed, the TCP connection
-used for the initial HTTP request is \emph{upgraded} to change protocol,
-and kept open to become the actual WebSocket connection. This mechanism
-allows WebSocket to be wildly supported over different network
-configurations.
+WebSocket \cite{websocket2011} provides full-duplex communication over a
+single TCP connection. Connection establishment begins with an HTTP
+request from client to server. After the handshake is completed, the TCP
+connection used for the initial HTTP request is \emph{upgraded} to
+change protocol, and kept open to become the actual WebSocket
+connection. This mechanism allows WebSocket to be wildly supported over
+different network configurations.
 
 WebSocket is also well supported across different platforms. Our library
 provides four WebSocket \emph{Transports}, a native JavaScript client, a
@@ -178,23 +173,23 @@ having all three Play, Netty and Tyrus might seem redundant, each of
 them comes with its own advantages. Play is a complete web framework,
 suitable to build every component of a web application. Play is based on
 Netty, which means that for a standalone WebSocket server, using Netty
-directly leads to better performances and less dependencies. Regarding
+directly leads to better performances and less dependencies. On the
 client side, the Tyrus library offers a standalone WebSocket client
 which is lightweight compared to the Netty framework.
 
 \subsection{SockJS}\label{sockjs}
 
 SockJS \cite{sockjs} is a WebSocket emulation protocol which fallbacks
-to different protocols when WebSocket is not supported. Is supports a
+to different protocols when WebSocket is not available. Is supports a
 large number of techniques to emulate the sending of messages from
-server to client, such as AJAX long polling, AJAX streaming, EventSource
-and streaming content by slowly loading an HTML file in an iframe. These
-techniques are based on the following idea: by issuing a regular HTTP
-request from client to server, and voluntarily delaying the response
-from the server, the server side can decide when to release information.
-This allows to emulate the sending of messages from server to client
-which not supported in the traditional request-response communication
-model.
+server to client, such as Ajax long polling, Ajax streaming, Server-Sent
+Events and streaming content by slowly loading an Html file in an
+iframe. All these techniques are based on the following idea: by issuing
+a regular HTTP request from client to server, and voluntarily delaying
+the response from the server, the server can decide when to release
+information. This allows to emulate the sending of messages from server
+to client which is not supported in the traditional request-response
+communication model.
 
 The scala-js-transport library provides a \emph{Transport} build on the
 official SockJS JavaScript client, and a server on the Play Framework
@@ -209,91 +204,90 @@ video communication, WebRTC also provides \emph{Data Channels} to
 communicate arbitrary data. Contrary to WebSocket which only supports
 TCP, WebRTC can be configured to use either TCP, UDP or SCTP.
 
-To connect via WebRTC, two peers must have a way to exchange connection
+To connect via WebRTC, peers must have a way to exchange connection
 establishment information. This initial communicate medium, called a
-\emph{SignalingChannel}, is not tight to a particular technology, its
-only requirement is to allow a back an forth communication between
+\emph{SignalingChannel}, is not tight to a particular technology: its
+only requirement is to allow back an forth communication between the
 peers. This is commonly achieved by connecting both peers via WebSocket
 to a server, which then acts as a relay for the WebRTC connection
 establishment.
 
 In term of the scala-js-transport library, this translates into having
-the \emph{Address} of a \emph{WebRTCClient} being the
-\emph{SignalingChannel}, that is, a \emph{ConnectionHandle} linking the
-two peers. \autoref{webRTCExample} shows an example of WebRTC connection
-establishment using a WebSocket relay server.
+the \emph{Address} of a \emph{WebRTCClient} being a
+\emph{SignalingChannel}, that is, a \emph{ConnectionHandle} linking two
+peers. \autoref{webRTCExample} shows an example of WebRTC connection
+establishment using a dedicated WebSocket relay server.
 
-\webRTCExample{Example of WebRTC connection establishment using a relay.}
+\webRTCExample{Example of WebRTC connection establishment using a dedicated relay server.}
 
-In some cases, one might want to use the client-server connections for
+In some cases, the client-server connections might need to be used for
 something other than the WebRTC connection establishment. The example of
-\autoref{webRTCExample} would not be sufficient, as it assumes that the
-client-server connections are entirely dedicated to the relay of message
-to act as a \emph{SignalingChannel}. To support these scenarios, where
-the client-server connections have other usages, the scala-js-transport
-library contains picklers for \emph{ConnectionHandle} objects and a
+\autoref{webRTCExample} would not be sufficient because it assumes that
+the client-server connections are entirely dedicated to the relay of
+messages. To support these scenarios the scala-js-transport library
+contains picklers for \emph{ConnectionHandle} objects and a
 \emph{newConnectionsPair()} function. This function returns or pair
-\emph{ConnectionHandle} objects that are linked one to the other,
-messages written in one connection will be received by the other
-connection, and \emph{vice versa}. By sending one the
-\emph{ConnectionHandle} object returned by \emph{newConnectionsPair()}
-to two different clients, a server can reuse its existing connections to
-these two clients to establish a third, virtual connection, which acts
-as a direct connection linking the two clients.
+\emph{ConnectionHandle} objects that are linked one to the other:
+messages written in one connection will be received by the other, and
+\emph{vice versa}. By sending the \emph{ConnectionHandle} object
+returned by \emph{newConnectionsPair()} to two different clients, a
+server can reuse its existing connections to these clients to establish
+a third, virtual connection, which acts as a direct link between the two
+clients.
 
-\calleeSequence{Callee sequence diagram.}
-\callerSequence{Caller sequence diagram.}
+\calleeSequence{Sequence diagram of WebRTC establishment, callee point of view.}
+\callerSequence{Sequence diagram of WebRTC establishment, caller point of view.}
 
-We will now quickly discuss the internal implementation of WebRTC
-connection establishment. As opposed the WebSocket and SockJS
-\emph{Transports}, which have straightforward implementations because of
-the similarity between the \emph{Transport} interface and the JavaScript
-API, adapting the JavaScript WebRTC API into the \emph{Transport}
-interface showed in \autoref{webRTCExample} require some work. The
-sequence diagrams in \autoref{calleeSequence} and
-\autoref{callerSequence} summarize the interactions between two
-\emph{WebRTCClients}, the underlying \emph{PeerConnections} (the main
-interface of the WebRTC API), and the \emph{SignalingChannel} providing
-the initial relayed connection between to two peers.
+We now quickly discuss the internal implementation of WebRTC connection
+establishment. As opposed the WebSocket and SockJS \emph{Transports},
+which have straightforward implementations because of the similarity
+between the \emph{Transport} interface and the JavaScript API, adapting
+the JavaScript WebRTC API into the \emph{Transport} interface showed in
+\autoref{webRTCExample} require some work. The sequence diagrams in
+\autoref{calleeSequence} and \autoref{callerSequence} summarize the
+interactions between two \emph{WebRTCClients}, their underlying
+\emph{PeerConnections} (the main interface of the WebRTC API), and the
+\emph{SignalingChannel} providing the initial connection between the two
+peers.
 
 The WebRTC protocol makes a distinction between the caller and callee.
 Because this distinction is of no interest in the scala-js-transport
-library, it is hidden thanks to an additional step in the connection
-establishment. The first step of the establishment thus consists in an
-exchange of random numbers, the peer who generates smallest number
-becomes the caller (this step is repeated in case of equality). From
-here, peers needs to negotiate a way to achieve Network Address
-Translator (NAT) traversal. This negotiation is done through the
-Interactive Connectivity Establishment (ICE) protocol , which requires
-an exchange of \emph{IceCandidate} messages through the
-\emph{SignalingChannel}. Follows an exchange of offer and answer of
-\emph{SessionDescription}, which is used to negotiate what media go
-through the connection (this step is superfluous in our case, but still
-required by the WebRTC protocol). Finally, the peer to peer connection
-will become operational, the \emph{WebRTCClient} can then close the
-\emph{SignalingChannel} connection and notify its user by successfully
-completing the \emph{connectionPromise} with the WebRTC connection.
+library, it is hidden to the library users via thanks to an additional
+step in the connection establishment. The first step of the
+establishment thus consists in an exchange of random numbers: the peer
+who generated smallest number is elected to be the caller (this step is
+repeated in case of equality). From here, peers needs to negotiate a way
+to achieve Network Address Translator (NAT) traversal. This negotiation
+is done through the Interactive Connectivity Establishment (ICE)
+protocol \cite{ice2010}, which requires an exchange of
+\emph{IceCandidate} messages through the \emph{SignalingChannel}.
+Follows an exchange of offer and answer of \emph{SessionDescription},
+which is used to negotiate what media go through the connection
+\cite{sdp2002}. Finally, when the peer to peer connection will become
+operational, the \emph{WebRTCClient} closes the \emph{SignalingChannel}
+connection and notifies its user by successfully completing the
+\emph{connectionPromise} with the WebRTC connection.
 
 In addition to the \emph{WebRTCClient} \emph{Transport}, the
 scala-js-transport library contains a \emph{WebRTCClientFallback}
-\emph{Transport}. The later implements some additional logic to detect
+\emph{Transport}. This later implements some additional logic to detect
 WebRTC support, and automatically fall back to using the signaling
-channel as substitute for WebRTC if either peer does not support it.
+channel as substitute for WebRTC when either peer does not support it.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and
 Opera, and lakes support in Safari and Internet Explorer. The only non
-browser implementations are available on the node.js platform.
+browser implementation is available on the Node.js platform.
 
 \section{Wrappers}\label{wrappers}
 
-By using \emph{Transport} interface, it is possible write programs with
-an abstract communication medium. We present two \emph{Transport}
+Thanks to the \emph{Transport} interface, it is possible write programs
+with an abstract communication medium. We present two \emph{Transport}
 wrappers, for Akka and Autowire~\cite{autowire}, which allow to work
-with different model of concurrency. Because Autowire and Akka (via
-\cite{scala-js-actors}) can both be used on the JVM and on JavaScript,
-these wrappers can be used to build cross compiling programs compatible
-with all the \emph{Transport} implementations presented in
-\autoref{implementations}.
+with different network programing models. Because Autowire and Akka (via
+\cite{scala-js-actors}) can both be used from both the JVM and
+JavaScript, these wrappers can be used to build cross compiling
+applications compatible with all the \emph{Transport} implementations
+presented in \autoref{implementations}.
 
 \subsection{Akka}\label{akka}
 
@@ -301,10 +295,10 @@ with all the \emph{Transport} implementations presented in
 actor model is based on asynchronous message passing between primitive
 entities called actors. Featuring both location transparency and fault
 tolerance via supervision, the actor model is particularly adapted to
-distributed environment. Akka, a toolkit build around the actor model
-for the JVM, was partly ported to Scala.js by S. Doeraene in
+distributed environment. Akka, a JVM toolkit build around the actor
+model, was partly ported to Scala.js by S. Doeraene in
 \cite{scala-js-actors}. The communication interface implemented in
-\cite{scala-js-actors} was revisited into the \emph{Transport} wrapper
+\cite{scala-js-actors} was revisited in the \emph{Transport} wrapper
 presented in \autoref{actorWrapper}.
 
 The two methods \emph{acceptWithActor} and \emph{connectWithActor} use
@@ -313,14 +307,14 @@ the underlying \emph{listen} and \emph{connect} methods of the wrapped
 connection. The semantic is as follows: the \emph{handler} actor is
 given an \emph{ActorRef} in it is constructor, to which sending messages
 results in sending outgoing messages through the connection, and
-messages received by the \emph{handler} actor are incoming messages
-received from the connection. Furthermore, the life span of an
+messages received by the \emph{handler} actor are received messages
+incoming from the connection. Furthermore, the life span of an
 \emph{handler} actor is tight to life span of its connection, meaning
 that the \emph{preStart} and \emph{postStop} hooks can be used to detect
-the creation and the termination of the connection, and killing the
+the creation and termination of the connection, and killing the
 \emph{handler} actor results in closing the connection.
 \autoref{yellingActor} shows an example of a simple \emph{handler} actor
-which than sending back whatever it receives in uppercase.
+which sends back whatever it receives in uppercase.
 
 \yellingActor{Example of a connection handling actor.}
 
@@ -330,8 +324,8 @@ that implicit picklers for these types of messages have been registered.
 Out of the box, picklers for case classes and case objects can be
 macros-generated by the pickling library. In addition, an
 \emph{ActorRef} pickler allows the transmission of \emph{ActorRefs}
-through a connection, making them transparently usable from the side of
-the connection as if they were references to local actors.
+through a connection, making them transparently usable from the other
+side of the connection, as if they were references to local actors.
 
 \subsection{Autowire}\label{autowire}
 
@@ -344,24 +338,24 @@ and the serialization library.
 The scala-js-transport library offers a \emph{RpcWrapper}, which makes
 internal use of Autowire to provide remote procedure call on top of any
 of the available \emph{Transports}. \autoref{rpcExample} shows a
-complete remote procedure call implementation on top of WebSocket, using
-the uPickle serialization library \cite{upickle}.
+complete remote procedure call implementation using WebSocket, and the
+uPickle \cite{upickle} serialization library.
 
-\rpcExample{Example of remote procedure call implementation.}
+\rpcExample{Complete example of remote procedure call implementation.}
 
 The main strength of remote procedure calls are their simplicity and
 type-safety. Indeed, because of how similar remote procedure calls are
 to actual method calls, they require little learning for the programmer.
-In addition, consistency between client and server side can be verified
-at compile time, and integrated development environment functionalities
+In addition, consistency between client and server can be verified at
+compile time, and integrated development environment functionalities
 such as \emph{refactoring} and \emph{go to definition} work out of the
-box. However, this simplicity also comes with some draw backs. Contrary
-to the actor model which explicitly models the life span of connections,
-and different failure scenarios, this is not build in when using remote
-procedure calls. In order to implement fine grain error handling and
-recovery mechanism on top of remote procedure calls, one would have to
-work at a lower lever than the one offered by the model itself, that is
-with the \emph{Transport} interface in our case.
+box. However, this simplicity also induces some draw backs. Contrary to
+the actor model which can be used to explicitly models the life span of
+connections, and different failure scenarios, this is not build in when
+using remote procedure calls. In order to implement fine grain error
+handling and recovery mechanism on top of remote procedure calls, one
+would have to work at a lower lever than the one offered by the model
+itself, which would be the \emph{Transport} interface in our case.
 
 \section{Going Further}\label{going-further}
 
@@ -369,17 +363,17 @@ The different \emph{Transport} implementations and wrappers presented is
 this section allows for several interesting combinations. Because the
 scala-js-transport library is built around a central communication
 interface, it is easily expendable in both directions. Any new
-implementation of the \emph{Transport} interface with for a different
-platform or technology would immediately be usable with all the
-wrappers. Analogously, any new \emph{Transport} wrapper would
-automatically be compatible with the variety of available
-implementations.
+implementation of the \emph{Transport} interface for another platform or
+technology would immediately be usable with all the wrappers.
+Analogously, any new \emph{Transport} wrapper would automatically be
+compatible with the variety of available implementations.
 
-All the implementations and wrappers are accompanied by integration
-tests. These tests are built using the \emph{Selenium WebDriver} to
-check proper behavior of the library using real web browsers. Our tests
-for WebRTC use two browsers, wich can be configured to be run with two
-different browsers to test their compatibility.
+All the implementations and wrappers in scala-js-transport are
+accompanied by integration tests. These tests are built using the
+\emph{Selenium WebDriver} to check proper behavior of the library using
+real web browsers. Our tests for WebRTC use two web browsers, wich can
+be configured to be run with two different browsers in order to test
+their compatibility.
 
 \chapter{Dealing with latency}\label{dealing-with-latency}
 
@@ -418,20 +412,20 @@ traditionally implemented using a central authoritative server which
 gathers inputs from all clients, computes the value of global state, and
 broadcasts this state back to all clients. It is then possible to make a
 prediction on the client side by computing a "throwaway" state using the
-latest local inputs, which is later replaced by the state provided by
-the server as soon as it is received. Predictions techniques with a
+latest local inputs, which is later replaced by the state given by the
+server as soon as it is received. Predictions techniques with a
 centralized server managing the application state are used in most
 \emph{First Person Shooter} games, including recent titles built with
 the Source Engine \cite{source-engine}. Predictions are sometimes
 limited to certain type of objects and interactions, such as in the
-\emph{dead reckoning} \cite{ieee-dead-reckoning1995} technique that
+\emph{Dead Reckoning} \cite{ieee-dead-reckoning1995} technique that
 estimates the current positions of moving objects based on their earlier
 position, velocity and acceleration information.
 
 \emph{Delayed input techniques} defer the execution of all actions to
 allow simultaneous execution by all peers. This solution is typically
 used in application where the state, (or the variations of state) is too
-large to be frequently sent over the network. In this case, peers would
+large to be frequently sent over the network. In this case, peers can
 directly exchange the user inputs and simultaneously simulate
 application with a fixed delay. Having a centralized server is not
 mandatory, and peer to peer configurations might be favored because of
@@ -443,7 +437,7 @@ up to 8 players and 1600 independently controllable entities \cite{aoe}.
 
 \emph{Time-offsettings techniques} add a delay in the application of
 remote inputs. Different peers will then see different versions of the
-application state over time. Local perception filters
+application state over time. \emph{Local perception filters}
 \cite{local-perception-filter1998} are an example of such techniques
 where the amount of delayed applied to world entities is proportional to
 their distance to the peer avatar. As a result, a user can interact in
@@ -456,19 +450,18 @@ interact by exchanging passive entities, such as bullets or arrows
 distortion becomes smaller than the network latency which invalidates
 the model.
 
-Each technique comes with its own advantages and disadvantages, and are
-essentially making different tradeoffs between consistency and
-responsiveness. Without going into further details on the different
-latency compensation techniques, this introduction should give the
-reader an idea of the variety of possible solutions and their respective
-sophistication.
+Each technique comes with its own advantages, and are essentially making
+different tradeoffs between consistency and responsiveness. Without
+going into further details on the different latency compensation
+techniques, this introduction should give the reader an idea of the
+variety of possible solutions and their respective sophistication.
 
 \section{A Functional Framework}\label{a-functional-framework}
 
 We now present scala-lag-comp, a Scala framework for predictive latency
 compensation. The framework cross compiles to run on both Java virtual
 machines and JavaScript engines, allowing to build applications
-targeting both platforms which can transparently collaborate.
+targeting both platforms able to transparently collaborate.
 
 By imposing a purely functional design to its users, scala-lag-comp
 focuses on correctness and leaves very little room for runtime errors.
@@ -510,13 +503,13 @@ unity.
 By nature, this design requires a careful management of the application
 state and it evolutions over time. Indeed, even a small variation
 between two remote simulations can cause a divergence, and would result
-in an out-of-sync application states. \cite{aoe}~reports out-of-sync
-issues as one of the main difficulty they encountered during the
-development of multiplayer features. In our case, the \emph{roll back in
-time} procedure introduces another source of potential mistake. Any
-mutation in a branch of the simulation that would not properly be
-canceled when rolling back to a previous state would induce serious
-bugs, which would be hard to reproduce and isolate.
+in out-of-sync application states. \cite{aoe}~reports out-of-sync issues
+as one of the main difficulty they encountered during the development of
+multiplayer features. In our case, the \emph{roll back} procedure
+introduces another source of potential mistake. Any mutation in a branch
+of the simulation that would not properly be canceled when rolling back
+to a previous state would introduce serious bugs, which would be hard to
+reproduce and isolate.
 
 To cope with these issues, the scala-lag-comp framework takes entirely
 care of state management and imposes a functional programing style to
@@ -547,18 +540,18 @@ the scala-lag-comp framework. The \emph{Engine} interface presented in
 for the initial attribution of peer \emph{identity}, and the
 establishment of a \emph{globalTime}, synchronized among all peers.
 \emph{StateLoop} stores all the peer \emph{Inputs} and is able to
-predict the application for the \emph{Inputs} received so far.
+predict the application state for the \emph{Inputs} received so far.
 \autoref{lagcompEngine} shows the interconnection between the components
 of an \emph{Engine}. The \emph{triggerRendering} function of the
-\emph{Engine} gets the current \emph{globalTime} from the
-\emph{ClockSync}, asks the \emph{StateLoop} to predict the \emph{State}
-at that time, and passes the output to the user via the \emph{render}
-function. Whenever an \emph{Input} is sent to the \emph{Engine} via
-\emph{futureAct}, this \emph{Input} is combined with the peer
-\emph{identity} to form an \emph{Action}, then couples with the
-\emph{globalTime} to form an \emph{Event}. This \emph{Event} is directly
-transmitted to the local \emph{StateLoop}, and sent via the connection
-to the remote \emph{StateLoops}.
+\emph{Engine} gets the current \emph{globalTime} from \emph{ClockSync},
+asks \emph{StateLoop} to predict the \emph{State} at that time, and
+passes the output to the user via the \emph{render} function. Whenever
+an \emph{Input} is sent to the \emph{Engine} via \emph{futureAct}, this
+\emph{Input} is combined with the peer \emph{identity} to form an
+\emph{Action} and then couples with the \emph{globalTime} to form an
+\emph{Event}. This \emph{Event} is directly transmitted to the local
+\emph{StateLoop}, and sent via the connection to the remote
+\emph{StateLoops}.
 
 \lagcompEngine{Architecture of the latency compensation framework.}
 
@@ -574,13 +567,13 @@ peers globally, and attribute them a consistent identity.
 Once peers are all aware of each other, they need to agree on a
 \emph{globalTime}. Ultimately, each peer holds a difference of time
 \dt between its internal clock and the globally consented clock. The
-global clock is defined to be the arithmetic average of all the peer's
-clock. In order to compute their \dt, each pair of peers needs to
+global clock is defined to be the arithmetic average of all the peers'
+clocks. In order to compute their \dt, each pair of peers needs to
 exchange their clock values. This is accomplished in a way similar to
-Cristian's algorithm~\cite{cristian89}. Firstly, peers send request for
+Cristian's algorithm~\cite{cristian89}. First, peers send request for
 the clock values of other peers. Upon receiving a response containing a
 time \emph{t}, one can estimate the value of the remote clock by adding
-half of the request round trip time to \emph{t}. Once all peers have
+half of the request round trip time to \emph{t}. Once peers all have
 estimations of the various clocks, they are able to locally compute the
 average, and use it as the estimated \emph{globalTime}. To minimize the
 impact of network variations, several requests are emitted between each
@@ -588,31 +581,30 @@ pair of peers, and the algorithms only retain the requests with the
 shortest round trip times.
 
 Certainly, this approach will result in slightly shifted views of the
-\emph{globalTime}. Even with more solutions elaborated, such as the
+\emph{globalTime}. Even with more elaborated solutions, such as the
 Network Time Protocol, the average precision varies between 20 ms and
 100 ms depending on the quality of the connection \cite{mills2010}. In
 the case of the scala-lag-comp framework, out-of-sync clocks can
 decrease the quality of the user experience but do not effect
 correctness. Indeed, once every user has seen every input, and once all
 the simulations have reached the \emph{globalTime} at which the latest
-input was issued, all the simulations generate \emph{States} for the
-same \emph{globalTime}. If one user is significantly ahead of the
-others, this will have the effect of preventing him to react quickly to
-other peers actions. Suppose a peer \emph{P\textsubscript{a}} thinks the
-\emph{globalTime} is \emph{t\textsubscript{a}} seconds ahead of what
-other peers believe. Whenever he receives an input issued at time
-\emph{t\textsubscript{1}}, \emph{P\textsubscript{a}} will already have
-simulated and displayed the application up to time
-\emph{t\textsubscript{1} + t\textsubscript{a} + networkdelay}, and his
-reaction to this input will be issued with a lag of
-\emph{t\textsubscript{a} + networkdelay}. Furthermore, being ahead of
+input was issued, all the simulations will generate the same
+\emph{States} for the same \emph{globalTimes}. If one user is
+significantly ahead of the others, this will have the effect of
+preventing him to react quickly to other peers actions. Suppose a peer
+\emph{P\textsubscript{a}} thinks the \emph{globalTime} is
+\emph{t\textsubscript{a}} seconds ahead of what other peers believe.
+Whenever he receives an input issued at time \emph{t\textsubscript{1}},
+\emph{P\textsubscript{a}} will already have simulated and displayed the
+application up to time \emph{t\textsubscript{1} + t\textsubscript{a} +
+networkdelay}, and his reaction to this input will be issued with a lag
+of \emph{t\textsubscript{a} + networkdelay}. Furthermore, being ahead of
 the actual \emph{globalTime} implies that the \emph{rolls back}
 mechanism will be used for significant portions of time, introducing
-potential visual glitches such as avatars teleporting from one point to
-another.
+visual glitches such as avatars teleporting from one point to another.
 
-To prevent malicious manipulations of the clock (a form of cheating in
-games), one could improve the framework by adding a mechanism to verify
+To prevent malicious manipulations of the clock, a form of cheating in
+games, one could improve the framework by adding a mechanism to verify
 that the issue times of inputs respects some causal consistency. Follows
 an example of such mechanism.
 
@@ -639,8 +631,8 @@ algorithm: a \emph{stateAt} function which, given a \emph{time},
 computes a prediction of the application \emph{State}. To do so,
 \emph{StateLoop} maintains a set of user \emph{Actions} received so far,
 which is used to simulate the execution of the application.
-\emph{Actions} are stored in an immutable list of \emph{Events} (pair of
-\emph{Action} and \emph{time}), sorted by \emph{time}.
+\emph{Actions} are stored in an immutable list of \emph{Events} (pairs
+of \emph{Action} and \emph{time}), sorted by \emph{time}.
 
 Semantically, every call to the \emph{stateAt} function implies a
 recursive computation of the current state. This recursion starts from
@@ -657,7 +649,7 @@ is called and no new \emph{Events} has been received since the last
 call, the cache hits right away, after a single recursion step. Whenever
 a remote input is received and inserted into the sorted list of
 \emph{Events}, the recursion takes place up to the time at which this
-newly received \emph{Event} was issued. The cache will then hit at that
+newly received \emph{Event} was issued. The cache then hit at that
 point, from where \emph{nextState} can be successively applied to obtain
 the \emph{State} for the current time. This is how the \emph{rolls back}
 mechanism illustrated in \autoref{stateGraph} is implemented in a
@@ -693,11 +685,11 @@ addition of real-time multiplayer features.
 The original version of the game was written in 1982 for the Atari 2600.
 One year later, a remake with better graphics is released for the
 Commodore 64. Recently, S. Schiller developed an open source remake of
-the game using HTML/CSS/JavaScript \cite{survivor2012}. This latest open
-source remake served as a basis for the version of the game presented in
-this chapter. We rewrote the code from scratch in Scala to follow the
-functional programing style required by the scala-lag-comp framework,
-but still share the visual assets created by S. Schiller.
+the game using Html, CSS and JavaScript \cite{survivor2012}. This latest
+open source remake served as a basis for the version of the game
+presented in this chapter. We rewrote the code from scratch in Scala to
+follow the functional programing style required by the scala-lag-comp
+framework, but still rely on the visual assets created by S. Schiller.
 
 \section{Architecture}\label{architecture}
 
@@ -707,71 +699,71 @@ time multiplayer game. On the networking side, it uses WebRTC if
 available, and fallbacks to WebSocket otherwise.
 
 Every aspect of the game logic is written in pure Scala, and is cross
-compiled to run on both Java Virtual Machines and JavaScript engines.
-Some IO related code had to be written specifically for each platform,
-such as the handling of keyboard events and of rendering requests. The
-JavaScript implementation is using the DOM APIs, and the JVM
-implementation is built on top of the JavaFX/ScalaFX platform. On the
-JavaScript side rendering requests are issued with
-\emph{requestAnimationFrame}, which saves CPU usage by only requesting
-rendering when the page is visible to the user.
+compiled for both JVM and JavaScript engines. Some I/O related code had
+to be written specifically for each platform, such as the handling of
+keyboard events and of rendering requests. The JavaScript implementation
+is using the DOM APIs, and the JVM implementation is built on top of the
+JavaFX/ScalaFX platform. On the JavaScript, side rendering requests are
+issued with \emph{requestAnimationFrame}, which saves battery and CPU
+usage by only requesting rendering when the page is visible to the user.
 
 In order to reuse the visual assets from \cite{survivor2012}, the JVM
-version embeds a full WebKit browser in order to run the same
-implementation of the user interface than the JavaScript version. The
-rendering on the JVM goes as follows. It begins with \emph{render}
-method being called with a \emph{State} to display. This \emph{State} is
-serialized using the uPickle serialization library \cite{upickle}, and
-passed to the embedded web browser as the argument of a
-\emph{renderString} function. This function, defined in the Scala.js
-with a \emph{@JSExport} annotation to be visible to the outside word,
-deserializes its argument back into a \emph{State}, but this time on the
-JavaScript engine. With this trick, a \emph{State} can be transfered
-from a JVM to a JavaScript engine, allowing the implementation of the
-user interface to be shared between two platforms. While sufficient for
-a proof of concept, this approach reduces the performances of the JVM
-version of the game, which could be avoided with an actual rewrite of
-the user interface on top of JavaFX/ScalaFX.
+version embeds a full WebKit browser and runs the same implementation of
+the user interface than the JavaScript version. The rendering on the JVM
+goes as follows. It begins with the \emph{render} function being called
+with a \emph{State} to display. This \emph{State} is serialized using
+the uPickle serialization library \cite{upickle}, and passed to the
+embedded web browser as the argument of a \emph{renderString} function.
+This function, defined in the Scala.js with a \emph{@JSExport}
+annotation to be visible to the outside word, deserializes its argument
+back into a \emph{State}, this time on the JavaScript engine. With this
+trick, a \emph{State} can be transfered from a JVM to a JavaScript
+engine, allowing the implementation of the user interface to be shared
+between two platforms. While sufficient for a proof of concept, this
+approach reduces the performances of the JVM version of the game, which
+could be avoided with an actual rewrite of the user interface on top of
+JavaFX/ScalaFX.
 
-\section{Functional Graphical User Interface With
-React}\label{functional-graphical-user-interface-with-react}
+\section{Functional Graphic User Interface With
+React}\label{functional-graphic-user-interface-with-react}
 
 In this section we discuss the implementation of the graphics user
 interface of our game using the React library \cite{react}. In
-functional programing, the \emph{de facto} standard building graphics
-user interface seems to be functional reactive programing. React enables
-a different approach\footnote{React supports a variety of architectures
-  to build user interfaces, and is not limited the approach described in
-  this section. For example, it is possible to store mutable state into
-  \emph{Components}. React also supports server side rendering; by
-  sharing the definition of \emph{Components} between client and server
-  side, rendering can take place on the server, thus limiting the client
-  work to reception and application of diffs.}, which suits perfectly
-the architecture of the scala-lag-comp framework.
+functional programing, the \emph{de facto} standard for building
+graphics user interface seems to be functional reactive programing.
+React enables a different approach\footnote{React supports a variety of
+  architectures to build user interfaces, and is not limited the
+  approach described in this section. For example, it supports the
+  storage of mutable state into \emph{Components}. React also supports
+  server side rendering. By sharing the definition of \emph{Components}
+  between client and server side, rendering can take place on the
+  server, thus limiting the client work to reception and application of
+  diffs.}, which suits perfectly the architecture of the scala-lag-comp
+framework.
 
 The interface is a single \emph{render} function, which takes as
 argument the entire state of the application, and returns a complete
-HTML representation of the state as a result.
+Html representation of the state as a result.
 
-The key performance aspect of React is that the library does directly
-uses the DOM returned by the \emph{render} function. Instead of
-replacing the content of the page whenever a new DOM is computed, React
-computes a diff between this new DOM and the currently rendered DOM.
-This diff is then used to send the minimal set of mutations to the
-browser, thereby minimizing rendering time.
+The key performance aspect of React is that it does directly uses the
+DOM returned by the \emph{render} function. Instead of replacing the
+content of the page whenever a new DOM is computed, React computes a
+diff between this new DOM and the currently rendered DOM. This diff is
+then used to send the minimal set of mutations to the browser, thereby
+minimizing rendering time.
 
 In order to lighten the diff computation, React uses \emph{Components},
 small building block to define the \emph{render} function. A
 \emph{Component} is essentially a fraction of the \emph{render}
-function, given a subset of the application state it returns an HTML
+function, that given a subset of the application state, returns an Html
 representation for this subset of the application. \emph{Components} can
 be composed into a tree that takes the complete application state at its
 root, and propagates the necessary elements of states through the tree,
-thus forming a complete rendering function of the application. Thanks to
-this subdivision into small \emph{Components}, React is able to optimize
-the diff operation by skipping branches of the HTML DOM corresponding to
-\emph{Components} that depend on subsets of the state which is unchanged
-since the last rendering.
+thereby forming the complete rendering function of the application.
+Thanks to this subdivision into \emph{Components}, React is able to
+optimize the diff operation by skipping branches of the Html DOM
+corresponding to \emph{Components} that depend on subsets of the state
+which is unchanged since the last rendering.
 
 There is a special optimization possible when working with immutable
 data structure, as it is the case with the scala-lag-comp framework.
@@ -779,12 +771,12 @@ This optimization consists in overriding React's method for dirty
 checking \emph{Components}. Instead of using deep equality on subsets of
 states to determine if a \emph{Component} needs to be re-rendered, one
 can use reference equality, which is a sufficient condition for equality
-when working with immutable data structure.
+on immutable data structures.
 
 \section{Experimental Results}\label{experimental-results}
 
 On modern laptop\footnote{Intel Core i7-2620M @ 2.69 GHz, using the
-  integrated graphics card.}, the game runs at 60 Frames Per Seconds
+  integrated graphics card.}, the game runs at 60 Frames Per Second
 (FPS) on both Google Chrome and the OpenJDK 8 Java virtual machine. The
 game feels perfectly smooth on the JavaScript version, and shows some
 FPS drops on the Java virtual machine when too many objects are present
@@ -795,8 +787,8 @@ virtual machine.
 In order to experience the effects of latency compensation, we set up
 simple WebSocket server on Heroku, located in the United States for a
 higher latency. The result is quite noticeable in the other player
-trajectory which has small noticeable "jumps" when the remote player
-changes direction.
+trajectory which has small "jumps" when the remote player changes
+direction.
 
 In \autoref{lagCompInAction} we illustrate a situation of latency
 compensation, reproducible by controlling a single player. The sequence
@@ -809,32 +801,32 @@ as it is emitted, and does not experience any latency compensation. In
 this example, \emph{P\textsubscript{m}} is moving strait up towards
 \emph{P\textsubscript{i}}. On frame \emph{f\textsubscript{2}} of
 \emph{P\textsubscript{m}}'s view, we can see that
-\emph{P\textsubscript{m}} stops thrusting his ship, noticeable by the
-dissipation of the halo surrounding his ship. On frames
-\emph{f\textsubscript{2}} to \emph{f\textsubscript{4}} of
-\emph{P\textsubscript{m}}'s view, we see his ship slowly decelerating to
-finally stop right in front of \emph{P\textsubscript{i}}'s ship. By
-looking at \emph{P\textsubscript{i}}'s view you see that his game it not
-immediately aware that \emph{P\textsubscript{m}} is decelerating, a
-manifestation of the delay required for a packet to do a round trip to
-the United States. On frame \emph{f\textsubscript{4}}, we see that
-\emph{P\textsubscript{i}} detected a collision, and initiated an
-explosion animation. Between frame \emph{f\textsubscript{4}} and
-\emph{f\textsubscript{5}}, \emph{P\textsubscript{i}} revives the message
-indicating that \emph{P\textsubscript{m}} actually interrupted his
-acceleration a few moments ago. At this point, the roll-back mechanism
-enters into action to take into account the last input from
-\emph{P\textsubscript{m}}, which results in the situation in frame
-\emph{f\textsubscript{5}}, where both games are in the same state.
+\emph{P\textsubscript{m}} stops thrusting, noticeable by the dissipation
+of the halo surrounding his ship. On frames \emph{f\textsubscript{2}} to
+\emph{f\textsubscript{4}} of \emph{P\textsubscript{m}}'s view, his ship
+slowly decelerating to finally stop right in front of
+\emph{P\textsubscript{i}}'s ship. From the point of view of
+\emph{P\textsubscript{i}}, we see that his game it not immediately aware
+that \emph{P\textsubscript{m}} is decelerating, a manifestation of the
+delay required for a packet to do a round trip to the United States. On
+frame \emph{f\textsubscript{4}}, we see that \emph{P\textsubscript{i}}
+detected a collision, and initiated an explosion animation. Between
+frame \emph{f\textsubscript{4}} and \emph{f\textsubscript{5}},
+\emph{P\textsubscript{i}} revives the message indicating that
+\emph{P\textsubscript{m}} actually interrupted his acceleration a few
+moments ago. At this point, the roll-back mechanism enters into action
+to take into account the last input from \emph{P\textsubscript{m}},
+which results in the situation in frame \emph{f\textsubscript{5}}, where
+both games are in the same state.
 
 \lagCompInAction{Latency compensation in action.}
 
-Reader are invited to try out Survivor to get their own feel of the
-smoothness and responsiveness of the game. The JavaScript executable of
-the game is available online\footnote{\url{http://olivierblanvillain.github.io/survivor}},
-configures to connection the to demo server located in the United
-States. Open the game twice to simulate a second player, and start
-moving and shooting around with arrow keys and the space bar.
+Readers are invited to try out Survivor to get their own impressions on
+the smoothness and responsiveness of the game. The JavaScript executable
+of the game is available online\footnote{\url{http://olivierblanvillain.github.io/survivor}},
+configures to connection the demo server located in the United States.
+Open the game twice to simulate a second player, and start moving around
+and shooting with arrow keys and the space bar.
 
 \chapter{Related Work}\label{related-work}
 
@@ -845,29 +837,29 @@ enabling server-side of applications to be written in JavaScript, it
 allows data structure and API can be shared between client and server.
 In the case of network capabilities, many JavaScript libraries imitate
 the WebSocket API and rely on \emph{duck typing} to share code between
-client and server. For example, the ws library \cite{nodejsws} is an
-implantation of WebSocket client and server for Node.js which provides
-\emph{ws} objects behaving exactly like \emph{WebSocket} objects do on
-the browser side. Similarly, SockJS clients (discussed in
+client and server. For example, the \emph{ws} library \cite{nodejsws} is
+an implantation of WebSocket client and server for Node.js which
+provides \emph{ws} objects behaving exactly like \emph{WebSocket}
+objects do on the browser side. Similarly, SockJS clients (discussed in
 \autoref{sockjs}) provide \emph{SockJS} objects that are almost drop in
 replacement for \emph{WebSocket} objects. Finally, we could also mention
-official WebRTC API \cite{webrtc2014}, which was designed such that its
-"API for sending and receiving data models the behavior of WebSockets".
+the official WebRTC API \cite{webrtc2014}, which was designed such that
+its "API for sending and receiving data models the behavior of
+WebSockets".
 
 ClojureScript, the official Clojure to JavaScript compiler, has a large
-ecosystem of libraries for both client and server, out of which Sente
-\cite{sente} seems to be the most popular library for network
-communication. It goals are similar to those of scala-js-transport:
-offer a uniform client/server API which supports several transport
-mechanism. Instead of using an existing WebSocket emulation library,
-Sente implements its own solution to fallback on Ajax/long-polling when
-WebSocket is not available.
+ecosystem of libraries, out of which \emph{Sente} \cite{sente} seems to
+be the most popular library for network communication. It goals are
+similar to those of scala-js-transport: offer a uniform client-server
+API supporting several transport mechanism. Instead of using an existing
+WebSocket emulation library, \emph{Sente} implements its own solution to
+fallback on Ajax and long-polling when WebSocket is not available.
 
 With the large number of languages that compile to JavaScript
 \cite{compiletojs}, an exhaustive coverage of the network libraries
 would be beyond the scope of this report. To the best of our knowledge,
-scala-js-transport is the first library offering this variety of
-supported protocols and platform (summarized in \autoref{implSummary}).
+scala-js-transport is the first library offering such variety of
+supported protocols and platform.
 
 \section{Latency Compensation
 Engines}\label{latency-compensation-engines}
@@ -875,19 +867,18 @@ Engines}\label{latency-compensation-engines}
 Mainstream real-time strategy game commonly rely on simultaneous
 simulation to implement mutliplayer over the Internet. While little to
 no information is made public by the game publishers, experimenting with
-these games can bring a lot of information about their implementations.
-For example, in \emph{Starcraft II} every input is executed with a
-minimum delay of 200 ms, which in most cases is sufficient to transfer
-the input over the network and have it processed simultaneously.
-However, because of fluctuation on the network or lack of processing
-power in one of the peers, this delay might not be sufficient. To
-recover the situation, the \emph{Starcraft} game clients first use a
-small pause to hold every simulation until the slowest client catches
-up, and then globally increases the input delay. The delay is then
-dynamically adjusted during the remaining of the game, aiming to bring
-it back at 200 ms. The absence of any prediction mechanism forces this
-delay to be identical for every peer, thus being as slow as the slowest
-player.
+these games brings information about their implementations. For example,
+in \emph{Starcraft II} every input is executed with a minimum delay of
+200 ms, which is in most cases sufficient to transfer the input over the
+network and have it processed simultaneously. However, because of
+fluctuation on the network or lack of processing power in one of the
+peers, this delay might not be sufficient. To recover the situation, the
+\emph{Starcraft} game clients first rely on a small pause to hold every
+simulation until the slowest client catches up, and then globally
+increases the input delay. The delay is then dynamically adjusted during
+the remaining of the game, aiming to get back at 200 ms. The absence of
+any prediction mechanism forces this delay to be identical for every
+peer, thus being as slow as the slowest player.
 
 The peer to peer model also raises several challenges in terms of
 security and cheating prevention. In addition to the potential for
@@ -902,15 +893,13 @@ presents a generic and semi automatic tool to build \emph{map hacks},
 which was proven to be effective for several of the most recent strategy
 games. By repetitively taking snapshots of the memory allocated by a
 game, the tool can identify areas corresponding to the active units and
-building. Because this attack does not make any modification on the
-game, but simply passively inspects the memory, it is completely
-undetectable.
-
+building. Because this attack does not make any modification on the game
+but simply passively inspects the memory, it is completely undetectable.
 In addition to their tool, \cite{maphacks2011} proposes a new approach
 to implement hidden information in peer to peer configuration. In their
 solution peers share the minimum amount of information about the game in
 order to prevent any forms of \emph{map hack}. They use a cryptographic
-protocol, on the category of oblivious intersection protocols, that
+protocol, of the category of oblivious intersection protocols, that
 allows peers to \emph{negotiate} what information should be shared
 without relying on a third party entity.
 
@@ -920,13 +909,12 @@ programing model called \emph{TimeLine}. The motivation from this model
 comes from the observation that dealing with both time and shared state
 is the main source of complexity for latency compensation algorithms.
 The \emph{TimeLine} model was designed to facilitates the explicit
-treatment of time. This model is used to formulate several latency
+treatment of time. This model was used to formulate several latency
 compensation algorithms, which are implemented as part of the
-\emph{Janus} toolkit to allow game developers to quickly try out with
-the different algorithms. In a sense, the approach of
-\cite{timelines2013} is orthogonal to the one taken in scala-lag-comp,
-where we rely on functional programing principles to allows users of the
-framework to avoid direct managment of state.
+\emph{Janus} toolkit. In a sense, the approach of \cite{timelines2013}
+is orthogonal to the one taken in scala-lag-comp, where we rely on
+functional programing principles to avoid direct management of state by
+the framework user.
 
 \section{Functional Programing In
 Games}\label{functional-programing-in-games}
@@ -934,39 +922,38 @@ Games}\label{functional-programing-in-games}
 In a blog post series entitled \emph{Purely Functional Retrogames}
 \cite{retrogames2008}, James Hague discusses a functional implementation
 of the \emph{Pac-Man} game. He explains that the amount of state to
-manage can be reduced by computing some parts as function of others. For
-instance, the blinking of pills does not need any storage as it can be
-deduced from the current time. The author advocates an architecture
-similar to the one we used in the Scala remake of Survivor: a top level
-loop executed on every frame gathers user inputs, computes the next
-state and displays this state to the user. In order to modularize the
-next state function, one could avoid returning update versions of game
-entities on every function by instead returning \emph{events}. These
-\emph{events}, which are essentially descriptions of state changes, can
-be handled in a separated step.
+manage can be reduced by computing some parts of it as function of
+others. For instance, the blinking of pills does not need any storage as
+it can be deduced from the current time. The author advocates an
+architecture similar to the one we used in the Scala remake of Survivor:
+a top level loop executed on every frame gathers user inputs, computes
+the next state and displays this state to the user. In order to
+modularize the next state function, one could avoid returning update
+versions of game entities on every function by instead returning
+\emph{events}. These \emph{events}, which are essentially descriptions
+of state changes, can be handled in a separated step.
 
 \emph{Torus Pong} is a multiplayer remake of Pong. Implemented over the
 course of two days during the Clojure Cup, \emph{Torus Pong}
-demonstrates how functional programing can be used to build games
-\cite{pongasync}. Similarly to our Scala remake of Survivor, the core of
-the game is a pure function to compute the state from the previous state
-and a set of commands. However, this function resides on the server
-which orchestrates the entirety of the game. Clients serve as simple
-terminal: they send local inputs to the server and render the game
-whenever a new state is received from the server. Every communication is
-asynchronous and transits over WebSocket connections.
+demonstrates how functional programing can be used to quickly build
+games \cite{pongasync}. The core of the game is a pure function to
+compute the state from the previous state and a set of commands. This
+function resides on the server which orchestrates the entirety of the
+game. Clients serve as simple terminal: they send local inputs to the
+server and render the game whenever a new state is received from the
+server. Every communication is asynchronous and transits over WebSocket
+connections.
 
 \emph{No Man's Sky} is an upcoming science fiction game set in an
 infinite, \emph{procedurally} generated universe. A recent video
-interview \cite{nomanssky} reveals the core mechanism of this game. As
-opposed to randomly generated environment, every planet in \emph{No
-Man's Sky} in entirely generated by a pure function, taking as input the
-id of the planet (a 64 bit hash) and the current time. Because
-everything is generated lazily, the game is able to offer a virtually
-infinite world without storing information. However, in contrast to
-randomly generated worlds, players will be able to come back to a planet
-they like to see how it evolved over time, and share their findings with
-friends.
+interview \cite{nomanssky} reveals the core mechanism of this game:
+every planet in \emph{No Man's Sky} in entirely generated by a pure
+function, taking as input the id of the planet (a 64 bit hash) and the
+current time. Because everything is generated lazily, the game is able
+to offer a virtually infinite world without storing any information. In
+contrast to randomly generated worlds, players will be able to come back
+to a planet they liked to see how it evolved over time, and share their
+findings with friends.
 
 \chapter{Conclusion and Future Work}\label{conclusion-and-future-work}
 
@@ -987,10 +974,10 @@ online, real-time mutiplayer features.
 Future work could investigate the support of Web Workers
 \cite{webworkers2012} in the scala-js-transport library. Web Workers
 allow parallel computations on web browsers, and as such, are not
-directly related to networking. However, in the current implementations,
-Web Workers communicate by message passing, where messages are copied
-from one Worker to another using \emph{structured cloning}, thus being
-similar to a communication over the network.
+directly related to networking. However, in their current
+implementations, Web Workers communicate by message passing where
+messages are copied from one Worker to another using \emph{structured
+cloning}, thus being similar to a communication over the network.
 
 Another possible direction would be to add communication via streams of
 data as another network programing model. The Reactive Stream initiative
