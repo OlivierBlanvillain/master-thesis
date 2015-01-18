@@ -1,0 +1,44 @@
+\begin{frame}{In the morning}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Eat eggs
+\item
+  Drink coffee
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{In the evening}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Eat spaghetti
+\item
+  Drink wine
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Conclusion}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  And the answer is...
+\item
+  \(f(x)=\sum_{n=0}^\infty\frac{f^{(n)}(a)}{n!}(x-a)^n\)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Thanks!}
+
+\begin{center}
+\Huge\sc
+Thanks!
+\end{center}
+
+\end{frame}

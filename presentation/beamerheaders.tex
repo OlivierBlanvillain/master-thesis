@@ -1,8 +1,20 @@
+% Beamer
+\usefonttheme{professionalfonts}
+\usecolortheme{seagull}
+\usecolortheme{seahorse}
+\setbeamertemplate{enumerate items}{(\arabic{enumi})}
+\setbeamertemplate{itemize items}[circle]
+\setbeamercovered{transparent=15}
+\beamertemplatenavigationsymbolsempty
+\institute{\small\textsc{Programming Methods Laboratory, EPFL}}
+\let\oldinstitute\institute
+\renewcommand{\institute}[1]{\oldinstitute{\small\textsc{#1}}}
+
 % Fonts
 \usepackage[log-declarations=false]{xparse}
 \usepackage{fontspec}
 \usepackage[protrusion=true, final]{microtype}
-\setmainfont{Adobe Caslon Pro}
+\setsansfont{Linux Biolinum O}
 \setmonofont{Bitstream Vera Sans Mono}
 \usepackage{bm}
 
@@ -39,13 +51,7 @@
 % Links
 \usepackage{silence}
 \WarningsOff*
-\usepackage[
-  breaklinks=true,
-  colorlinks=true,
-  allcolors=blue,
-  pagebackref,
-  linktocpage=true
-]{hyperref}
+\usepackage{hyperref}
 \WarningsOn
 \renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
 \expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks
@@ -61,24 +67,13 @@
 \usepackage{longtable}
 \setlength\defaultaddspace{4pt}
 \setlength\belowrulesep{6pt}
-\usepackage{caption} 
-\captionsetup[table]{skip=6pt}
-
-% Document strucutre (toc & co)
-\usepackage[all]{nowidow}
-\usepackage{changepage}
-\usepackage{titling}
-\usepackage{tocloft}
+\usepackage{caption}
 
 % Figures
 \usepackage{graphicx}
-\graphicspath{{figures/}}
+\graphicspath{{../report/figures/}}
 \usepackage{floatrow}
-\floatsetup[table]{capposition=bottom}
 \usepackage{pstricks}
-
-% References
-\bibliographystyle{unsrt}
 
 % Custom commands
 \newfont{\eaddfnt}{phvr8t at 12pt}
