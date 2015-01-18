@@ -31,23 +31,15 @@
 - [x] Conclusion future work
 - [x] Intro
 - [x] Abstract
-
-
-# Report
-
-- The game
-
+- [x] The game
+- [x] Report
+- [~] Walls, bases and turrets
 
 # Pre Presentation
 
-- [] Walls, bases and turrets
-
 - [] Clock synchronization
-- [] UI to measure/set latency http://foundation.zurb.com/docs/components/range_slider.html
-
 - [] Proper buffer
 - [] Proper connection proxy
-
 
 # Post Presentation
 

@@ -15,14 +15,13 @@ Another obstacle to the development of client-server communication interfaces co
 
 Introducing scala-js-transport: a networking library for simple communication between Scala systems running on Java virtual machines and on JavaScript engines. This library fills the gap between the various network protocols supported by modern web browsers, and the high level, idiomatic interfaces that are convenient to build distributed applications. The remainder of the project is dedicated to an example of usage of scala-js-transport; a remake of a Commodore 64 game, augmented with online multiplayer features. Our contributions can be summarized as follows:
 
-
 - We introduce the scala-js-transport library and the various technologies and network programing models it supports. The library is built around the *Transport* interface, a trait unifying the communication capabilities of clients and servers. We discuss the different available implementations of the interface, targeting both the Java virtual machine and JavaScript, and two *Transport* wrappers featuring remote procedure calls and the actor model on top of the various implementations.
 
 - We present the scala-lag-comp framework, a general purpose, cross platform framework for latency compensation applications. Designed for peer to peer environments, the framework implement a predictive latency compensation algorithm to offer maximal responsiveness with a guaranty of eventual consistency. Thanks to a clever use of immutable data structures and an optimal caching policy, the implementation is both computational and memory efficient.
 
 - We show how we implemented Survivor, a cross platform, multiplayer game featuring real-time interactions with latency compensation. The game runs at about 60 frames per seconds, and, thanks to the design of the scala-lag-comp framework, provides an online experience comparable to modern multiplayer games. This example demonstrates the potential of Scala.js and of the scala-js-transport library to be used in latency sensitive applications.
 
-The source code of the software developed for this project is available online in open source (MIT) on the project repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transport/}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
+The source code of the software developed for this project is available online in open source (MIT) on the project repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transport}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
 
 Transport
 =========

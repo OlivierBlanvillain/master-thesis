@@ -4,3 +4,6 @@
 [submodule "transport"]
 	path = transport
 	url = git@github.com:OlivierBlanvillain/scala-js-transport.git
+[submodule "lag-comp"]
+	path = lag-comp
+	url = git@github.com:OlivierBlanvillain/scala-lag-comp.git
