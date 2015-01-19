@@ -2,13 +2,27 @@
 \usefonttheme{professionalfonts}
 \usecolortheme{seagull}
 \usecolortheme{seahorse}
-\setbeamertemplate{enumerate items}{(\arabic{enumi})}
 \setbeamertemplate{itemize items}[circle]
+% \setbeamercolor{normal text}{fg=white,bg=black!90}
+% \setbeamercolor*{structure}{fg=blue!33!white}
+% \setbeamercolor{alerted text}{use=structure,fg=structure.fg}
+% \setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+% \setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+% \setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+% \setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+% \setbeamercolor*{framesubtitle}{fg=white}
 \setbeamercovered{transparent=15}
 \beamertemplatenavigationsymbolsempty
 \institute{\small\textsc{Programming Methods Laboratory, EPFL}}
 \let\oldinstitute\institute
 \renewcommand{\institute}[1]{\oldinstitute{\small\textsc{#1}}}
+
+% Enumerate spacing
+\newlength{\wideitemsep}
+\setlength{\wideitemsep}{\itemsep}
+\addtolength{\wideitemsep}{5pt}
+\let\olditem\item
+\renewcommand{\item}{\setlength{\itemsep}{\wideitemsep}\olditem}
 
 % Fonts
 \usepackage[log-declarations=false]{xparse}
@@ -31,7 +45,7 @@
 }[keywords, comments, strings]
 \lstset{
   tabsize=2,
-  basicstyle=\ttfamily\fontsize{9pt}{1.1em}\selectfont,
+  basicstyle=\color{black!15}\ttfamily\fontsize{9pt}{1.1em}\selectfont,
   keywordstyle=\bfseries,
   commentstyle=\itshape\ttfamily\fontsize{9pt}{1.1em}\selectfont,
   language=scala,
@@ -41,18 +55,54 @@
   showstringspaces=false,
   classoffset=0pt,
   aboveskip=0pt,
-  belowskip=0pt
+  belowskip=0pt,
+  % moredelim=**[is][\only<1,2,3,4,5>{\color{black}}]{12345~}{~},
+  % moredelim=**[is][\only<1,2,3,5>{\color{black}}]{1235~}{~},
+  % moredelim=**[is][\only<1,2,4,5>{\color{black}}]{1245~}{~},
+  % moredelim=**[is][\only<1,3,4,5>{\color{black}}]{1345~}{~},
+  % moredelim=**[is][\only<2,3,4,5>{\color{black}}]{2345~}{~},
+  % moredelim=**[is][\only<1,2,5>{\color{black}}]{125~}{~},
+  % moredelim=**[is][\only<1,3,5>{\color{black}}]{135~}{~},
+  % moredelim=**[is][\only<1,4,5>{\color{black}}]{145~}{~},
+  % moredelim=**[is][\only<2,3,5>{\color{black}}]{235~}{~},
+  % moredelim=**[is][\only<2,4,5>{\color{black}}]{245~}{~},
+  % moredelim=**[is][\only<3,4,5>{\color{black}}]{345~}{~},
+  % moredelim=**[is][\only<1,5>{\color{black}}]{15~}{~},
+  % moredelim=**[is][\only<2,5>{\color{black}}]{25~}{~},
+  % moredelim=**[is][\only<3,5>{\color{black}}]{35~}{~},
+  % moredelim=**[is][\only<4,5>{\color{black}}]{45~}{~},
+  moredelim=**[is][\only<1-4>{\color{black}}]{1234~}{~},
+  moredelim=**[is][\only<1-3>{\color{black}}]{123~}{~},
+  moredelim=**[is][\onlyotf{\color{black}}]{124~}{~},
+  moredelim=**[is][\onlyohf{\color{black}}]{134~}{~},
+  moredelim=**[is][\only<2-4>{\color{black}}]{234~}{~},
+  moredelim=**[is][\only<1-2>{\color{black}}]{12~}{~},
+  moredelim=**[is][\onlyot{\color{black}}]{13~}{~},
+  moredelim=**[is][\onlyof{\color{black}}]{14~}{~},
+  moredelim=**[is][\only<2-3>{\color{black}}]{23~}{~},
+  moredelim=**[is][\onlytf{\color{black}}]{24~}{~},
+  moredelim=**[is][\only<3-4>{\color{black}}]{34~}{~},
+  moredelim=**[is][\only<1>{\color{black}}]{1~}{~},
+  moredelim=**[is][\only<2>{\color{black}}]{2~}{~},
+  moredelim=**[is][\only<3>{\color{black}}]{3~}{~},
+  moredelim=**[is][\only<4>{\color{black}}]{4~}{~},
+  moredelim=**[is][\only<5>{\color{black}}]{5~}{~},
 }
+\newcommand\onlyot[1]{\only<1,3>{#1}}
+\newcommand\onlyof[1]{\only<1,4>{#1}}
+\newcommand\onlytf[1]{\only<2,4>{#1}}
+\newcommand\onlyotf[1]{\only<1,2,4>{#1}}
+\newcommand\onlyohf[1]{\only<1,3,4>{#1}}
 
 % Quotes
-\usepackage[autostyle=false, style=english]{csquotes}
+\usepackage[autostyle=false,style=english]{csquotes}
 \MakeOuterQuote{"}
 
 % Links
-\usepackage{silence}
-\WarningsOff*
-\usepackage{hyperref}
-\WarningsOn
+% \usepackage{silence}
+% \WarningsOff*
+% \usepackage{hyperref}
+% \WarningsOn
 \renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
 \expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks
   \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j
@@ -72,6 +122,7 @@
 % Figures
 \usepackage{graphicx}
 \graphicspath{{../report/figures/}}
+\graphicspath{{figures/}}
 \usepackage{floatrow}
 \usepackage{pstricks}
 
@@ -84,3 +135,5 @@
 \newcommand\dt[0]{$\Delta t$\xspace}
 \newcommand\state[1]{S\textsubscript{#1}}
 \newcommand\stateprime[1]{S'\hspace{-1.5pt}\textsubscript{#1}}
+\newcommand\hfilll[0]{\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill\hfill}
+\renewcommand\logo[1]{\includegraphics[height=2ex]{#1}}

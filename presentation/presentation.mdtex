@@ -1,44 +1,148 @@
-\begin{frame}{In the morning}
+\begin{frame}{This Presentation}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Transport library
+\item
+  Latency compensation framework
+\item
+  Example: online multiplayer game
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Motivation}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Eat eggs
+  Share
 \item
-  Drink coffee
+  Many JavaScript APIs
+\item
+  Many network programming models
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{In the evening}
+\begin{frame}{}
+
+~
+
+\centering\Huge
+Diving in...
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+\begin{lstlisting}
+124~trait Transport~ 24~{
+  type Address
+  def listen(): Future[Promise[ConnectionListener]]
+  def connect(remote: Address): Future[ConnectionHandle]
+  def shutdown(): Future[Unit]
+}~
+134~trait ConnectionHandle~ 34~{
+  def handlerPromise: Promise[MessageListener]
+  def write(message: String): Unit
+  def closedFuture: Future[Unit]
+  def close(): Unit
+}~
+24~type ConnectionListener = ConnectionHandle => Unit~
+34~type MessageListener = String => Unit~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{Targeted Technologies}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Eat spaghetti
+  WebSocket
 \item
-  Drink wine
+  SockJS
+\item
+  WebRTC
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Conclusion}
+\begin{frame}{WebSocket}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  And the answer is...
-\item
-  \(f(x)=\sum_{n=0}^\infty\frac{f^{(n)}(a)}{n!}(x-a)^n\)
+  Introduction
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Thanks!}
+\begin{frame}{WebSocket Support}
 
-\begin{center}
-\Huge\sc
+\centering
+\includegraphics[width=\linewidth]{ciu-websocket} \medskip
+
+Availability: \textasciitilde{}84\%
+
+\end{frame}
+
+\begin{frame}{SockJS}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Introduction
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{SockJS, Supported Transports}
+
+\includegraphics[width=\linewidth]{sockjs-table.pdf}
+
+\end{frame}
+
+\begin{frame}{WebRTC}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Introduction
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{WebRTC Support}
+
+\centering
+\includegraphics[width=\linewidth]{ciu-webrtc} \medskip
+
+Availability: \textasciitilde{}54\%
+
+\end{frame}
+
+\begin{frame}{Transport Implementations}
+
+\begin{longtable}[c]{@{}lccc@{}}
+\toprule
+Platform & WebSocket & SockJS & WebRTC\tabularnewline
+\midrule
+\endhead
+JavaScript & client & client & client\tabularnewline
+Play Framework & server & server & -\tabularnewline
+Netty & both & - & -\tabularnewline
+Tyrus & client & - & -\tabularnewline
+\bottomrule
+\end{longtable}
+
+\end{frame}
+
+\begin{frame}{}
+
+~
+
+\centering\Huge\sc
 Thanks!
-\end{center}
 
 \end{frame}
