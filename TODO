@@ -43,11 +43,12 @@
 
 # Post Presentation
 
+- [] Make shutdown shutdown everywhere
 - [] WebRTC Close SignalingChannel on establishment
 - [] Readmes
-- [] Remove all TODOCs
+- [] Remove all TODoCs
 - [] Message to the mailing list
-- [] Message to the survivor author
+- [] Message to the Survivor's remake author
 - [] Message to Odersky
 - [] Update CV
 - [] Firefox

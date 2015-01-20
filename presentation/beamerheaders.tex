@@ -13,7 +13,6 @@
 % \setbeamercolor*{framesubtitle}{fg=white}
 \setbeamercovered{transparent=15}
 \beamertemplatenavigationsymbolsempty
-\institute{\small\textsc{Programming Methods Laboratory, EPFL}}
 \let\oldinstitute\institute
 \renewcommand{\institute}[1]{\oldinstitute{\small\textsc{#1}}}
 
@@ -31,6 +30,7 @@
 \setsansfont{Linux Biolinum O}
 \setmonofont{Bitstream Vera Sans Mono}
 \usepackage{bm}
+\newfontfamily\caslon{Adobe Caslon Pro}
 
 % Scala format
 \usepackage[final]{listings}
@@ -56,53 +56,19 @@
   classoffset=0pt,
   aboveskip=0pt,
   belowskip=0pt,
-  % moredelim=**[is][\only<1,2,3,4,5>{\color{black}}]{12345~}{~},
-  % moredelim=**[is][\only<1,2,3,5>{\color{black}}]{1235~}{~},
-  % moredelim=**[is][\only<1,2,4,5>{\color{black}}]{1245~}{~},
-  % moredelim=**[is][\only<1,3,4,5>{\color{black}}]{1345~}{~},
-  % moredelim=**[is][\only<2,3,4,5>{\color{black}}]{2345~}{~},
-  % moredelim=**[is][\only<1,2,5>{\color{black}}]{125~}{~},
-  % moredelim=**[is][\only<1,3,5>{\color{black}}]{135~}{~},
-  % moredelim=**[is][\only<1,4,5>{\color{black}}]{145~}{~},
-  % moredelim=**[is][\only<2,3,5>{\color{black}}]{235~}{~},
-  % moredelim=**[is][\only<2,4,5>{\color{black}}]{245~}{~},
-  % moredelim=**[is][\only<3,4,5>{\color{black}}]{345~}{~},
-  % moredelim=**[is][\only<1,5>{\color{black}}]{15~}{~},
-  % moredelim=**[is][\only<2,5>{\color{black}}]{25~}{~},
-  % moredelim=**[is][\only<3,5>{\color{black}}]{35~}{~},
-  % moredelim=**[is][\only<4,5>{\color{black}}]{45~}{~},
-  moredelim=**[is][\only<1-4>{\color{black}}]{1234~}{~},
-  moredelim=**[is][\only<1-3>{\color{black}}]{123~}{~},
-  moredelim=**[is][\onlyotf{\color{black}}]{124~}{~},
-  moredelim=**[is][\onlyohf{\color{black}}]{134~}{~},
-  moredelim=**[is][\only<2-4>{\color{black}}]{234~}{~},
-  moredelim=**[is][\only<1-2>{\color{black}}]{12~}{~},
-  moredelim=**[is][\onlyot{\color{black}}]{13~}{~},
-  moredelim=**[is][\onlyof{\color{black}}]{14~}{~},
-  moredelim=**[is][\only<2-3>{\color{black}}]{23~}{~},
-  moredelim=**[is][\onlytf{\color{black}}]{24~}{~},
-  moredelim=**[is][\only<3-4>{\color{black}}]{34~}{~},
   moredelim=**[is][\only<1>{\color{black}}]{1~}{~},
   moredelim=**[is][\only<2>{\color{black}}]{2~}{~},
   moredelim=**[is][\only<3>{\color{black}}]{3~}{~},
   moredelim=**[is][\only<4>{\color{black}}]{4~}{~},
   moredelim=**[is][\only<5>{\color{black}}]{5~}{~},
 }
-\newcommand\onlyot[1]{\only<1,3>{#1}}
-\newcommand\onlyof[1]{\only<1,4>{#1}}
-\newcommand\onlytf[1]{\only<2,4>{#1}}
-\newcommand\onlyotf[1]{\only<1,2,4>{#1}}
-\newcommand\onlyohf[1]{\only<1,3,4>{#1}}
 
 % Quotes
 \usepackage[autostyle=false,style=english]{csquotes}
 \MakeOuterQuote{"}
 
 % Links
-% \usepackage{silence}
-% \WarningsOff*
-% \usepackage{hyperref}
-% \WarningsOn
+\hypersetup{colorlinks,linkcolor=blue,urlcolor=blue}
 \renewcommand*{\UrlFont}{\ttfamily\footnotesize\relax}
 \expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks
   \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j
@@ -125,12 +91,13 @@
 \graphicspath{{figures/}}
 \usepackage{floatrow}
 \usepackage{pstricks}
+\setkeys{Gin}{width=\linewidth}
 
 % Custom commands
 \newfont{\eaddfnt}{phvr8t at 12pt}
 \newcommand\at{\eaddfnt @}
 \usepackage{color}
-\newcommand\TODO[1]{\emph{\color{red} TODO: #1}}
+% \newcommand\TO DO[1]{\emph{\color{red} TO DO: #1}}
 \usepackage{xspace}
 \newcommand\dt[0]{$\Delta t$\xspace}
 \newcommand\state[1]{S\textsubscript{#1}}

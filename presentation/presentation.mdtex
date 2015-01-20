@@ -16,11 +16,11 @@
 
 \begin{itemize}
 \item
-  Share
-\item
   Many JavaScript APIs
 \item
   Many network programming models
+\item
+  Goal: cross platform networking
 \end{itemize}
 
 \end{frame}
@@ -29,7 +29,7 @@
 
 ~
 
-\centering\Huge
+\centering\Huge\sc
 Diving in...
 
 \end{frame}
@@ -37,20 +37,53 @@ Diving in...
 \begin{frame}[fragile]{}
 
 \begin{lstlisting}
-124~trait Transport~ 24~{
+4~2~1~trait Transport~ {
   type Address
   def listen(): Future[Promise[ConnectionListener]]
   def connect(remote: Address): Future[ConnectionHandle]
   def shutdown(): Future[Unit]
 }~
-134~trait ConnectionHandle~ 34~{
+3~1~trait ConnectionHandle~ {
   def handlerPromise: Promise[MessageListener]
   def write(message: String): Unit
   def closedFuture: Future[Unit]
   def close(): Unit
 }~
-24~type ConnectionListener = ConnectionHandle => Unit~
-34~type MessageListener = String => Unit~
+2~type ConnectionListener = ConnectionHandle => Unit~
+3~type MessageListener = String => Unit~~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Client Example}
+
+\begin{lstlisting}
+4~2~1~val transport = new WebSocketClient()
+val url = WebSocketUrl("ws://echo.websocket.org")~
+
+val futureConnection = transport.connect(url)
+futureConnection.onSuccess { case connection =>~
+  3~connection.write("Hello WebSocket!")
+  connection.handlerPromise.success { message =>
+    print("Received: " + message)
+    connection.close()
+  }~
+2~}~~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Server Example}
+
+\begin{lstlisting}
+5~2~1~val transport = new WebSocketServer(8080, "/ws")~
+try {
+  3~transport.listen()~~3~.foreach { _.success { connection =>~
+    4~connection.handlerPromise.success { message =>
+      connection.write(message)
+    }~
+  3~}}~
+2~} finally transport.shutdown()~~
 \end{lstlisting}
 
 \end{frame}
@@ -71,18 +104,21 @@ Diving in...
 \begin{frame}{WebSocket}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Introduction
+  Bidirectional client-server communication
+\item
+  Handshake = HTTP upgrade request
+\item
+  Long lived TCP
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{WebSocket Support}
+\begin{frame}{WebSocket Support, caniuse.com}
+
+\includegraphics{ciu-websocket} \medskip
 
 \centering
-\includegraphics[width=\linewidth]{ciu-websocket} \medskip
-
 Availability: \textasciitilde{}84\%
 
 \end{frame}
@@ -90,34 +126,62 @@ Availability: \textasciitilde{}84\%
 \begin{frame}{SockJS}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Introduction
+  WebSocket emulation, same API
+\item
+  Fallbacks to HTTP requests + long polling
+\item
+  Supports sticky sessions
+\item
+  Well defined protocol, standard test suite
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{SockJS, Supported Transports}
 
-\includegraphics[width=\linewidth]{sockjs-table.pdf}
+\includegraphics{sockjs-table.pdf}
 
 \end{frame}
 
 \begin{frame}{WebRTC}
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Introduction
+  Peer to peer
+\item
+  Made for Video, Audio and Data
+\item
+  Supports TCP, UDP and SCTP
+\item
+  RTC = Real Time Communication
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{WebRTC Support}
+\begin{frame}[fragile]{WebRTC Connection Establishment}
+
+\begin{itemize}
+\item
+  Requires a signaling channel
+\item
+  Typically thought a relay server
+\item
+\begin{lstlisting}
+1~class WebRTCClient extends Transport {
+  type Address = ConnectionHandle
+  ...
+}~
+\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{WebRTC Support, caniuse.com}
+
+\includegraphics{ciu-webrtc} \medskip
 
 \centering
-\includegraphics[width=\linewidth]{ciu-webrtc} \medskip
-
 Availability: \textasciitilde{}54\%
 
 \end{frame}
@@ -140,9 +204,212 @@ Tyrus & client & - & -\tabularnewline
 
 \begin{frame}{}
 
-~
+\Huge\sc
+Network Programming Abstractions
 
-\centering\Huge\sc
+\end{frame}
+
+\begin{frame}{The Actor Model}
+
+\begin{itemize}
+\item
+  Akka on the JVM
+\item
+  scala-js-actors on the browser
+\item
+  Let's do everything with actors!
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Actor Transport Wrapper}
+
+\begin{lstlisting}
+2~1~class ActorWrapper[T <: Transport](t: T) {~
+  type Handler = ActorRef => Props
+  def acceptWithActor(handler: Handler): Unit
+  def connectWithActor(
+      address: t.Address)(handler: Handler): Unit
+1~}~~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Connection Handling Actor}
+
+\begin{lstlisting}
+3~1~class YellingActor(2~out: ActorRef~) extends Actor {
+  override def preStart = println("Connected")
+  override def postStop = println("Disconnected")~
+  2~def receive = {
+    case message: String =>
+      println("Received: " + message)
+      out ! message.toUpperCase
+  }~
+1~}~~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{Remote Procedure Calls}
+
+\begin{itemize}
+\item
+  Wrapper around Autowire
+\item
+  Future based RPC
+\item
+  Agnostic of the serialization library
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+\begin{lstlisting}
+4~1~trait Api {
+  3~def doThing(i: Int, s: String): Seq[String]~
+}~
+  
+2~object Server extends Api {
+  def doThing(i: Int, s: String) = Seq.fill(i)(s)
+}
+val transport = new WebSocketServer(8080, "/ws")
+new MyRpcWrapper(transport).serve(_.route[Api](Server))~
+  
+3~val transport = new WebSocketClient()
+val url = WebSocketUrl("ws://localhost:8080/ws")
+val client = new MyRpcWrapper(transport).connect(url)
+val result: Future[Seq[String]] =
+    client[Api].doThing(3, "ha").call()~~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{}
+
+\Huge\sc
+Latency Compensation
+
+\end{frame}
+
+\begin{frame}{}
+
+\vspace{-1pt}
+
+\noindent\makebox[\columnwidth]{\includegraphics[width=1.333\paperwidth]{living-with-lag}}
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+\bigskip\Large
+Let's see how
+\href{https://docs.google.com/document/d/1iO8Jx-0M8-ZTwxzmK_SwjGScgN42XuIxt5fhpbM5Nao/edit\#}{Google
+Docs} does it!
+
+\begin{lstlisting}
+1~
+  sudo tc qdisc add dev eth0 root netem delay 3000ms
+  sudo tc qdisc del dev eth0 root netem~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{}
+
+\bigskip\centering\caslon\small
+\psscalebox{0.8 0.8}{\input{state-graph.tex}}
+
+\end{frame}
+
+\begin{frame}{Latency Compensation Framework}
+
+\begin{itemize}
+\item
+  Predictive algorithm
+\item
+  Peer to peer
+\item
+  Zero input latency
+\item
+  Eventual consistency
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Functional interface}
+
+\begin{lstlisting}
+4~1~case class Action[Input](input: Input, peer: Peer)
+ 
+2~class Engine[Input, State]~~2~(
+    initState: State,
+    nextState: (State, Set[Action[Input]]) => State,
+    render: State => Unit,
+    broadcastConnection: ConnectionHandle) {~
+  
+  3~def triggerRendering(): Unit
+  def futureAct: Future[Input => Unit]~
+2~}~~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{}
+
+\bigskip\centering\caslon\small
+\psscalebox{0.8 0.8}{\input{../report/figures/lagcomp-engine.tex}}
+
+\end{frame}
+
+\begin{frame}{StateLoop Implementation}
+
+todo...
+
+\end{frame}
+
+\begin{frame}{}
+
+\vspace{-1pt}
+
+\noindent\makebox[\columnwidth]{\includegraphics[width=0.54\paperwidth]{survivor}}
+
+\end{frame}
+
+\begin{frame}{Demo}
+
+\begin{itemize}
+\item
+  Cross platform
+\item
+  WebRTC
+\item
+  \href{http://olivierblanvillain.github.io/survivor/}{Online}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{React}
+
+\begin{itemize}
+\item
+  Re-render the whole application every frame
+\item
+\begin{lstlisting}
+1~def render(state: State): Html~
+\end{lstlisting}
+\item
+  Divided into Components
+\item
+  Virtual DOM diff algorithm
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{}
+
+\bigskip\centering\Huge\sc
 Thanks!
 
 \end{frame}
