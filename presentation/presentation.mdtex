@@ -27,8 +27,6 @@
 
 \begin{frame}{}
 
-~
-
 \centering\Huge\sc
 Diving in...
 
@@ -58,32 +56,17 @@ Diving in...
 \begin{frame}[fragile]{Client Example}
 
 \begin{lstlisting}
-4~2~1~val transport = new WebSocketClient()
+3~2~1~val transport = new WebSocketClient()
 val url = WebSocketUrl("ws://echo.websocket.org")~
 
 val futureConnection = transport.connect(url)
-futureConnection.onSuccess { case connection =>~
-  3~connection.write("Hello WebSocket!")
+futureConnection.foreach { connection =>~
   connection.handlerPromise.success { message =>
     print("Received: " + message)
     connection.close()
-  }~
+  }
+  connection.write("Hello WebSocket!")
 2~}~~
-\end{lstlisting}
-
-\end{frame}
-
-\begin{frame}[fragile]{Server Example}
-
-\begin{lstlisting}
-5~2~1~val transport = new WebSocketServer(8080, "/ws")~
-try {
-  3~transport.listen()~~3~.foreach { _.success { connection =>~
-    4~connection.handlerPromise.success { message =>
-      connection.write(message)
-    }~
-  3~}}~
-2~} finally transport.shutdown()~~
 \end{lstlisting}
 
 \end{frame}
@@ -101,40 +84,12 @@ try {
 
 \end{frame}
 
-\begin{frame}{WebSocket}
-
-\begin{itemize}
-\item
-  Bidirectional client-server communication
-\item
-  Handshake = HTTP upgrade request
-\item
-  Long lived TCP
-\end{itemize}
-
-\end{frame}
-
 \begin{frame}{WebSocket Support, caniuse.com}
 
 \includegraphics{ciu-websocket} \medskip
 
 \centering
 Availability: \textasciitilde{}84\%
-
-\end{frame}
-
-\begin{frame}{SockJS}
-
-\begin{itemize}
-\item
-  WebSocket emulation, same API
-\item
-  Fallbacks to HTTP requests + long polling
-\item
-  Supports sticky sessions
-\item
-  Well defined protocol, standard test suite
-\end{itemize}
 
 \end{frame}
 
@@ -165,7 +120,7 @@ Availability: \textasciitilde{}84\%
 \item
   Requires a signaling channel
 \item
-  Typically thought a relay server
+  Typically through a relay server
 \item
 \begin{lstlisting}
 1~class WebRTCClient extends Transport {
@@ -195,7 +150,7 @@ Platform & WebSocket & SockJS & WebRTC\tabularnewline
 \endhead
 JavaScript & client & client & client\tabularnewline
 Play Framework & server & server & -\tabularnewline
-Netty & both & - & -\tabularnewline
+Netty & both & inc. & -\tabularnewline
 Tyrus & client & - & -\tabularnewline
 \bottomrule
 \end{longtable}
@@ -238,15 +193,15 @@ Network Programming Abstractions
 \begin{frame}[fragile]{Connection Handling Actor}
 
 \begin{lstlisting}
-3~1~class YellingActor(2~out: ActorRef~) extends Actor {
+1~class YellingActor(2~out: ActorRef~) extends Actor {
   override def preStart = println("Connected")
-  override def postStop = println("Disconnected")~
+  override def postStop = println("Disconnected")
   2~def receive = {
     case message: String =>
       println("Received: " + message)
       out ! message.toUpperCase
   }~
-1~}~~
+}~
 \end{lstlisting}
 
 \end{frame}
@@ -268,16 +223,28 @@ Network Programming Abstractions
 
 \begin{lstlisting}
 4~1~trait Api {
-  3~def doThing(i: Int, s: String): Seq[String]~
-}~
-  
-2~object Server extends Api {
+  def doThing(i: Int, s: String): Seq[String]
+}~~
+\end{lstlisting}
+
+\vspace{-5pt}
+
+\text{\only<3>{\color{black!15}}\noindent\hfil\rule{\textwidth}{.4pt}\hfil}
+
+\begin{lstlisting}
+4~2~object Server extends Api {
   def doThing(i: Int, s: String) = Seq.fill(i)(s)
 }
 val transport = new WebSocketServer(8080, "/ws")
-new MyRpcWrapper(transport).serve(_.route[Api](Server))~
-  
-3~val transport = new WebSocketClient()
+new MyRpcWrapper(transport).serve(_.route[Api](Server))~~
+\end{lstlisting}
+
+\vspace{-5pt}
+
+\text{\only<1>{\color{black!15}}\noindent\hfil\rule{\textwidth}{.4pt}\hfil}
+
+\begin{lstlisting}
+4~3~val transport = new WebSocketClient()
 val url = WebSocketUrl("ws://localhost:8080/ws")
 val client = new MyRpcWrapper(transport).connect(url)
 val result: Future[Seq[String]] =
@@ -310,15 +277,25 @@ Docs} does it!
 
 \begin{lstlisting}
 1~
-  sudo tc qdisc add dev eth0 root netem delay 3000ms
-  sudo tc qdisc del dev eth0 root netem~
+  sudo tc qdisc add dev wlan0 root netem delay 3000ms
+  sudo tc qdisc del dev wlan0 root netem~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+\begin{lstlisting}
+1~
+
+        nextState: (State, Set[Action]) => State~
 \end{lstlisting}
 
 \end{frame}
 
 \begin{frame}{}
 
-\bigskip\centering\caslon\small
+\medskip\centering\caslon\small
 \psscalebox{0.8 0.8}{\input{state-graph.tex}}
 
 \end{frame}
@@ -327,31 +304,27 @@ Docs} does it!
 
 \begin{itemize}
 \item
-  Predictive algorithm
-\item
   Peer to peer
 \item
-  Zero input latency
+  Zero input latency (predictive)
 \item
   Eventual consistency
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}[fragile]{Functional interface}
+\begin{frame}[fragile]{Functional Interface}
 
 \begin{lstlisting}
-4~1~case class Action[Input](input: Input, peer: Peer)
- 
-2~class Engine[Input, State]~~2~(
+3~1~class Engine(
     initState: State,
-    nextState: (State, Set[Action[Input]]) => State,
+    nextState: (State, Set[Action]) => State,
     render: State => Unit,
     broadcastConnection: ConnectionHandle) {~
-  
-  3~def triggerRendering(): Unit
-  def futureAct: Future[Input => Unit]~
-2~}~~
+
+  2~def triggerRendering(): Unit
+  def futureAct: Future[Action => Unit]~
+1~}~~
 \end{lstlisting}
 
 \end{frame}
@@ -360,12 +333,6 @@ Docs} does it!
 
 \bigskip\centering\caslon\small
 \psscalebox{0.8 0.8}{\input{../report/figures/lagcomp-engine.tex}}
-
-\end{frame}
-
-\begin{frame}{StateLoop Implementation}
-
-todo...
 
 \end{frame}
 
@@ -379,14 +346,16 @@ todo...
 
 \begin{frame}{Demo}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
 \item
-  Cross platform
+  JVM and JavaScript together
 \item
-  WebRTC
+  WebRTC, server shutdown
 \item
-  \href{http://olivierblanvillain.github.io/survivor/}{Online}
-\end{itemize}
+  Latency compensation
+  \href{http://olivierblanvillain.github.io/survivor/}{in action}
+\end{enumerate}
 
 \end{frame}
 
@@ -400,8 +369,6 @@ todo...
 1~def render(state: State): Html~
 \end{lstlisting}
 \item
-  Divided into Components
-\item
   Virtual DOM diff algorithm
 \end{itemize}
 
@@ -411,5 +378,43 @@ todo...
 
 \bigskip\centering\Huge\sc
 Thanks!
+
+\end{frame}
+
+\begin{frame}{}
+
+\bigskip\centering\Huge\sc
+Bonus Slides
+
+\end{frame}
+
+\begin{frame}[fragile]{Server Example}
+
+\begin{lstlisting}
+1~val transport = new WebSocketServer(8080, "/ws")
+try {
+  transport.listen().foreach { _.success { connection =>
+    connection.handlerPromise.success { message =>
+      connection.write(message)
+    }
+  }}
+} finally transport.shutdown()~
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{WebRTC connection establishment}
+
+\begin{lstlisting}
+1~val webSocketClient = new WebSocketClient()
+val webRTCClient = new WebRTCClient()
+val relayURL = WebSocketUrl("ws://localhost:8080/ws")
+
+val signalingChannel: Future[ConnectionHandle] =
+  webSocketClient.connect(relayURL)
+
+val p2pConnection: Future[ConnectionHandle] =
+  signalingChannel.flatMap(webRTCClient.connect(_))~
+\end{lstlisting}
 
 \end{frame}

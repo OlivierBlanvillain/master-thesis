@@ -472,6 +472,8 @@ framework does not use any authoritative node to hold the global state
 of the application, and can therefore function in peer to peer, without
 single points of failure.
 
+\stateGraph{Growth of the state graph over time, from the point of view of \emph{P\textsubscript{1}}.}
+
 To do so, each peer runs a local simulation of the application up to the
 current time, using all the information available locally. Whenever an
 input is transmitted to a peer via the network, this remote input will
@@ -489,8 +491,6 @@ from \emph{P\textsubscript{2}} which was emitted at time
 branch of the state tree, \emph{\state{2}-\state{3}}, and computes
 \emph{\stateprime{2}-\stateprime{3}-\stateprime{4}} to take into account
 both inputs.
-
-\stateGraph{Growth of the state graph over time, from the point of view of \emph{P\textsubscript{1}}.}
 
 By instantaneously applying local input, the application reactiveness is
 not affected by the quality of the connection; a user interacts with the
