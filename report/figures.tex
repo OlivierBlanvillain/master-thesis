@@ -18,9 +18,9 @@
     \centering
     \begin{minipage}{0.8\linewidth}
       \toplisting
-      \input{../transport/transport/core/src/main/scala/transport/Transport.listings}
+      \input{../transport/transport/core/shared/src/main/scala/transport/Transport.listings}
       \lstset{caption=#1,label=transportInterface}
-      \input{../transport/transport/core/src/main/scala/transport/package.listings}
+      \input{../transport/transport/core/shared/src/main/scala/transport/package.listings}
       \bottomlisting
     \end{minipage}
   \end{figure}
@@ -53,7 +53,7 @@
 
 \newcommand\engineInterface[1]{
   \customlisting{t}{engineInterface}{0.75}{#1}
-    {survivor/lag-comp/src/main/scala/AbstractEngine.listings}
+    {lag-comp/lag-comp/src/main/scala/AbstractEngine.listings}
 }
 
 \newcommand\webRTCExample[1]{

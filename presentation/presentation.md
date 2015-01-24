@@ -233,14 +233,6 @@ does it!
 
 3. Latency compensation [in action](http://olivierblanvillain.github.io/survivor/)
 
-# React
-
-- Re-render the whole application every frame
-
--       1~def render(state: State): Html~
-
-- Virtual DOM diff algorithm
-
 #
 \bigskip\centering\Huge\sc
 Thanks!
@@ -269,3 +261,11 @@ Bonus Slides
 
     val p2pConnection: Future[ConnectionHandle] =
       signalingChannel.flatMap(webRTCClient.connect(_))~
+
+# React
+
+- Re-render the whole application every frame
+
+-       1~def render(state: State): Html~
+
+- Virtual DOM diff algorithm

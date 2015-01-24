@@ -33,22 +33,24 @@
 - [x] Abstract
 - [x] The game
 - [x] Report
-- [~] Walls, bases and turrets
+- [x] Walls
+- [x] Proper buffer
+- [x] Clock synchronization
+- [x] View Scroll
 
 # Pre Presentation
 
-- [] Clock synchronization
-- [] Proper buffer
 - [] Proper connection proxy
 
 # Post Presentation
 
 - [] Make shutdown shutdown everywhere
 - [] WebRTC Close SignalingChannel on establishment
-- [] Readmes
-- [] Remove all TODoCs
-- [] Message to the mailing list
-- [] Message to the Survivor's remake author
-- [] Message to Odersky
-- [] Update CV
 - [] Firefox
+- [] Remove all TODoCs
+- [] Readmes
+- [] Message to the mailing list
+- [] Update CV
+- [] Bases, turrets and rocks
+- [] Message to the Survivor's remake author
+- [] Update to 0.6 once released! (Suck because of scala-js-pickling)

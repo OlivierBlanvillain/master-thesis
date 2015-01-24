@@ -359,21 +359,6 @@ Docs} does it!
 
 \end{frame}
 
-\begin{frame}[fragile]{React}
-
-\begin{itemize}
-\item
-  Re-render the whole application every frame
-\item
-\begin{lstlisting}
-1~def render(state: State): Html~
-\end{lstlisting}
-\item
-  Virtual DOM diff algorithm
-\end{itemize}
-
-\end{frame}
-
 \begin{frame}{}
 
 \bigskip\centering\Huge\sc
@@ -416,5 +401,20 @@ val signalingChannel: Future[ConnectionHandle] =
 val p2pConnection: Future[ConnectionHandle] =
   signalingChannel.flatMap(webRTCClient.connect(_))~
 \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{React}
+
+\begin{itemize}
+\item
+  Re-render the whole application every frame
+\item
+\begin{lstlisting}
+1~def render(state: State): Html~
+\end{lstlisting}
+\item
+  Virtual DOM diff algorithm
+\end{itemize}
 
 \end{frame}
