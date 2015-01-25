@@ -37,17 +37,16 @@
 - [x] Proper buffer
 - [x] Clock synchronization
 - [x] View Scroll
-
-# Pre Presentation
-
-- [] Proper connection proxy
+- [x] Proper connection proxy
+- [x] Pre Presentation
+- [x] Remove all TODocs
 
 # Post Presentation
 
 - [] Make shutdown shutdown everywhere
+- [] Exception for writing on closed connection
 - [] WebRTC Close SignalingChannel on establishment
 - [] Firefox
-- [] Remove all TODoCs
 - [] Readmes
 - [] Message to the mailing list
 - [] Update CV
