@@ -72,8 +72,8 @@ In term of the scala-js-transport library, this translates into having the *Addr
 \webRTCExample{Example of WebRTC connection establishment using a dedicated relay server.}
 
 In some cases, the client-server connections might need to be used for something other than the WebRTC connection establishment. The example of #webRTCExample would not be sufficient because it assumes that the client-server connections are entirely dedicated to the relay of messages.
-<!-- This is outdated... -->
-To support these scenarios the scala-js-transport library contains picklers for *ConnectionHandle* objects and a *newConnectionsPair()* function. This function returns or pair *ConnectionHandle* objects that are linked one to the other: messages written in one connection will be received by the other, and *vice versa*. By sending the *ConnectionHandle* object returned by *newConnectionsPair()* to two different clients, a server can reuse its existing connections to these clients to establish a third, virtual connection, which acts as a direct link between the two clients.
+<!-- This is outdated...
+To support these scenarios the scala-js-transport library contains picklers for *ConnectionHandle* objects and a *newConnectionsPair()* function. This function returns or pair *ConnectionHandle* objects that are linked one to the other: messages written in one connection will be received by the other, and *vice versa*. By sending the *ConnectionHandle* object returned by *newConnectionsPair()* to two different clients, a server can reuse its existing connections to these clients to establish a third, virtual connection, which acts as a direct link between the two clients. -->
 
 \calleeSequence{Sequence diagram of WebRTC establishment, callee point of view.}
 \callerSequence{Sequence diagram of WebRTC establishment, caller point of view.}

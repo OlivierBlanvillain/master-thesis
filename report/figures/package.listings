@@ -1,0 +1,4 @@
+\begin{lstlisting}
+type ConnectionListener = ConnectionHandle => Unit
+type MessageListener = String => Unit
+\end{lstlisting}

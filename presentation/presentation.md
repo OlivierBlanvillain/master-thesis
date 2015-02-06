@@ -190,7 +190,7 @@ does it!
 #
     1~
     
-            nextState: (State, Set[Action]) => State~
+            nextState: (State, List[Action]) => State~
 
 #
 \medskip\centering\caslon\small
@@ -210,7 +210,7 @@ does it!
 
     3~1~class Engine(
         initState: State,
-        nextState: (State, Set[Action]) => State,
+        nextState: (State, List[Action]) => State,
         render: State => Unit,
         broadcastConnection: ConnectionHandle) {~
 

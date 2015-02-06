@@ -1,7 +1,4 @@
-Master Thesis Report
-====================
-
-## To compile it
+## To compile the report
 
 You will need:
 
@@ -10,7 +7,7 @@ You will need:
 - [Bitstream Vera Sans Mono](http://www.dafont.com/bitstream-vera-mono.font)
 - Tex live (`apt-get install texlive-full` should do)
 
-Then clone this repository with `git clone --recursive` to include the submodules, and call `latexmk` from the `report` directory.
+Then clone this repository with `git clone --recursive` to include the submodules, and call `latexmk` from the `report` directory. The presentation uses the [Linux Biolinum O](http://www.fontsquirrel.com/fonts/linux-biolinum) font and can be compiled the same way.
 
 ## How it works
 

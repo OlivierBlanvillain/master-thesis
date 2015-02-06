@@ -288,7 +288,7 @@ Docs} does it!
 \begin{lstlisting}
 1~
 
-        nextState: (State, Set[Action]) => State~
+        nextState: (State, List[Action]) => State~
 \end{lstlisting}
 
 \end{frame}
@@ -318,7 +318,7 @@ Docs} does it!
 \begin{lstlisting}
 3~1~class Engine(
     initState: State,
-    nextState: (State, Set[Action]) => State,
+    nextState: (State, List[Action]) => State,
     render: State => Unit,
     broadcastConnection: ConnectionHandle) {~
 

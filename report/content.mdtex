@@ -108,9 +108,9 @@ it varies greatly from one technology to another.
 \emph{ConnectionHandle} represents an open connection. Thereby, it
 supports four type of interactions: writing a message, listening for
 incoming messages, closing the connection and listening for connection
-closure. Similarly to \emph{Transport}, listening for incoming messages
-in \emph{ConnectionHandle} is achieved by completing a \emph{promise} of
-\emph{MessageListener}.
+termination. Similarly to \emph{Transport}, listening for incoming
+messages in \emph{ConnectionHandle} is achieved by completing a
+\emph{promise} of \emph{MessageListener}.
 
 An example of direct usage of the \emph{Transport} interface is
 presented in \autoref{rawclient}. This example implements a simple
@@ -163,7 +163,7 @@ single TCP connection. Connection establishment begins with an HTTP
 request from client to server. After the handshake is completed, the TCP
 connection used for the initial HTTP request is \emph{upgraded} to
 change protocol, and kept open to become the actual WebSocket
-connection. This mechanism allows WebSocket to be wildly supported over
+connection. This mechanism allows WebSocket to be widely supported over
 different network configurations.
 
 WebSocket is also well supported across different platforms. Our library
@@ -224,16 +224,7 @@ In some cases, the client-server connections might need to be used for
 something other than the WebRTC connection establishment. The example of
 \autoref{webRTCExample} would not be sufficient because it assumes that
 the client-server connections are entirely dedicated to the relay of
-messages. To support these scenarios the scala-js-transport library
-contains picklers for \emph{ConnectionHandle} objects and a
-\emph{newConnectionsPair()} function. This function returns or pair
-\emph{ConnectionHandle} objects that are linked one to the other:
-messages written in one connection will be received by the other, and
-\emph{vice versa}. By sending the \emph{ConnectionHandle} object
-returned by \emph{newConnectionsPair()} to two different clients, a
-server can reuse its existing connections to these clients to establish
-a third, virtual connection, which acts as a direct link between the two
-clients.
+messages.
 
 \calleeSequence{Sequence diagram of WebRTC establishment, callee point of view.}
 \callerSequence{Sequence diagram of WebRTC establishment, caller point of view.}
@@ -318,7 +309,7 @@ which sends back whatever it receives in uppercase.
 
 \yellingActor{Example of a connection handling actor.}
 
-Thanks to the picking mechanism developed in \cite{scala-js-actors}, it
+Thanks to the pickling mechanism developed in \cite{scala-js-actors}, it
 is possible to sent messages of any type through a connection, given
 that implicit picklers for these types of messages have been registered.
 Out of the box, picklers for case classes and case objects can be
@@ -616,7 +607,7 @@ allow the detection of malicious peers. Indeed, if a malicious peer
 \emph{P\textsubscript{1}} pretends that his message
 \emph{m\textsubscript{1}} is issued one second later that it is in
 reality, and \emph{P\textsubscript{2}} sends a message
-\emph{m\textsubscript{2}} that can by estimated to arrive before
+\emph{m\textsubscript{2}} that can be estimated to arrive before
 \emph{m\textsubscript{1}} was issues, then \emph{P\textsubscript{2}} can
 detect that \emph{P\textsubscript{1}} is malicious by checking that
 \emph{m\textsubscript{1}} does not contain \emph{r\textsubscript{2}}.
@@ -659,7 +650,7 @@ Regarding memory management, timing assumptions on the network allows
 the use of a bounded cache. Indeed, if we consider a peer to be
 disconnected when one of his messages takes more than one second to
 transit over the network, it is sufficient to retain history of
-\emph{States} for a period of one second. Thus, the memorization can be
+\emph{States} for a period of one second. Thus, the memoization can be
 implemented using a fixed size array, retaining the association between
 a time, a list of \emph{Events}, and a \emph{State}. Thanks to a careful
 use of immutable lists to store \emph{Events}, querying the cache can be

@@ -40,16 +40,16 @@
 - [x] Proper connection proxy
 - [x] Pre Presentation
 - [x] Remove all TODocs
+- [x] Finish the game
+- [x] WebRTC Close SignalingChannel on establishment
+- [x] Bases, turrets and rocks
+- [-] Make shutdown shutdown everywhere
+- [x] Firefox
 
 # Post Presentation
 
-- [] Make shutdown shutdown everywhere
-- [] Exception for writing on closed connection
-- [] WebRTC Close SignalingChannel on establishment
-- [] Firefox
 - [] Readmes
 - [] Message to the mailing list
 - [] Update CV
-- [] Bases, turrets and rocks
 - [] Message to the Survivor's remake author
-- [] Update to 0.6 once released! (Suck because of scala-js-pickling)
+- [] Update to 0.6 once released! (Stuck because of scala-js-pickling)
