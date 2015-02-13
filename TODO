@@ -17,7 +17,7 @@
 - [x] React
 - [x] Multiplayer
 - [x] P1 P2 instead of Me Him
-- [x] Single player version
+- [x] Single player version 
 - [x] Independent repo
 - [x] Check for memory leaks on the server
 - [x] WebRTC with signaling fallback
@@ -45,11 +45,12 @@
 - [x] Bases, turrets and rocks
 - [-] Make shutdown shutdown everywhere
 - [x] Firefox
+- [x] Update to 0.6
+- [x] Update CV
+- [x] Readmes
 
 # Post Presentation
 
-- [] Readmes
+- [] Publish to maven central
 - [] Message to the mailing list
-- [] Update CV
 - [] Message to the Survivor's remake author
-- [] Update to 0.6 once released! (Stuck because of scala-js-pickling)

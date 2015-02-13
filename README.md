@@ -1,13 +1,16 @@
-## To compile the report
+My master thesis, with source and PDFs of the [report](report/thesis.pdf) and the [presentation](presentation/main.pdf).
+
+## To compile it
 
 You will need:
 
 - Pandoc (install it [from source](http://johnmacfarlane.net/pandoc/installing.html#installing-from-source))
 - [Adobe Caslon Pro](https://www.google.com/search?q=Adobe+Caslon+Pro+torrent)
 - [Bitstream Vera Sans Mono](http://www.dafont.com/bitstream-vera-mono.font)
+- [Linux Biolinum O](http://www.fontsquirrel.com/fonts/linux-biolinum)
 - Tex live (`apt-get install texlive-full` should do)
 
-Then clone this repository with `git clone --recursive` to include the submodules, and call `latexmk` from the `report` directory. The presentation uses the [Linux Biolinum O](http://www.fontsquirrel.com/fonts/linux-biolinum) font and can be compiled the same way.
+Then clone this repository with `git clone --recursive` to include the submodules, and call `latexmk` from the `report` or the `presentation` directory.
 
 ## How it works
 
