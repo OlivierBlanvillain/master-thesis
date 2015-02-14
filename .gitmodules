@@ -3,7 +3,7 @@
 	url = https://github.com/OlivierBlanvillain/survivor.git
 [submodule "transport"]
 	path = transport
-	url = https://github.com/OlivierBlanvillain/scala-js-transport.git
+	url = https://github.com/OlivierBlanvillain/scalajs-transport.git
 [submodule "lag-comp"]
 	path = lag-comp
 	url = https://github.com/OlivierBlanvillain/scala-lag-comp.git

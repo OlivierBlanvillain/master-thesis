@@ -13,15 +13,15 @@ Another obstacle to the development of client-server communication interfaces co
 
 ### Contributions and Overview
 
-Introducing scala-js-transport: a networking library for simple communication between Scala systems running on Java virtual machines and on JavaScript engines. This library fills the gap between the various network protocols supported by modern web browsers, and the high level, idiomatic interfaces that are convenient to build distributed applications. The remainder of the project is dedicated to an example of usage of scala-js-transport; a remake of a Commodore 64 game, augmented with online multiplayer features. Our contributions can be summarized as follows:
+Introducing scalajs-transport: a networking library for simple communication between Scala systems running on Java virtual machines and on JavaScript engines. This library fills the gap between the various network protocols supported by modern web browsers, and the high level, idiomatic interfaces that are convenient to build distributed applications. The remainder of the project is dedicated to an example of usage of scalajs-transport; a remake of a Commodore 64 game, augmented with online multiplayer features. Our contributions can be summarized as follows:
 
-- We introduce the scala-js-transport library and the various technologies and network programing models it supports. The library is built around the *Transport* interface, a trait unifying the communication capabilities of clients and servers. We discuss the different available implementations of the interface, targeting both the Java virtual machine and JavaScript, and two *Transport* wrappers featuring remote procedure calls and the actor model on top of the various implementations.
+- We introduce the scalajs-transport library and the various technologies and network programing models it supports. The library is built around the *Transport* interface, a trait unifying the communication capabilities of clients and servers. We discuss the different available implementations of the interface, targeting both the Java virtual machine and JavaScript, and two *Transport* wrappers featuring remote procedure calls and the actor model on top of the various implementations.
 
 - We present the scala-lag-comp framework, a general purpose, cross platform framework for latency compensation applications. Designed for peer to peer environments, the framework implement a predictive latency compensation algorithm to offer maximal responsiveness with a guaranty of eventual consistency. Thanks to a clever use of immutable data structures and an optimal caching policy, the implementation is both computational and memory efficient.
 
-- We show how we implemented Survivor, a cross platform, multiplayer game featuring real-time interactions with latency compensation. The game runs at about 60 frames per seconds, and, thanks to the design of the scala-lag-comp framework, provides an online experience comparable to modern multiplayer games. This example demonstrates the potential of Scala.js and of the scala-js-transport library to be used in latency sensitive applications.
+- We show how we implemented Survivor, a cross platform, multiplayer game featuring real-time interactions with latency compensation. The game runs at about 60 frames per seconds, and, thanks to the design of the scala-lag-comp framework, provides an online experience comparable to modern multiplayer games. This example demonstrates the potential of Scala.js and of the scalajs-transport library to be used in latency sensitive applications.
 
-The source code of the software developed for this project is available online in open source (MIT) on the project repositories\footnote{\url{http://github.com/OlivierBlanvillain/scala-js-transport}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
+The source code of the software developed for this project is available online in open source (MIT) on the project repositories\footnote{\url{http://github.com/OlivierBlanvillain/scalajs-transport}}\footnote{\url{http://github.com/OlivierBlanvillain/scala-lag-comp}}\footnote{\url{http://github.com/OlivierBlanvillain/survivor}}.
 
 Transport
 =========
@@ -48,7 +48,7 @@ In addition to the examples of usage presented in #transportInterface and #rawcl
 
 ### Implementations
 
-The scala-js-transport library contains several implementations of *Transports* for WebSocket @websocket2011, SockJS @sockjs and WebRTC @webrtc2014. This subsection briefly presents the different technologies. #implSummary summarizes the available *Transports* for each platform and technology.
+The scalajs-transport library contains several implementations of *Transports* for WebSocket @websocket2011, SockJS @sockjs and WebRTC @webrtc2014. This subsection briefly presents the different technologies. #implSummary summarizes the available *Transports* for each platform and technology.
 
 \implSummary{Summary of the available Transports.}
 
@@ -60,29 +60,29 @@ WebSocket is also well supported across different platforms. Our library provide
 ###### SockJS
 SockJS @sockjs is a WebSocket emulation protocol which fallbacks to different protocols when WebSocket is not available. Is supports a large number of techniques to emulate the sending of messages from server to client, such as Ajax long polling, Ajax streaming, Server-Sent Events and streaming content by slowly loading an Html file in an iframe. All these techniques are based on the following idea: by issuing a regular HTTP request from client to server, and voluntarily delaying the response from the server, the server can decide when to release information. This allows to emulate the sending of messages from server to client which is not supported in the traditional request-response communication model.
 
-The scala-js-transport library provides a *Transport* build on the official SockJS JavaScript client, and a server on the Play Framework via a community plugin @play2-sockjs. Netty developers have scheduled SockJS support for the next major release.
+The scalajs-transport library provides a *Transport* build on the official SockJS JavaScript client, and a server on the Play Framework via a community plugin @play2-sockjs. Netty developers have scheduled SockJS support for the next major release.
 
 ###### WebRTC
 WebRTC @webrtc2014 is an experimental API for peer to peer communication between web browsers. Initially targeted at audio and video communication, WebRTC also provides *Data Channels* to communicate arbitrary data. Contrary to WebSocket which only supports TCP, WebRTC can be configured to use either TCP, UDP or SCTP.
 
 To connect via WebRTC, peers must have a way to exchange connection establishment information. This initial communicate medium, called a *SignalingChannel*, is not tight to a particular technology: its only requirement is to allow back an forth communication between the peers. This is commonly achieved by connecting both peers via WebSocket to a server, which then acts as a relay for the WebRTC connection establishment.
 
-In term of the scala-js-transport library, this translates into having the *Address* of a *WebRTCClient* being a *SignalingChannel*, that is, a *ConnectionHandle* linking two peers. #webRTCExample shows an example of WebRTC connection establishment using a dedicated WebSocket relay server.
+In term of the scalajs-transport library, this translates into having the *Address* of a *WebRTCClient* being a *SignalingChannel*, that is, a *ConnectionHandle* linking two peers. #webRTCExample shows an example of WebRTC connection establishment using a dedicated WebSocket relay server.
 
 \webRTCExample{Example of WebRTC connection establishment using a dedicated relay server.}
 
 In some cases, the client-server connections might need to be used for something other than the WebRTC connection establishment. The example of #webRTCExample would not be sufficient because it assumes that the client-server connections are entirely dedicated to the relay of messages.
 <!-- This is outdated...
-To support these scenarios the scala-js-transport library contains picklers for *ConnectionHandle* objects and a *newConnectionsPair()* function. This function returns or pair *ConnectionHandle* objects that are linked one to the other: messages written in one connection will be received by the other, and *vice versa*. By sending the *ConnectionHandle* object returned by *newConnectionsPair()* to two different clients, a server can reuse its existing connections to these clients to establish a third, virtual connection, which acts as a direct link between the two clients. -->
+To support these scenarios the scalajs-transport library contains picklers for *ConnectionHandle* objects and a *newConnectionsPair()* function. This function returns or pair *ConnectionHandle* objects that are linked one to the other: messages written in one connection will be received by the other, and *vice versa*. By sending the *ConnectionHandle* object returned by *newConnectionsPair()* to two different clients, a server can reuse its existing connections to these clients to establish a third, virtual connection, which acts as a direct link between the two clients. -->
 
 \calleeSequence{Sequence diagram of WebRTC establishment, callee point of view.}
 \callerSequence{Sequence diagram of WebRTC establishment, caller point of view.}
 
 We now quickly discuss the internal implementation of WebRTC connection establishment. As opposed the WebSocket and SockJS *Transports*, which have straightforward implementations because of the similarity between the *Transport* interface and the JavaScript API, adapting the JavaScript WebRTC API into the *Transport* interface showed in #webRTCExample require some work. The sequence diagrams in #calleeSequence and #callerSequence summarize the interactions between two *WebRTCClients*, their underlying *PeerConnections* (the main interface of the WebRTC API), and the *SignalingChannel* providing the initial connection between the two peers.
 
-The WebRTC protocol makes a distinction between the caller and callee. Because this distinction is of no interest in the scala-js-transport library, it is hidden to the library users via thanks to an additional step in the connection establishment. The first step of the establishment thus consists in an exchange of random numbers: the peer who generated smallest number is elected to be the caller (this step is repeated in case of equality). From here, peers needs to negotiate a way to achieve Network Address Translator (NAT) traversal. This negotiation is done through the Interactive Connectivity Establishment (ICE) protocol @ice2010, which requires an exchange of *IceCandidate* messages through the *SignalingChannel*. Follows an exchange of offer and answer of *SessionDescription*, which is used to negotiate what media go through the connection @sdp2002. Finally, when the peer to peer connection will become operational, the *WebRTCClient* closes the *SignalingChannel* connection and notifies its user by successfully completing the *connectionPromise* with the WebRTC connection.
+The WebRTC protocol makes a distinction between the caller and callee. Because this distinction is of no interest in the scalajs-transport library, it is hidden to the library users via thanks to an additional step in the connection establishment. The first step of the establishment thus consists in an exchange of random numbers: the peer who generated smallest number is elected to be the caller (this step is repeated in case of equality). From here, peers needs to negotiate a way to achieve Network Address Translator (NAT) traversal. This negotiation is done through the Interactive Connectivity Establishment (ICE) protocol @ice2010, which requires an exchange of *IceCandidate* messages through the *SignalingChannel*. Follows an exchange of offer and answer of *SessionDescription*, which is used to negotiate what media go through the connection @sdp2002. Finally, when the peer to peer connection will become operational, the *WebRTCClient* closes the *SignalingChannel* connection and notifies its user by successfully completing the *connectionPromise* with the WebRTC connection.
 
-In addition to the *WebRTCClient* *Transport*, the scala-js-transport library contains a *WebRTCClientFallback* *Transport*. This later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC when either peer does not support it.
+In addition to the *WebRTCClient* *Transport*, the scalajs-transport library contains a *WebRTCClientFallback* *Transport*. This later implements some additional logic to detect WebRTC support, and automatically fall back to using the signaling channel as substitute for WebRTC when either peer does not support it.
 
 At the time of writing, WebRTC is implemented is Chrome, Firefox and Opera, and lakes support in Safari and Internet Explorer. The only non browser implementation is available on the Node.js platform.
  
@@ -104,7 +104,7 @@ Thanks to the pickling mechanism developed in @scala-js-actors, it is possible t
 ###### Autowire
 Remote procedure call allow remote systems to communicate through an interface similar to method calls. The Autowire library allows to perform type-safe, reflection-free remote procedure calls between Scala systems. It uses macros and is agnostic of both the transport-mechanism and the serialization library.
 
-The scala-js-transport library offers a *RpcWrapper*, which makes internal use of Autowire to provide remote procedure call on top of any of the available *Transports*. #rpcExample shows a complete remote procedure call implementation using WebSocket, and the uPickle @upickle serialization library.
+The scalajs-transport library offers a *RpcWrapper*, which makes internal use of Autowire to provide remote procedure call on top of any of the available *Transports*. #rpcExample shows a complete remote procedure call implementation using WebSocket, and the uPickle @upickle serialization library.
 
 \rpcExample{Complete example of remote procedure call implementation.}
 
@@ -112,9 +112,9 @@ The main strength of remote procedure calls are their simplicity and type-safety
 
 ### Going Further
 
-The different *Transport* implementations and wrappers presented is this section allows for several interesting combinations. Because the scala-js-transport library is built around a central communication interface, it is easily expendable in both directions. Any new implementation of the *Transport* interface for another platform or technology would immediately be usable with all the wrappers. Analogously, any new *Transport* wrapper would automatically be compatible with the variety of available implementations.
+The different *Transport* implementations and wrappers presented is this section allows for several interesting combinations. Because the scalajs-transport library is built around a central communication interface, it is easily expendable in both directions. Any new implementation of the *Transport* interface for another platform or technology would immediately be usable with all the wrappers. Analogously, any new *Transport* wrapper would automatically be compatible with the variety of available implementations.
 
-All the implementations and wrappers in scala-js-transport are accompanied by integration tests. These tests are built using the *Selenium WebDriver* to check proper behavior of the library using real web browsers. Our tests for WebRTC use two web browsers, wich can be configured to be run with two different browsers in order to test their compatibility.
+All the implementations and wrappers in scalajs-transport are accompanied by integration tests. These tests are built using the *Selenium WebDriver* to check proper behavior of the library using real web browsers. Our tests for WebRTC use two web browsers, wich can be configured to be run with two different browsers in order to test their compatibility.
 
 
 Dealing with latency
@@ -186,7 +186,7 @@ Regarding memory management, timing assumptions on the network allows the use of
 A Real-Time Multiplayer Game
 ============================
 
-There seems to be a tradition of using Scala.js to build games. Indeed, at the time of writing, half of the projects listed on the official web site of the project are video games. What could be better than a multiplayer game to showcase the scala-js-transport library?
+There seems to be a tradition of using Scala.js to build games. Indeed, at the time of writing, half of the projects listed on the official web site of the project are video games. What could be better than a multiplayer game to showcase the scalajs-transport library?
 
 ### Scala Remake of a Commodore 64 Game
 
@@ -196,7 +196,7 @@ The original version of the game was written in 1982 for the Atari 2600. One yea
 
 ### Architecture
 
-The Scala remake of Survivor puts together the scala-js-transport library and the scala-lag-comp framework into a cross platform, real time multiplayer game. On the networking side, it uses WebRTC if available, and fallbacks to WebSocket otherwise.
+The Scala remake of Survivor puts together the scalajs-transport library and the scala-lag-comp framework into a cross platform, real time multiplayer game. On the networking side, it uses WebRTC if available, and fallbacks to WebSocket otherwise.
 
 Every aspect of the game logic is written in pure Scala, and is cross compiled for both JVM and JavaScript engines. Some I/O related code had to be written specifically for each platform, such as the handling of keyboard events and of rendering requests. The JavaScript implementation is using the DOM APIs, and the JVM implementation is built on top of the JavaFX/ScalaFX platform. On the JavaScript, side rendering requests are issued with *requestAnimationFrame*, which saves battery and CPU usage by only requesting rendering when the page is visible to the user.
 
@@ -238,9 +238,9 @@ Related Work
 
 The Node.js platform gained a lot of popularity in the recent years. By enabling server-side of applications to be written in JavaScript, it allows data structure and API can be shared between client and server. In the case of network capabilities, many JavaScript libraries imitate the WebSocket API and rely on *duck typing* to share code between client and server. For example, the *ws* library @nodejsws is an implantation of WebSocket client and server for Node.js which provides *ws* objects behaving exactly like *WebSocket* objects do on the browser side. Similarly, SockJS clients (discussed in #sockjs) provide *SockJS* objects that are almost drop in replacement for *WebSocket* objects. Finally, we could also mention the official WebRTC API @webrtc2014, which was designed such that its "API for sending and receiving data models the behavior of WebSockets".
 
-ClojureScript, the official Clojure to JavaScript compiler, has a large ecosystem of libraries, out of which *Sente* @sente seems to be the most popular library for network communication. It goals are similar to those of scala-js-transport: offer a uniform client-server API supporting several transport mechanism. Instead of using an existing WebSocket emulation library, *Sente* implements its own solution to fallback on Ajax and long-polling when WebSocket is not available.
+ClojureScript, the official Clojure to JavaScript compiler, has a large ecosystem of libraries, out of which *Sente* @sente seems to be the most popular library for network communication. It goals are similar to those of scalajs-transport: offer a uniform client-server API supporting several transport mechanism. Instead of using an existing WebSocket emulation library, *Sente* implements its own solution to fallback on Ajax and long-polling when WebSocket is not available.
 
-With the large number of languages that compile to JavaScript @compiletojs, an exhaustive coverage of the network libraries would be beyond the scope of this report. To the best of our knowledge, scala-js-transport is the first library offering such variety of supported protocols and platform.
+With the large number of languages that compile to JavaScript @compiletojs, an exhaustive coverage of the network libraries would be beyond the scope of this report. To the best of our knowledge, scalajs-transport is the first library offering such variety of supported protocols and platform.
 
 ### Latency Compensation Engines
 
@@ -261,8 +261,8 @@ In a blog post series entitled *Purely Functional Retrogames* @retrogames2008, J
 Conclusion and Future Work
 ==========================
 
-In this report, we presented the scala-js-transport library which simplifies Scala.js networking. The library supports several communication technologies over different platforms, and allows its users to develop in various network programing models. In addition, it also sets the basics for the creation of cross platform networking utilities. Our work includes an example of such utility: a predictive latency compensation framework for peer to peer applications. The framework takes great advantage of the functional programing capabilities of Scala to allow the elaboration of easy to understand and easy to maintain applications. The project is concluded with the remake of the retrogame called Survivor, which puts together the scala-js-transport library and the scala-lag-comp framework to provide online, real-time mutiplayer features.
+In this report, we presented the scalajs-transport library which simplifies Scala.js networking. The library supports several communication technologies over different platforms, and allows its users to develop in various network programing models. In addition, it also sets the basics for the creation of cross platform networking utilities. Our work includes an example of such utility: a predictive latency compensation framework for peer to peer applications. The framework takes great advantage of the functional programing capabilities of Scala to allow the elaboration of easy to understand and easy to maintain applications. The project is concluded with the remake of the retrogame called Survivor, which puts together the scalajs-transport library and the scala-lag-comp framework to provide online, real-time mutiplayer features.
 
-Future work could investigate the support of Web Workers @webworkers2012 in the scala-js-transport library. Web Workers allow parallel computations on web browsers, and as such, are not directly related to networking. However, in their current implementations, Web Workers communicate by message passing where messages are copied from one Worker to another using *structured cloning*, thus being similar to a communication over the network.
+Future work could investigate the support of Web Workers @webworkers2012 in the scalajs-transport library. Web Workers allow parallel computations on web browsers, and as such, are not directly related to networking. However, in their current implementations, Web Workers communicate by message passing where messages are copied from one Worker to another using *structured cloning*, thus being similar to a communication over the network.
 
-Another possible direction would be to add communication via streams of data as another network programing model. The Reactive Stream initiative @reactivestreams defines a standard for stream processing with non-blocking back pressure. Being currently targeted at Java virtual machines, the project could benefit from an implementation for JavaScript engines, which would have its place as part of the scala-js-transport library.
+Another possible direction would be to add communication via streams of data as another network programing model. The Reactive Stream initiative @reactivestreams defines a standard for stream processing with non-blocking back pressure. Being currently targeted at Java virtual machines, the project could benefit from an implementation for JavaScript engines, which would have its place as part of the scalajs-transport library.
